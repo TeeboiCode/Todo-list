@@ -6,13 +6,11 @@
 </template>
 
 <script>
-// import CoverPageVue from "../components/CoverPage.vue";
-import AdsProjectVue from "../components/AdsProject.vue";
+import CoverPageVue from "../components/CoverPage.vue";
 export default {
   name: "HomeView",
   components: {
-    // CoverPageVue,
-    AdsProjectVue,
+    CoverPageVue,
   },
 };
 </script>
