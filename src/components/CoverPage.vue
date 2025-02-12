@@ -1,13 +1,13 @@
 <template>
-  <h2>Cover Page</h2>
+  <div>
+    <h2>CoverPageVue</h2>
+  </div>
 </template>
 
 <script>
 export default {
-name:"CoverPageVue"
-}
+  name: "CoverPageVue",
+};
 </script>
 
-<style>
-
-</style>
+<style scoped></style>
