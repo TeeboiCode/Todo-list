@@ -1,6 +1,11 @@
 <template>
   <div class="home">
     <CoverPageVue />
+    <div class="container-fluid p-0 m-0">
+      <div v-show="showCoverPage">
+        <CoverPageVue />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -11,6 +16,16 @@ export default {
   components: {
     CoverPageVue,
   
+  },
+  data() {
+    return {
+      showCoverPage: true,
+    };
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showCoverPage = false;
+    }, 15000);
   },
 };
 </script>
