@@ -1,8 +1,15 @@
 <template>
   <div class="home">
     <div class="container-fluid p-0 m-0">
-      <div v-show="showCoverPage">
+
+      <!-- showCoverPage at default -->
+      <div v-if="showCoverPage">
         <CoverPageVue />
+      </div>
+      
+      <!-- show AdsProject after 5secs -->
+      <div v-else>
+        <AdsProjectVue />
       </div>
     </div>
   </div>
@@ -10,10 +17,12 @@
 
 <script>
 import CoverPageVue from "../components/CoverPage.vue";
+import AdsProjectVue from "../components/AdsProject.vue";
 export default {
   name: "HomeView",
   components: {
     CoverPageVue,
+    AdsProjectVue,
   },
   data() {
     return {
@@ -23,7 +32,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.showCoverPage = false;
-    }, 15000);
+    }, 5000);
   },
 };
 </script>
