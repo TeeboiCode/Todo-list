@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
-import SignUp from "../components/Login and SignUp/SignUp.vue";
-import AppDashboard from "../components/App/AppDashboard.vue";
+import AppCard from "../components/App/AppCard.vue";
+import Login from "../components/Login and SignUp/Login.vue"; 
 const routes = [
   {
     path: "/",
@@ -18,14 +18,14 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
   {
-    path: "/sign-up",
-    name: "sign-up",
-    component: SignUp,
+    path: "/login",
+    name: "login",
+    component: Login,
   },
   {
-    path: "/dashboard",
-    name: "dashboard",
-    component: AppDashboard,
+    path: "/appcard",
+    name: "appcard",
+    component: AppCard,
   },
 ];
 
