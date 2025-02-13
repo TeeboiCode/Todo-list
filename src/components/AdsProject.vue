@@ -1,51 +1,77 @@
 <template>
-
     <!-- container -->
     <div class="container">
-
         <!-- advert-button -->
         <div class="advert-button">
-            <button>Skip</button>
+            <button type="button">Skip</button>
         </div>
-        
+
         <!-- advert-img -->
         <div class="advert-img">
-            <img src="../assets/ads1.png" alt="">
+            <img :src="images[imgIndex]" />
         </div>
 
         <!-- welcome -->
         <div class="welcome">
             <h3>Welcome to <span>Taskly</span></h3>
-            <p>Your Personal Task Manager To Help You Stay Organised And Productive</p>
+            <p>{{ text[textIndex] }}</p>
 
             <!-- welcome-btn -->
             <div class="welcome-btn">
-                <button>Next</button>
+                <button type="button" @click="nextImage">Next</button>
             </div>
 
             <!-- scroll -->
             <div class="scroll">
-                <div class="scroll1 active"></div>
-                <div class="scroll2"></div>
-                <div class="scroll3"></div>
+                <div class="scroll1" v-bind:class="imgIndex === 0 ? 'active' : ''" ></div>
+                <div class="scroll2" v-bind:class="imgIndex === 1 ? 'active' : ''" ></div>
+                <div class="scroll3" v-bind:class="imgIndex === 2 ? 'active' : ''" ></div>
             </div>
         </div>
 
-        <!-- footer -->
-        <footer>
-            <p>By continuing , you agree to  Taskly <span>Terms of Service.   Privacy Policy and Cookies Policy.</span></p>
-        </footer>
+        <!-- imported footer-content -->
+        <FooterContent />
     </div>
 </template>
 
 <script>
-export default {
 
-}
+import FooterContent from './FooterContent.vue'
+export default {
+    name: "AdsProject",
+    components: {
+        FooterContent,
+    },
+
+  data() {
+    return{
+        images:[
+            require('@/assets/ads1.png'),
+            require('@/assets/ads2.png'),
+            require('@/assets/ads3.png'),
+        ],
+
+        text : [
+            "Your Personal Task Manager To Help You Stay Organised And Productive",
+            "Stay on top of your tasks and boost your productivity with your ultimate personal organizer",
+            "Effortlessly manage your tasks and achieve more ."
+        ],
+
+  imgIndex: 0,
+  textIndex: 0,
+    };
+  },
+  methods: {
+    nextImage() {
+        this.imgIndex++ 
+        this.textIndex++
+    }
+  }
+
+};
 </script>
 
 <style scoped>
-
 .container {
     padding: 10px 12px;
 }
@@ -56,25 +82,27 @@ export default {
 }
 
 .advert-button button {
-    margin-top: 40px;
+    margin-top: 10px;
     position: absolute;
     top: 0;
-    left: 80%;
+    right: 10px;
     border: none;
     outline: none;
     background: transparent;
     color: rgba(114, 116, 118, 1);
     font-size: 18px;
+    cursor: pointer;
 }
 
 .advert-img {
     width: 100%;
     text-align: center;
-    margin-top: 60px;
+    margin-top: 35px;
 }
 
 .advert-img img {
     width: 70%;
+    max-width: 300px;
 }
 
 /* welcome */
@@ -95,9 +123,9 @@ export default {
 }
 
 .welcome p {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 400;
-    line-height: 22px;
+    line-height: 18px;
     color: #000000;
 }
 
@@ -115,16 +143,15 @@ export default {
     color: #ffffff;
     font-size: 16px;
     font-weight: 600;
+    transition: 0.3s;
 }
 
 /* scroll */
 .scroll {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 0 5px;
-    width: 100%;
+    gap: 5px;
     height: 5vh;
 }
 
@@ -133,29 +160,40 @@ export default {
 .scroll3 {
     width: 10px;
     height: 10px;
-    border: 1px solid;
+    background: rgba(217, 217, 217, 1);
     border-radius: 100px;
 }
 
-.scroll1.active {
+.active {
     background: #000;
 }
 
-footer {
-    text-align: center;
-    align-items: center;
+@media (min-height: 600px) {
+    .advert-img img {
+        width: 100%;
+    }
+
+    .advert-img {
+        margin-top: 80px;
+    }
+
+    .footer-container {
+        margin-bottom: 10px;
+    }
 }
 
-footer p {
-    font-size: 11px;
-    color: #767676;
-    font-weight: 400;
-}
+@media (min-height: 800px) {
 
-footer p span {
-    font-weight: 700;
-    text-decoration: underline;
-    text-decoration-style: solid;
-}
+    .advert-button button {
+        margin-top: 80px;
+    }
 
+    .container {
+        padding: 12px 20px;
+    }
+
+    .advert-img {
+        margin-top: 150px;
+    }
+}
 </style>
