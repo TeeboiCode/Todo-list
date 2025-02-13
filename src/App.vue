@@ -19,6 +19,7 @@
 nav {
   text-align: center;
   padding: 30px;
+  background: gray;
 
   a {
     font-weight: bold;
