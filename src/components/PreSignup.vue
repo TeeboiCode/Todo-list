@@ -14,6 +14,7 @@
               src="..\assets\preSignUP-1.png"
               alt="Taskly Illustration"
               class="illustration"
+              data-aos="fade-left"
             />
           </div>
         </div>
