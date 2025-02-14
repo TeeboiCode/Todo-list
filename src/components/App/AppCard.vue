@@ -1,12 +1,15 @@
 <template>
   <!-- container -->
   <div class="container">
+
     <!-- profile -->
     <div class="profile">
+
       <!-- profile-img -->
       <div class="profile-img">
         <img src="../../assets/profile-img.png" alt="Profile Picture">
       </div>
+
       <!-- profile-text -->
       <div class="profile-text">
         <h3>Lizzy Daniel</h3>
@@ -17,43 +20,69 @@
     <!-- acct-info -->
     <div class="acct-info">
       <h3>My Account</h3>
+
       <!-- personal -->
       <div class="personal">
+
         <!-- user -->
         <div class="user">
+
+          <!-- user-details -->
           <div class="user-details">
             <i class="fa-solid fa-user"></i>
             <h4>Personal Details</h4>
           </div>
+
+          <!-- angle-right -->
           <div class="angle-right">
             <i class="fa-solid fa-angle-right"></i>
           </div>
         </div>
+
+        <!-- user -->
         <div class="user">
+
+          <!-- user-details -->
           <div class="user-details">
             <i class="fa-solid fa-lock"></i>
             <h4>Change Password</h4>
           </div>
+
+          <!-- angle-right -->
           <div class="angle-right">
             <i class="fa-solid fa-angle-right"></i>
           </div>
         </div>
       </div>
+
+      <!-- personal -->
       <div class="personal">
+
+        <!-- user -->
         <div class="user">
+
+          <!-- user-action -->
           <div class="user-action">
             <i class="fa-solid fa-right-from-bracket"></i>
             <h4>Sign Out</h4>
           </div>
+
+          <!-- angle-right -->
           <div class="angle-right">
             <i class="fa-solid fa-angle-right"></i>
           </div>
         </div>
+
+        <!-- user -->
         <div class="user">
+
+          <!-- user-action -->
           <div class="user-action">
             <i class="fa-solid fa-trash"></i>
             <h4>Delete Account</h4>
           </div>
+
+          <!-- angle-right -->
           <div class="angle-right">
             <i class="fa-solid fa-angle-right"></i>
           </div>
@@ -99,7 +128,7 @@ export default {
 
 .profile-text p {
   margin: 0;
-  padding: 0;
+  padding: 0  ;
   font-size: 12px;
   color: #555;
 }
