@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import AppCard from "../components/App/AppCard.vue";
-import Login from "../components/Login and SignUp/Login.vue"; 
+import Login from "../components/Login and SignUp/Login.vue";
+import SignPg from "../components/Login and SignUp/SignUp.vue";
 const routes = [
   {
     path: "/",
@@ -26,6 +27,11 @@ const routes = [
     path: "/appcard",
     name: "appcard",
     component: AppCard,
+  },
+  {
+    path: "/signPg",
+    name: "signPg",
+    component: SignPg,
   },
 ];
 

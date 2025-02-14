@@ -1,12 +1,11 @@
 <template>
   <div class="home">
     <div class="container-fluid p-0 m-0">
-
       <!-- showCoverPage at default -->
       <div v-if="showCoverPage">
         <CoverPageVue />
       </div>
-      
+
       <!-- show AdsProject after 5secs -->
       <div v-else>
         <AdsProjectVue />
@@ -32,7 +31,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.showCoverPage = false;
-    }, 5000);
+    }, 4500);
   },
 };
 </script>

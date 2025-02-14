@@ -1,9 +1,9 @@
 <template>
   <div>
-    <nav>
+    <!-- <nav>
       <router-link to="/login">Login</router-link> |
       <router-link to="/appcard">AppCard</router-link>
-    </nav>
+    </nav> -->
     <router-view />
   </div>
 </template>

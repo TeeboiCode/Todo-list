@@ -1,128 +1,103 @@
 <template>
- <div class="container">
-    <div class="login-box">
-      <!-- Header -->
-      <div class="header">
-        <h1 class="title">
-          <span class="checkmark">✔</span> Taskly
-        </h1>
-        <button class="login-btn" >Log In</button>
-      </div>
+  <div>
+    <div class="container-fluid p-0">
+      <div class="login-box">
+        <!-- Header -->
+        <div class="header">
+          <button class="login-btn">Log In</button>
+        </div>
 
-      <!-- Illustration -->
-      <img src="..\assets\preSignUP-1.png" alt="Taskly Illustration" class="illustration" />
+        <!-- Illustration -->
+        <div class=".advert-img" id="advert">
+          <div class="advert-img-container">
+            <img
+              src="..\assets\preSignUP-1.png"
+              alt="Taskly Illustration"
+              class="illustration"
+            />
+          </div>
+        </div>
 
-      <!-- Subtitle -->
-      <p class="subtitle">Stay Organized. Stay Focused. Get Things Done</p>
+        <!-- Subtitle -->
+        <p class="subtitle">Stay Organized. Stay Focused. Get Things Done</p>
 
-      <!-- Signup Button -->
-      <button class="btn signup-btn" >Sign Up</button>
-
-      <!-- Separator -->
-      <div class="separator">
-        <span class="line"></span> Or <span class="line"></span>
-      </div>
-
-      <!-- Social Logins -->
-      <div class="button-group">
-        <button class="btn apple" >
-<i class="fa-brands fa-apple"></i>
-          Continue with Apple
+        <!-- Signup Button -->
+        <button class="btn signup-btn">
+          <router-link to="/signPg" style="color: #fff; text-decoration: none"
+            >Sign Up</router-link
+          >
         </button>
-        <button class="btn google">
-<i class="fa-brands fa-google"></i>
-          Continue with Google
-        </button>
-      </div>
 
-      <!-- Terms -->
-      <p class="terms">
-        By continuing, you agree to Taskly's
-        <a href="#">Terms of Service</a>,
-        <a href="#">Privacy Policy</a>, and
-        <a href="#">Cookies Policy</a>.
-      </p>
+        <!-- Separator -->
+        <div class="separator">
+          <span class="line"></span> Or <span class="line"></span>
+        </div>
+
+        <!-- Social Logins -->
+        <div class="button-group">
+          <button class="btn apple">
+            <i class="fa-brands fa-apple"></i>
+            Continue with Apple
+          </button>
+          <button class="btn google">
+            <i class="fa-brands fa-google"></i>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="footerContainer">
+      <FooterContentVue />
     </div>
   </div>
 </template>
 
-<script setup>
-
+<script>
+import FooterContentVue from "./FooterContent.vue";
+export default {
+  name: "PreSignupVue",
+  components: {
+    FooterContentVue,
+  },
+};
 </script>
+
 <style scoped>
-
-
-/* General Styles */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  width: 100%;
-}
-
-.login-box {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-}
-
 /* Header */
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
-}
-
-.title {
-  font-size: 24px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  color:#09203E;
-}
-
-.checkmark {
-  color:  #09203E;
-  margin-right: 5px;
 }
 
 .login-btn {
   background: none;
-   border: 1.5px solid #09203E;
-  padding: 6px 12px;
+  border: 1.5px solid #09203e;
+  padding: 3px 12px;
   border-radius: 5px;
-  color: #09203E;
+  color: #09203e;
   font-size: 14px;
   cursor: pointer;
-  transition: 3s;
+  transition: 0.3s;
+  margin-top: 10px;
 }
 
-.login-btn:hover {
-  background: #09203E;
-  color: white;
+#advert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Illustration */
-.illustration {
+.advert-img-container {
+  width: 70%;
+  height: 208px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.advert-img-container img {
   width: 100%;
-  max-width: 300px;
-  margin: 10px 0;
 }
 
 /* Subtitle */
@@ -130,25 +105,27 @@ body {
   color: #666;
   font-size: 14px;
   margin-bottom: 15px;
+  padding: 0 10px;
+  text-align: center;
+  margin-top: -20px;
 }
 
 /* Signup Button */
 .signup-btn {
-  background:  #09203E;
-;
-  color: white;
-  padding: 10px;
-  width: 100%;
+  background: #09203e;
+  padding: 12px 120px;
+  border-radius: 25px !important;
   border: none;
-  border-radius: 5px;
+  outline: none;
+  color: #ffffff;
   font-size: 16px;
-  cursor: pointer;
-  transition: 3s;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
-.signup-btn:hover {
-  background:  #174884;
-color: #fff;
+.login-btn:hover .signup-btn:hover {
+  background: #174884;
+  color: #fff;
 }
 
 /* Separator */
@@ -193,7 +170,7 @@ color: #fff;
   color: black;
   border: 1px solid #ccc;
   transition: 3s;
-font-weight: 700;
+  font-weight: 700;
 }
 
 .apple:hover {
@@ -212,30 +189,52 @@ font-weight: 700;
   background-color: #f0f0f0;
 }
 
-/* Icon Styles */
-.icon {
-  width: 20px;
-  height: 20px;
+.footerContainer {
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  text-align: center;
+  align-items: center;
 }
 
-/* Terms */
-.terms {
-  font-size: 12px;
-  color: gray;
-  margin-top: 10px;
+@media (min-height: 568px) {
+  .advert-img img {
+    width: 100%;
+  }
+
+  #advert {
+    margin-top: 80px;
+  }
 }
 
-.terms a {
-  color: blue;
-  text-decoration: none;
+@media (min-height: 620px) {
+  .advert-img-container {
+    width: 100%;
+    height: 295px;
+    background: transparent;
+  }
 }
 
-/* Responsive Design */
-@media (max-width: 480px) {
-  .login-box {
-    width:90%;
- }
+@media (min-height: 700px) {
+  .footerContainer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
+@media (min-height: 800px) {
+  .advert-button button {
+    margin-top: 80px;
+  }
 
+  .container {
+    padding: 12px 20px;
+  }
+
+  #advert {
+    margin-top: 150px;
+  }
+}
 </style>
