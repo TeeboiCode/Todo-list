@@ -7,7 +7,7 @@
 
       <!-- profile-img -->
       <div class="profile-img">
-        <img src="../../assets/profile-img.png" alt="Profile Picture">
+        <img src="../../assets/default-image.jpg" alt="Profile Picture">
       </div>
 
       <!-- profile-text -->
@@ -111,6 +111,11 @@ export default {
 }
 
 /* Profile image */
+.profile-img {
+  border: 1px solid;
+  border-radius: 100px;
+}
+
 .profile-img img {
   width: 70px;
   height: 70px;
