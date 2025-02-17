@@ -4,6 +4,14 @@
     <div v-if="!showPreSignUp" class="container2">
       <!-- advert-button -->
       <div class="advert-button">
+        <div class="back-btn" v-if="imgIndex !== 0" @click="backAds()">
+          <img
+            src="../assets/back-arrow-icon.png"
+            width="28"
+            height="25"
+            alt=""
+          />
+        </div>
         <button type="button" v-show="!(imgIndex === 2)" @click="skipAds()">
           Skip
         </button>
@@ -29,7 +37,7 @@
       <!-- welcome -->
       <div class="welcome">
         <h3>Welcome to <span>Taskly</span></h3>
-        <p>{{ text[imgIndex] }}</p>
+        <p class="welcome-text">{{ text[imgIndex] }}</p>
 
         <!-- welcome-btn -->
         <div class="welcome-btn">
@@ -55,7 +63,7 @@
     </div>
 
     <div v-else>
-      <PreSignupVue />
+      <PreSignupVue @back="imgIndex = 2" />
     </div>
 
     <!-- imported footer-content -->
@@ -103,6 +111,12 @@ export default {
     skipAds() {
       return (this.imgIndex = 3);
     },
+
+    backAds() {
+      if (this.imgIndex > 0) {
+        this.imgIndex -= 1;
+      }
+    },
   },
 
   computed: {
@@ -124,16 +138,16 @@ export default {
 }
 
 .advert-button button {
-  /* margin-top: 10px; */
   position: absolute;
-  top: 0;
+  top: -25px;
   right: 10px;
   border: none;
   outline: none;
   background: transparent;
-  color: rgba(114, 116, 118, 1);
+  color: #a8a9aa;
   font-size: 18px;
   cursor: pointer;
+  padding: 0;
 }
 
 .advert-img {
@@ -143,6 +157,14 @@ export default {
   align-items: center;
   text-align: center;
   margin-top: 35px;
+}
+
+.back-btn {
+  width: fit-content;
+  padding: 0 3px 0 0;
+  position: absolute;
+  top: -25px;
+  left: 0;
 }
 
 .advert-img-container {
@@ -173,7 +195,7 @@ export default {
   font-size: 18px;
 }
 
-.welcome p {
+.welcome-text {
   font-size: 11px;
   font-weight: 400;
   line-height: 18px;
@@ -236,9 +258,9 @@ export default {
     width: 100%;
   }
 
-  .advert-img {
+  /* .advert-img {
     margin-top: 80px;
-  }
+  } */
 
   .footer-container {
     margin-bottom: 10px;
@@ -251,19 +273,40 @@ export default {
     height: 295px;
     background: transparent;
   }
+
+  .welcome-text {
+    font-size: 13px !important;
+    padding: 3px 15px !important;
+  }
+}
+
+@media (min-height: 700px) {
+  .welcome-text {
+    padding: 3px 15px !important;
+  }
 }
 
 @media (min-height: 800px) {
-  .advert-button button {
-    margin-top: 80px;
-  }
-
   .container {
     padding: 12px 20px;
   }
 
-  .advert-img {
-    margin-top: 150px;
+  .container2 {
+    margin-top: 4rem;
+  }
+
+  .advert-button button,
+  .back-btn {
+    top: -45px;
+  }
+
+  .welcome-text {
+    padding: 3px 20px !important;
+    font-size: 1rem;
+  }
+
+  .welcome h3 {
+    font-size: 1.5rem;
   }
 }
 </style>

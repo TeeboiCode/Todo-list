@@ -1,226 +1,262 @@
 <template>
-  <div class="container-fluid p-0">
-    <div class="login-box">
-      <!-- Header -->
+  <div class="container">
+    <div class="signup-box">
+      <!-- Back Button & Title -->
       <div class="header">
-        <!-- <h1 class="title"><span class="checkmark">✔</span> Taskly</h1> -->
-        <button class="login-btn">Log In</button>
+        <span class="back-icon"><i class="fa-solid fa-less-than"></i></span>
+        <h2 class="title">Let's Get Started</h2>
       </div>
 
-      <!-- Illustration -->
-      <img
-        src="..\assets\preSignUP-1.png"
-        alt="Taskly Illustration"
-        class="illustration"
-      />
+      <!-- "Sign Up" text -->
+      <h3 class="signup-text">Sign Up</h3>
+      <p class="subtitle">Enter Your Details Below</p>
 
-      <!-- Subtitle -->
-      <p class="subtitle">Stay Organized. Stay Focused. Get Things Done</p>
+      <form>
+        <!-- Full Name -->
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="Full Name" required />
+        </div>
 
-      <!-- Signup Button -->
-      <button class="btn signup-btn">Sign Up</button>
+        <!-- Email -->
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" placeholder="Adebayonisola@gmail.com" required />
+        </div>
 
-      <!-- Separator -->
-      <div class="separator">
-        <span class="line"></span> Or <span class="line"></span>
-      </div>
+        <!-- Phone Number -->
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="07050419815" required />
+        </div>
 
-      <!-- Social Logins -->
-      <div class="button-group">
-        <button class="btn apple">
-          <i class="fa-brands fa-apple"></i>
-          Continue with Apple
-        </button>
-        <button class="btn google">
-          <i class="fa-brands fa-google"></i>
-          Continue with Google
-        </button>
-      </div>
-    </div>
+        <!-- Password -->
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" />
+        </div>
 
-    <div class="">
-      <FooterContentVue />
+        <!-- Remember Me -->
+        <div class="remember-me">
+          <input type="checkbox" />
+          <label>Remember Me</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btns">Sign Up</button>
+      </form>
+
+      <!-- Login Link -->
+      <p class="login-link">
+        Already Have An Account?
+        <a href="#">Log In</a>
+      </p>
     </div>
   </div>
 </template>
 
-<script>
-import FooterContentVue from "./FooterContent.vue";
-export default {
-  name: "PreSignupVue",
-  components: {
-    FooterContentVue,
-  },
-};
-</script>
+<script></script>
 <style scoped>
 /* General Styles */
-/* body {
+body {
   font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-} */
+  min-height: 100vh;
+}
 
-.container-fluid {
+/* Container */
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* padding: 20px; */
   width: 100%;
+  padding: 20px;
+}
+
+/* Signup Box */
+.signup-box {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
 /* Header */
 .header {
   display: flex;
-  justify-content: end;
   align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
-.title {
-  font-size: 24px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  color: #09203e;
-}
-
-.checkmark {
-  color: #09203e;
-  margin-right: 5px;
-}
-
-.login-btn {
-  background: none;
-  border: 1.5px solid #09203e;
-  padding: 3px 12px;
-  border-radius: 5px;
-  color: #09203e;
-  font-size: 14px;
+.back-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 20px;
   cursor: pointer;
-  transition: 0.3s;
+  color: #000;
+}
+
+/* Title and Signup Text */
+.title {
+  font-size: 22px;
+  color: #09203e;
+}
+
+.signup-text {
+  font-size: 18px;
+  color: #000;
   margin-top: 10px;
-}
-
-.login-btn:hover {
-  background: #09203e;
-  color: white;
-}
-
-/* Illustration */
-.illustration {
-  width: 100%;
-  max-width: 300px;
-  margin: 10px 0;
+  text-align: left;
 }
 
 /* Subtitle */
 .subtitle {
-  color: #666;
   font-size: 14px;
-  margin-bottom: 15px;
-  padding: 0 10px;
+  color: #000;
+  margin-bottom: 20px;
+  text-align: left;
 }
 
-/* Signup Button */
+/* Input Group */
+.input-group {
+  text-align: left;
+  margin-bottom: 15px;
+}
 
-.signup-btn {
-  background: #09203e;
-  padding: 12px 120px;
-  border-radius: 25px !important;
-  border: none;
+.input-group label {
+  display: block;
+  font-size: 14px;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
   outline: none;
-  color: #ffffff;
+  border-radius: 10px;
+
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Phone Number Input */
+.phone-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  overflow: hidden;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.country-code {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 14px;
+  border-right: 1px solid #ccc;
+}
+
+.phone-input input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+/* Remember Me */
+.remember-me {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #000;
+}
+
+.remember-me input {
+  margin-right: 5px;
+}
+
+/* Sign-Up Button */
+.btns {
+  width: 100%;
+  background-color: #1a1f36;
+  color: white;
+  padding: 12px;
+  border: none;
   font-size: 16px;
-  font-weight: 600;
+  cursor: pointer;
+  font-weight: bold;
   transition: 0.3s;
 }
 
-.signup-btn:hover {
-  background: #174884;
-  color: #fff;
+.btns:hover {
+  background-color: #0f172a;
 }
 
-/* Separator */
-.separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px 0;
-  color: #666;
+/* Login Link */
+.login-link {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #000;
 }
 
-.line {
-  flex: 1;
-  height: 1px;
-  background-color: #ccc;
-  margin: 0 10px;
-}
-
-/* Buttons */
-.button-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.btn {
-  padding: 10px;
-  width: 100%;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.apple {
-  background-color: white;
-  color: white;
-  color: black;
-  border: 1px solid #ccc;
-  transition: 3s;
-  font-weight: 700;
-}
-
-.apple:hover {
-  background-color: #f0f0f0;
-}
-
-.google {
-  background-color: white;
-  color: black;
-  border: 1px solid #ccc;
-  transition: 3s;
-  font-weight: 700;
-}
-
-.google:hover {
-  background-color: #f0f0f0;
-}
-
-/* Icon Styles */
-.icon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Terms */
-.terms {
-  font-size: 12px;
-  color: gray;
-  margin-top: 10px;
-}
-
-.terms a {
-  color: blue;
+.login-link a {
+  color: #d9534f;
   text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* RESPONSIVENESS */
+
+@media screen and (max-width: 480px) {
+  .signup-box {
+    padding: 10px;
+    width: 100%;
+  }
+
+  .back-icon {
+    font-size: 18px;
+    left: 5px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .signup-text,
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .input-group input,
+  .phone-input input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .btns {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+/* For medium screens like tablets (481px - 768px) */
+@media screen and (max-width: 768px) {
+  .signup-box {
+    width: 100%;
+  }
 }
 </style>

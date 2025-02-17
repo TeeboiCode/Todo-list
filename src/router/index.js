@@ -3,6 +3,9 @@ import HomeView from "../views/HomeView.vue";
 import AppCard from "../components/App/AppCard.vue";
 import Login from "../components/Login and SignUp/Login.vue";
 import SignPg from "../components/Login and SignUp/SignUp.vue";
+import SignupAndLogin from "../components/Login and SignUp/SignUpAndLogin.vue";
+import PreSignup from "../components/PreSignup.vue";
+import AppDashboard from "../components/App/AppDashboard.vue";
 const routes = [
   {
     path: "/",
@@ -32,6 +35,21 @@ const routes = [
     path: "/signPg",
     name: "signPg",
     component: SignPg,
+  },
+  {
+    path: "/create",
+    name: "create",
+    component: SignupAndLogin,
+  },
+  {
+    path: "/presignup",
+    name: "presignup",
+    component: PreSignup,
+  },
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: AppDashboard,
   },
 ];
 

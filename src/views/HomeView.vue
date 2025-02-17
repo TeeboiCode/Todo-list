@@ -31,7 +31,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.showCoverPage = false;
-    }, 4500);
+    }, 5000);
   },
 };
 </script>
