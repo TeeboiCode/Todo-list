@@ -1,8 +1,8 @@
 <template>
   <div>
     <nav>
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/appcard">AppCard</router-link>
+      <router-link to="/createTask">Create Task</router-link> |
+      <router-link to="/dashboardcard">Dashboard Card</router-link>
     </nav>
     <router-view />
   </div>

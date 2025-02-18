@@ -6,6 +6,9 @@ import SignPg from "../components/Login and SignUp/SignUp.vue";
 import SignupAndLogin from "../components/Login and SignUp/SignUpAndLogin.vue";
 import PreSignup from "../components/PreSignup.vue";
 import AppDashboard from "../components/App/AppDashboard.vue";
+import DashboardCard from "../components/App/DashboardCard.vue";
+import CreateTask from "../components/CreateTask.vue";
+
 const routes = [
   {
     path: "/",
@@ -50,6 +53,16 @@ const routes = [
     path: "/dashboard",
     name: "dashboard",
     component: AppDashboard,
+  },
+  {
+    path: "/createTask",
+    name: "createTask",
+    component: CreateTask,
+  },
+  {
+    path: "/dashboardcard",
+    name: "dashboardcard",
+    component: DashboardCard,
   },
 ];
 
