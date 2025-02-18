@@ -1,10 +1,8 @@
 <template>
   <!-- container -->
   <div class="container">
-
     <!-- profile -->
     <div class="profile">
-
       <!-- profile-img -->
       <div class="profile-img">
         <img src="../../assets/default-image.jpg" alt="Profile Picture">
@@ -53,6 +51,20 @@
             <i class="fa-solid fa-angle-right"></i>
           </div>
         </div>
+
+        <!-- user - Enable Notification -->
+        <div class="user">
+          <div class="user-details">
+            <i class="fa-solid fa-bell"></i>
+            <h4>Enable Notification</h4>
+          </div>
+
+          <!-- Toggle Switch -->
+          <label class="switch">
+            <input type="checkbox" v-model="isNotificationEnabled">
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
 
       <!-- personal -->
@@ -60,8 +72,6 @@
 
         <!-- user -->
         <div class="user">
-
-          <!-- user-action -->
           <div class="user-action">
             <i class="fa-solid fa-right-from-bracket"></i>
             <h4>Sign Out</h4>
@@ -75,8 +85,6 @@
 
         <!-- user -->
         <div class="user">
-
-          <!-- user-action -->
           <div class="user-action">
             <i class="fa-solid fa-trash"></i>
             <h4>Delete Account</h4>
@@ -95,6 +103,11 @@
 <script>
 export default {
   name: "AppCardVue",
+  data() {
+    return {
+      isNotificationEnabled: false, 
+    };
+  },
 };
 </script>
 
@@ -133,7 +146,7 @@ export default {
 
 .profile-text p {
   margin: 0;
-  padding: 0  ;
+  padding: 0;
   font-size: 12px;
   color: #555;
 }
@@ -164,7 +177,7 @@ export default {
   align-items: center;
   padding: 8px 0;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .user:hover {
@@ -173,18 +186,21 @@ export default {
 }
 
 /* Icons and labels */
-.user-details, .user-action {
+.user-details,
+.user-action {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.user-details h4, .user-action h4 {
+.user-details h4,
+.user-action h4 {
   margin: 0;
   font-size: 14px;
 }
 
-.user-details i, .user-action i {
+.user-details i,
+.user-action i {
   font-size: 16px;
   color: #3386ec;
 }
@@ -192,5 +208,52 @@ export default {
 /* Signout & Delete Colors */
 .user-action i {
   color: #eb1212;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+/* Checked (ON) State */
+input:checked + .slider {
+  background-color: #3386ec;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
 }
 </style>

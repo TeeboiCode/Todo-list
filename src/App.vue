@@ -1,8 +1,8 @@
 <template>
   <div>
     <nav>
-      <router-link to="/appProfile">App Profile</router-link> |
-      <router-link to="/dashboardcard">Dashboard Card</router-link>
+      <router-link to="/createTask">Create Task</router-link> |
+      <router-link to="/appcard"> Card</router-link>
     </nav>
     <router-view />
   </div>
