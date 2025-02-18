@@ -16,24 +16,21 @@
       <div class="login-form-container">
         <p class="des">enter your details below</p>
 
-        <form class="row g-3 needs-validation" novalidate>
+        <form class="row g-3 needs-validation" novalidate @submit.prevent="handleLogin">
           <div class="col-md-4">
-            <label for="validationDefaultUsername" class="form-label"
-              >Email</label
-            >
+            <label for="validationDefaultUsername" class="form-label">Email</label>
             <div class="input-group">
-              <span
-                class="input-group-text border-end-0"
-                id="inputGroupPrepend2"
-              >
+              <span class="input-group-text border-end-0" id="inputGroupPrepend2">
                 <i class="fa-solid fa-envelope" style="color: #a8a9aa"></i>
               </span>
               <input
-                type="text"
+                type="email"
                 placeholder="ayomideakorede0@gmail.com"
                 class="form-control border-start-0"
+                :class="{ 'is-invalid': errors.email }"
                 id="validationDefaultUsername"
-                aria-describedby="inputGroupPrepend2"
+                v-model.trim="formValue.email"
+                ref="email"
                 required
               />
             </div>
@@ -55,13 +52,13 @@
                 type="password"
                 placeholder="Password"
                 class="form-control pass border-start-0"
+                :class="{ 'is-invalid': errors.password }"
                 id="password"
-                aria-describedby="password"
-                v-model="password"
+                v-model="formValue.password"
+                ref="password"
                 required
               />
             </div>
-            <div class="valid-feedback">Please provide a valid name.</div>
           </div>
 
           <div class="col-12">
@@ -69,23 +66,18 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                value=""
-                id="invalidCheck"
-                required
+                id="rememberMe"
+                v-model="formValue.rememberMe"
               />
-              <label class="form-check-label" for="invalidCheck">
+              <label class="form-check-label" for="rememberMe">
                 remember me
               </label>
-              <!-- <div class="invalid-feedback">
-              You must agree before submitting.
-            </div> -->
             </div>
           </div>
           <div class="col-12 mt-5">
             <button
               class="btn btn-primary p-3 submitForm w-100"
               type="submit"
-              @click="$router.push('/dashboard')"
             >
               login
             </button>
@@ -103,9 +95,128 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
   name: "loginVue",
   emits: ["signup"],
+  data() {
+    return {
+      formValue: {
+        email: "",
+        password: "",
+        rememberMe: false
+      },
+      errors: {
+        email: false,
+        password: false
+      }
+    };
+  },
+  watch: {
+    'formValue.email'(newValue) {
+      if (newValue.trim()) {
+        this.errors.email = false;
+      }
+    },
+    'formValue.password'(newValue) {
+      if (newValue) {
+        this.errors.password = false;
+      }
+    }
+  },
+  methods: {
+    resetErrors() {
+      this.errors = {
+        email: false,
+        password: false
+      };
+    },
+
+    async handleLogin() {
+      try {
+        this.resetErrors();
+        let hasError = false;
+
+        // Validate empty fields
+        if (!this.formValue.email.trim()) {
+          this.errors.email = true;
+          this.$refs.email.focus();
+          hasError = true;
+        }
+        if (!this.formValue.password) {
+          this.errors.password = true;
+          if (!hasError) this.$refs.password.focus();
+          hasError = true;
+        }
+
+        if (hasError) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill in all required fields',
+            confirmButtonColor: '#09203e'
+          });
+          return;
+        }
+
+        // Get users from localStorage
+        const users = JSON.parse(localStorage.getItem('usersData')) || [];
+        const user = users.find(u => u.email === this.formValue.email.trim());
+
+        if (!user) {
+          this.errors.email = true;
+          await Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: 'Email not found. Please check your email or sign up.',
+            confirmButtonColor: '#09203e'
+          });
+          return;
+        }
+
+        if (user.password !== this.formValue.password) {
+          this.errors.password = true;
+          await Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: 'Incorrect password. Please try again.',
+            confirmButtonColor: '#09203e'
+          });
+          return;
+        }
+
+        // If remember me is checked, store the login state
+        if (this.formValue.rememberMe) {
+          localStorage.setItem('currentUser', JSON.stringify({
+            id: user.id,
+            email: user.email,
+            fullName: user.fullName
+          }));
+        }
+
+        // Successful login
+        await Swal.fire({
+          icon: 'success',
+          title: 'Welcome back!',
+          text: `Hello, ${user.fullName}`,
+          confirmButtonColor: '#09203e'
+        });
+
+        // Navigate to dashboard
+        this.$router.push('/dashboard');
+
+      } catch (error) {
+        console.error('Login error:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred during login. Please try again.',
+          confirmButtonColor: '#09203e'
+        });
+      }
+    }
+  }
 };
 </script>
 
@@ -191,5 +302,14 @@ label {
 
 .form-check-label {
   font-weight: 400;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545 !important;
+  background-image: none !important;
+}
+
+.input-group .form-control.is-invalid {
+  z-index: 0;
 }
 </style>

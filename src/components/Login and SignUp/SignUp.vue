@@ -16,24 +16,28 @@
       <div class="signUp-form-container">
         <p class="des">enter your details below</p>
 
-        <form class="row g-3 needs-validation" novalidate>
+        <form
+          class="row g-3 needs-validation"
+          novalidate
+          @submit.prevent="submitForm"
+        >
           <div class="col-md-4">
             <label for="fullName" class="form-label">Full Name</label>
             <input
               type="text"
               class="form-control"
+              :class="{ 'is-invalid': errors.fullName }"
               id="fullName"
-              v-model.trim="fullName"
+              v-model.trim="formValue.fullName"
               placeholder="Full Name"
+              ref="fullName"
               required
             />
             <div class="valid-feedback">Please provide a valid name.</div>
           </div>
 
           <div class="col-md-4">
-            <label for="validationDefaultUsername" class="form-label"
-              >Email</label
-            >
+            <label for="email" class="form-label">Email</label>
             <div class="input-group">
               <span
                 class="input-group-text border-end-0"
@@ -42,30 +46,36 @@
                 <i class="fa-solid fa-envelope" style="color: #a8a9aa"></i>
               </span>
               <input
-                type="text"
+                type="email"
                 placeholder="ayomideakorede0@gmail.com"
                 class="form-control border-start-0"
-                id="validationDefaultUsername"
-                aria-describedby="inputGroupPrepend2"
+                :class="{ 'is-invalid': errors.email }"
+                id="email"
+                v-model="formValue.email"
+                ref="email"
                 required
               />
             </div>
           </div>
           <div class="col-md-6">
-            <label for="validationCustom03" class="form-label"
-              >Phone Number</label
-            >
+            <label for="phoneNum" class="form-label">Phone Number</label>
             <input
               type="text"
               class="form-control"
-              id="validationCustom03"
+              :class="{ 'is-invalid': errors.phoneNum }"
+              id="phoneNum"
+              v-model.trim="formValue.phoneNum"
+              placeholder="07050419815"
+              ref="phoneNum"
               required
             />
-            <div class="invalid-feedback">Please provide a valid city.</div>
+            <div class="invalid-feedback">
+              Please provide a valid phone number.
+            </div>
           </div>
 
           <div class="col-md-4">
-            <label for="Password" class="form-label">Password</label>
+            <label for="password" class="form-label">Password</label>
             <div class="input-group">
               <span class="input-group-text border-end-0" id="password">
                 <div class="icon">
@@ -80,13 +90,14 @@
                 type="password"
                 placeholder="Password"
                 class="form-control pass border-start-0"
+                :class="{ 'is-invalid': errors.password }"
                 id="password"
-                aria-describedby="password"
-                v-model="password"
+                v-model="formValue.password"
+                ref="password"
                 required
               />
             </div>
-            <div class="valid-feedback">Please provide a valid name.</div>
+            <div class="valid-feedback">Please provide a valid password.</div>
           </div>
 
           <div class="col-12">
@@ -94,8 +105,9 @@
               <input
                 class="form-check-input"
                 type="checkbox"
-                value=""
+                value="remember-me"
                 id="invalidCheck"
+                v-model="formValue.rememberMe"
                 required
               />
               <label class="form-check-label" for="invalidCheck">
@@ -107,11 +119,7 @@
             </div>
           </div>
           <div class="col-12 mt-5">
-            <button
-              class="btn btn-primary p-3 submitForm w-100"
-              type="submit"
-              @click="$router.push('/dashboard')"
-            >
+            <button class="btn btn-primary p-3 submitForm w-100" type="submit">
               Sign Up
             </button>
           </div>
@@ -128,9 +136,160 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
   name: "SignUpVue",
   emits: ["login"],
+  data() {
+    return {
+      formValue: {
+        fullName: "",
+        email: "",
+        phoneNum: "",
+        password: "",
+        rememberMe: false,
+      },
+      errors: {
+        fullName: false,
+        email: false,
+        phoneNum: false,
+        password: false,
+      }
+    };
+  },
+  watch: {
+    // Watch each form field and clear its error when it's filled
+    'formValue.fullName'(newValue) {
+      if (newValue.trim()) {
+        this.errors.fullName = false;
+      }
+    },
+    'formValue.email'(newValue) {
+      if (newValue.trim()) {
+        this.errors.email = false;
+      }
+    },
+    'formValue.phoneNum'(newValue) {
+      if (newValue.trim()) {
+        this.errors.phoneNum = false;
+      }
+    },
+    'formValue.password'(newValue) {
+      if (newValue) {
+        this.errors.password = false;
+      }
+    }
+  },
+  methods: {
+    resetErrors() {
+      this.errors = {
+        fullName: false,
+        email: false,
+        phoneNum: false,
+        password: false,
+      };
+    },
+    checkExistingEmail(email) {
+      const existingUsers = JSON.parse(localStorage.getItem('usersData')) || [];
+      return existingUsers.some(user => user.email === email);
+    },
+    submitForm() {
+      try {
+        this.resetErrors();
+        let hasError = false;
+        let firstEmptyField = null;
+
+        // Check each field and mark errors
+        if (!this.formValue.fullName.trim()) {
+          this.errors.fullName = true;
+          hasError = true;
+          firstEmptyField = 'fullName';
+        }
+        if (!this.formValue.email.trim()) {
+          this.errors.email = true;
+          hasError = true;
+          firstEmptyField = firstEmptyField || 'email';
+        }
+        if (!this.formValue.phoneNum.trim()) {
+          this.errors.phoneNum = true;
+          hasError = true;
+          firstEmptyField = firstEmptyField || 'phoneNum';
+        }
+        if (!this.formValue.password) {
+          this.errors.password = true;
+          hasError = true;
+          firstEmptyField = firstEmptyField || 'password';
+        }
+
+        if (hasError) {
+          if (firstEmptyField) {
+            this.$refs[firstEmptyField].focus();
+          }
+          
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: `Please fill in the ${firstEmptyField.replace(/([A-Z])/g, ' $1').toLowerCase()} field`,
+            confirmButtonColor: '#09203e'
+          });
+          return;
+        }
+
+        // Check for existing email
+        if (this.checkExistingEmail(this.formValue.email.trim())) {
+          this.errors.email = true;
+          this.$refs.email.focus();
+          Swal.fire({
+            icon: 'error',
+            title: 'Email Already Exists',
+            text: 'This email is already registered. Please use a different email.',
+            confirmButtonColor: '#09203e'
+          });
+          return;
+        }
+
+        // Get existing users or initialize empty array
+        const existingUsers = JSON.parse(localStorage.getItem('usersData')) || [];
+        
+        // Add new user to array
+        existingUsers.push({
+          ...this.formValue,
+          id: Date.now(), // Add unique ID for each user
+          createdAt: new Date().toISOString()
+        });
+
+        // Save updated array back to localStorage
+        localStorage.setItem('usersData', JSON.stringify(existingUsers));
+        
+        console.log('All users:', existingUsers);
+        
+        // Clear the form
+        this.formValue = {
+          fullName: "",
+          email: "",
+          phoneNum: "",
+          password: "",
+          rememberMe: false,
+        };
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Registration successful!',
+          confirmButtonColor: '#09203e'
+        });
+      } catch (error) {
+        console.error('Error saving data:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error saving your data. Please try again.',
+          confirmButtonColor: '#09203e'
+        });
+      }
+    },
+  },
 };
 </script>
 

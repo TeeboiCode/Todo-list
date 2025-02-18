@@ -1,9 +1,9 @@
 <template>
   <div>
-    <nav>
+    <!-- <nav>
       <router-link to="/createTask">Create Task</router-link> |
       <router-link to="/appcard"> Card</router-link>
-    </nav>
+    </nav> -->
     <router-view />
   </div>
 </template>
