@@ -8,6 +8,7 @@ import PreSignup from "../components/PreSignup.vue";
 import AppDashboard from "../components/App/AppDashboard.vue";
 import DashboardCard from "../components/App/DashboardCard.vue";
 import CreateTask from "../components/CreateTask.vue";
+import AppProfile from "../components/App/AppProfile";
 
 const routes = [
   {
@@ -63,6 +64,11 @@ const routes = [
     path: "/dashboardcard",
     name: "dashboardcard",
     component: DashboardCard,
+  },
+  {
+    path: "/appProfile",
+    name: "appProfile",
+    component: AppProfile,
   },
 ];
 
