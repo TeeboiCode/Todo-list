@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TodoListApp</string>
+    <string name="title_activity_main">TodoListApp</string>
+    <string name="package_name">om.tta.todolist</string>
+    <string name="custom_url_scheme">om.tta.todolist</string>
+</resources>
