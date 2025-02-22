@@ -286,13 +286,6 @@ export default {
 }
 
 @media (min-height: 700px) {
-  .footerContainer {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
   #advert {
     margin-top: 10%;
   }
@@ -305,15 +298,29 @@ export default {
   }
 }
 
+@media (min-width: 768px) {
+  #advert {
+    margin-top: 20%;
+  }
+  .footerContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* left: 50%;
+    transform: translateX(-50%); */
+  }
+}
+
 @media (min-height: 800px) {
   .container {
     padding: 12px 20px;
   }
 }
 
-@media (min-height: 850px) {
+@media (min-height: 820px) {
   #advert {
-    margin-top: 20%;
+    margin-top: 35%;
   }
 }
 </style>
