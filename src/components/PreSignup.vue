@@ -30,32 +30,34 @@
           </div>
         </div>
 
-        <!-- Subtitle -->
-        <p class="subtitle">Stay Organized. Stay Focused. Get Things Done</p>
+        <div class="content-container-presignup">
+          <!-- Subtitle -->
+          <p class="subtitle">Stay Organized. Stay Focused. Get Things Done</p>
 
-        <!-- Signup Button -->
+          <!-- Signup Button -->
 
-        <router-link to="/create" style="color: #fff; text-decoration: none">
-          <button class="btn signup-btn">Sign Up</button>
-        </router-link>
+          <router-link to="/create" style="color: #fff; text-decoration: none">
+            <button class="btn signup-btn">Sign Up</button>
+          </router-link>
 
-        <!-- Separator -->
-        <div class="separator">
-          <span class="line"></span> Or <span class="line"></span>
-        </div>
+          <!-- Separator -->
+          <div class="separator">
+            <span class="line"></span> Or <span class="line"></span>
+          </div>
 
-        <!-- Social Logins -->
-        <div class="button-group">
-          <button class="btn apple">
-            <!-- <i class="fa-brands fa-apple"></i> -->
-            <img src="../assets/tdesign_logo-apple-filled.png" alt="" />
-            Continue with Apple
-          </button>
-          <button class="btn google">
-            <!-- <i class="fa-brands fa-google"></i> -->
-            <img src="../assets/devicon_google.png" alt="" />
-            Continue with Google
-          </button>
+          <!-- Social Logins -->
+          <div class="button-group">
+            <button class="btn apple">
+              <!-- <i class="fa-brands fa-apple"></i> -->
+              <img src="../assets/tdesign_logo-apple-filled.png" alt="" />
+              Continue with Apple
+            </button>
+            <button class="btn google">
+              <!-- <i class="fa-brands fa-google"></i> -->
+              <img src="../assets/devicon_google.png" alt="" />
+              Continue with Google
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -290,11 +292,28 @@ export default {
     left: 50%;
     transform: translateX(-50%);
   }
+
+  #advert {
+    margin-top: 10%;
+  }
+
+  .content-container-presignup {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+  }
 }
 
 @media (min-height: 800px) {
   .container {
     padding: 12px 20px;
+  }
+}
+
+@media (min-height: 850px) {
+  #advert {
+    margin-top: 20%;
   }
 }
 </style>
