@@ -1,262 +1,431 @@
 <template>
+  <!-- container -->
   <div class="container">
-    <div class="signup-box">
-      <!-- Back Button & Title -->
-      <div class="header">
-        <span class="back-icon"><i class="fa-solid fa-less-than"></i></span>
-        <h2 class="title">Let's Get Started</h2>
+    <div v-if="!showPreSignUp" class="container2">
+      <!-- advert-button -->
+      <div class="advert-button">
+        <div class="back-btn" v-if="imgIndex !== 0" @click="prevImage">
+          <img
+            src="../assets/back-arrow-icon.png"
+            width="28"
+            height="25"
+            alt=""
+          />
+        </div>
+        <button
+          type="button"
+          v-show="!(imgIndex === images.length - 1)"
+          @click="skipAds"
+        >
+          Skip
+        </button>
       </div>
 
-      <!-- "Sign Up" text -->
-      <h3 class="signup-text">Sign Up</h3>
-      <p class="subtitle">Enter Your Details Below</p>
+      <!-- advert-img -->
+      <div class="advert-img">
+        <div class="advert-img-container">
+          <div class="swipe-wrapper">
+            <template v-for="image in images" :key="image">
+              <img
+                @touchstart="startSwipe"
+                @touchmove="moveSwipe"
+                @touchend="endSwipe"
+                :src="image"
+                v-if="imgIndex === images.indexOf(image)"
+                :style="{
+                  transform: `translateX(${swipeOffset}px)`,
+                  transition: isSwiping ? 'none' : 'transform 0.3s ease-in-out',
+                }"
+              />
+            </template>
+          </div>
 
-      <form>
-        <!-- Full Name -->
-        <div class="input-group">
-          <label>Full Name</label>
-          <input type="text" placeholder="Full Name" required />
+          <!-- <div v-if="imgIndex === 1" :key="imgIndex">
+            <img :src="images[1]" />
+          </div>
+
+          <div v-if="imgIndex === 2" :key="imgIndex">
+            <img :src="images[2]" />
+          </div> -->
+        </div>
+      </div>
+
+      <!-- data-aos="fade-left" -->
+
+      <!-- welcome -->
+      <div class="welcome">
+        <h3>Welcome to <span>Taskly</span></h3>
+        <p class="welcome-text">{{ text[imgIndex] }}</p>
+
+        <!-- welcome-btn -->
+        <div class="welcome-btn">
+          <button type="button" @click="nextImage">Next</button>
         </div>
 
-        <!-- Email -->
-        <div class="input-group">
-          <label>Email</label>
-          <input type="email" placeholder="Adebayonisola@gmail.com" required />
+        <!-- scroll -->
+        <div class="scroll">
+          <div
+            class="scroll1"
+            v-bind:class="imgIndex === 0 ? 'active' : ''"
+          ></div>
+          <div
+            class="scroll2"
+            v-bind:class="imgIndex === 1 ? 'active' : ''"
+          ></div>
+          <div
+            class="scroll3"
+            v-bind:class="imgIndex === 2 ? 'active' : ''"
+          ></div>
         </div>
+      </div>
+    </div>
 
-        <!-- Phone Number -->
-        <div class="input-group">
-          <label>Phone Number</label>
-          <input type="tel" placeholder="07050419815" required />
-        </div>
+    <div v-else>
+      <PreSignupVue @back="imgIndex = 2" />
+    </div>
 
-        <!-- Password -->
-        <div class="input-group">
-          <label>Password</label>
-          <input type="password" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="remember-me">
-          <input type="checkbox" />
-          <label>Remember Me</label>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="btns">Sign Up</button>
-      </form>
-
-      <!-- Login Link -->
-      <p class="login-link">
-        Already Have An Account?
-        <a href="#">Log In</a>
-      </p>
+    <!-- imported footer-content -->
+    <div v-if="!showPreSignUp" class="footerContainer">
+      <FooterContent />
     </div>
   </div>
 </template>
 
-<script></script>
+<script>
+import FooterContent from "./FooterContent.vue";
+import PreSignupVue from "./PreSignup.vue";
+export default {
+  name: "AdsProject",
+  components: {
+    FooterContent,
+    PreSignupVue,
+  },
+
+  data() {
+    return {
+      images: [
+        require("@/assets/ads1.png"),
+        require("@/assets/ads2.png"),
+        require("@/assets/ads3.png"),
+      ],
+
+      text: [
+        "Your Personal Task Manager To Help You Stay Organised And Productive",
+        "Stay on top of your tasks and boost your productivity with your ultimate personal organizer",
+        "Effortlessly manage your tasks and achieve more .",
+      ],
+      startX: 0,
+      swipeOffset: 0,
+      isSwiping: false,
+      imgIndex: 0,
+    };
+  },
+
+  methods: {
+    nextImage() {
+      if (this.imgIndex < this.images.length) {
+        this.imgIndex += 1;
+      }
+    },
+
+    skipAds() {
+      return (this.imgIndex = 3);
+    },
+
+    prevImage() {
+      if (this.imgIndex > 0) {
+        this.imgIndex -= 1;
+      }
+    },
+    startSwipe(event) {
+      this.startX = event.touches[0].clientX; // Store starting touch position
+      this.isSwiping = true; // Disable transition while swiping
+    },
+    moveSwipe(event) {
+      let currentX = event.touches[0].clientX;
+      this.swipeOffset = currentX - this.startX; // Update the swipe position dynamically
+    },
+    endSwipe(event) {
+      let endX = event.changedTouches[0].clientX;
+      this.isSwiping = false; // Enable transition
+
+      if (this.startX - endX > 50) {
+        this.nextImage(); // Swiped left
+      } else if (endX - this.startX > 50) {
+        this.prevImage(); // Swiped right
+      }
+
+      this.swipeOffset = 0; // Reset swipe offset
+    },
+    nextImage() {
+      if (this.currentIndex < this.images.length - 1) {
+        this.currentIndex++;
+      }
+    },
+    prevImage() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      }
+    },
+  },
+
+  computed: {
+    showPreSignUp() {
+      return this.imgIndex === 3;
+    },
+  },
+};
+</script>
+
 <style scoped>
-/* General Styles */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-/* Container */
 .container {
+  padding: 10px 16px;
+}
+
+/* advert-text */
+.advert-button {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.advert-button button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #a8a9aa;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  z-index: 999;
+}
+
+.advert-img {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  padding: 20px;
+  text-align: center;
+  margin-top: 35px;
 }
 
-/* Signup Box */
-.signup-box {
-  background-color: white;
-  padding: 25px;
-  border-radius: 10px;
+.back-btn {
+  padding: 0 3px 0 0;
+  position: absolute;
+  top: 1.1rem;
+  left: 1rem;
+  z-index: 999;
+}
+
+.advert-img-container {
+  width: 70%;
+  height: 208px;
+  background: transparent;
+}
+
+.advert-img-container img {
   width: 100%;
-  max-width: 400px;
+  max-width: 300px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* welcome */
+.welcome {
   text-align: center;
 }
 
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.back-icon {
-  position: absolute;
-  left: 10px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #000;
-}
-
-/* Title and Signup Text */
-.title {
-  font-size: 22px;
-  color: #09203e;
-}
-
-.signup-text {
+.welcome h3 {
+  color: #000000;
   font-size: 18px;
-  color: #000;
-  margin-top: 10px;
-  text-align: left;
+  font-weight: 500;
 }
 
-/* Subtitle */
-.subtitle {
-  font-size: 14px;
-  color: #000;
-  margin-bottom: 20px;
-  text-align: left;
+.welcome h3 span {
+  color: #219afd;
+  font-weight: 600;
+  font-size: 18px;
 }
 
-/* Input Group */
-.input-group {
-  text-align: left;
-  margin-bottom: 15px;
+.welcome-text {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 18px;
+  color: #000000;
 }
 
-.input-group label {
-  display: block;
-  font-size: 14px;
-  color: #000;
-  margin-bottom: 5px;
-}
-
-.input-group input {
+.welcome-btn {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  outline: none;
-  border-radius: 10px;
-
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3%;
 }
 
-/* Phone Number Input */
-.phone-input {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  overflow: hidden;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.country-code {
-  background-color: #eee;
-  padding: 10px;
-  font-size: 14px;
-  border-right: 1px solid #ccc;
-}
-
-.phone-input input {
-  flex: 1;
+.welcome-btn button {
+  background: #09203e;
+  padding: 12px 120px;
+  border-radius: 25px;
   border: none;
-  padding: 10px;
-  font-size: 14px;
   outline: none;
-}
-
-/* Remember Me */
-.remember-me {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  font-size: 14px;
-  color: #000;
-}
-
-.remember-me input {
-  margin-right: 5px;
-}
-
-/* Sign-Up Button */
-.btns {
-  width: 100%;
-  background-color: #1a1f36;
-  color: white;
-  padding: 12px;
-  border: none;
+  color: #ffffff;
   font-size: 16px;
-  cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   transition: 0.3s;
 }
 
-.btns:hover {
-  background-color: #0f172a;
+.swipe-wrapper {
+  display: flex;
+  width: 300%;
 }
 
-/* Login Link */
-.login-link {
-  margin-top: 15px;
-  font-size: 14px;
-  color: #000;
+/* scroll */
+.scroll {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  height: 5vh;
 }
 
-.login-link a {
-  color: #d9534f;
-  text-decoration: none;
+.scroll1,
+.scroll2,
+.scroll3 {
+  width: 10px;
+  height: 10px;
+  background: rgba(217, 217, 217, 1);
+  border-radius: 100px;
 }
 
-.login-link a:hover {
-  text-decoration: underline;
+.active {
+  background: #000;
 }
 
-/* RESPONSIVENESS */
+.footerContainer {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  text-align: center;
+  align-items: center;
+}
 
-@media screen and (max-width: 480px) {
-  .signup-box {
-    padding: 10px;
+@media (min-height: 568px) {
+  .advert-img img {
     width: 100%;
   }
 
-  .back-icon {
-    font-size: 18px;
-    left: 5px;
+  .back-btn {
+    top: 1.2rem;
   }
 
-  .title {
-    font-size: 20px;
+  .advert-button button {
+    position: absolute;
+    top: 1.1rem;
   }
 
-  .signup-text,
-  .subtitle {
-    font-size: 16px;
+  .advert-img-container {
+    width: 100%;
   }
 
-  .input-group input,
-  .phone-input input {
-    padding: 8px;
-    font-size: 13px;
+  /* .advert-img {
+    margin-top: 80px;
+  } */
+
+  .footer-container {
+    margin-bottom: 10px;
   }
 
-  .btns {
-    padding: 10px;
-    font-size: 14px;
+  .welcome {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+  }
+
+  .welcome-text {
+    padding: 0px 25px !important;
   }
 }
 
-/* For medium screens like tablets (481px - 768px) */
-@media screen and (max-width: 768px) {
-  .signup-box {
+@media (min-height: 620px) {
+  .advert-img-container {
     width: 100%;
+    height: 295px;
+    background: transparent;
+  }
+
+  .back-btn {
+    top: 1.5rem;
+  }
+
+  .advert-button button {
+    top: 1.6rem;
+  }
+
+  .welcome-text {
+    font-size: 13px !important;
+    padding: 3px 25px !important;
+  }
+  .welcome {
+    bottom: 80px;
+  }
+
+  .advert-img {
+    margin-top: 20%;
+  }
+
+  .advert-img img {
+    scale: 1.2;
+  }
+
+  /* .advert-button button,
+  .back-btn {
+    top: -30px;
+  } */
+}
+
+@media (min-height: 700px) {
+  .advert-img {
+    margin-top: 30%;
+  }
+
+  .content-container-presignup {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+  }
+}
+
+@media (min-height: 800px) {
+  .container {
+    padding: 12px 20px;
+  }
+
+  .container2 {
+    margin-top: 4rem;
+  }
+
+  .welcome-text {
+    padding: 3px 25px !important;
+    font-size: 1rem;
+  }
+
+  .welcome h3 {
+    font-size: 1.5rem;
+  }
+  .welcome {
+    bottom: 100px;
+  }
+}
+
+@media (max-width: 400px) {
+  .advert-img img {
+    scale: 1.3;
   }
 }
 </style>

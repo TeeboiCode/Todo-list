@@ -1,72 +1,59 @@
 <template>
-  <!-- container -->
   <div class="container">
     <div v-if="!showPreSignUp" class="container2">
-      <!-- advert-button -->
       <div class="advert-button">
-        <div class="back-btn" v-if="imgIndex !== 0" @click="backAds()">
-          <img
-            src="../assets/back-arrow-icon.png"
-            width="28"
-            height="25"
-            alt=""
-          />
+        <div class="back-btn" v-if="imgIndex !== 0" @click="prevImage">
+          <img src="../assets/back-arrow-icon.png" width="28" height="25" />
         </div>
-        <button type="button" v-show="!(imgIndex === 2)" @click="skipAds()">
+        <button
+          type="button"
+          v-show="!(imgIndex === images.length - 1)"
+          @click="skipAds"
+        >
           Skip
         </button>
       </div>
 
-      <!-- advert-img -->
       <div class="advert-img">
-        <div class="advert-img-container">
-          <div v-if="imgIndex === 0" :key="imgIndex">
-            <img :src="images[0]" data-aos="fade-left" />
-          </div>
-
-          <div v-if="imgIndex === 1" :key="imgIndex">
-            <img :src="images[1]" data-aos="fade-left" />
-          </div>
-
-          <div v-if="imgIndex === 2" :key="imgIndex">
-            <img :src="images[2]" data-aos="fade-left" />
+        <div
+          class="advert-img-container"
+          @touchstart="startSwipe"
+          @touchmove="moveSwipe"
+          @touchend="endSwipe"
+        >
+          <div class="swipe-wrapper" :style="swipeStyle">
+            <img
+              v-for="(image, index) in images"
+              :key="index"
+              :src="image"
+              class="advert-image"
+            />
           </div>
         </div>
       </div>
 
-      <!-- welcome -->
       <div class="welcome">
         <h3>Welcome to <span>Taskly</span></h3>
         <p class="welcome-text">{{ text[imgIndex] }}</p>
 
-        <!-- welcome-btn -->
         <div class="welcome-btn">
           <button type="button" @click="nextImage">Next</button>
         </div>
 
-        <!-- scroll -->
         <div class="scroll">
           <div
-            class="scroll1"
-            v-bind:class="imgIndex === 0 ? 'active' : ''"
-          ></div>
-          <div
-            class="scroll2"
-            v-bind:class="imgIndex === 1 ? 'active' : ''"
-          ></div>
-          <div
-            class="scroll3"
-            v-bind:class="imgIndex === 2 ? 'active' : ''"
+            v-for="(image, index) in images"
+            :key="index"
+            :class="['scroll-dot', { active: imgIndex === index }]"
           ></div>
         </div>
       </div>
     </div>
 
     <div v-else>
-      <PreSignupVue @back="imgIndex = 2" />
+      <PreSignupVue @back="imgIndex = images.length - 1" />
     </div>
 
-    <!-- imported footer-content -->
     <div v-if="!showPreSignUp" class="footerContainer">
       <FooterContent />
     </div>
@@ -76,13 +63,13 @@
 <script>
 import FooterContent from "./FooterContent.vue";
 import PreSignupVue from "./PreSignup.vue";
+
 export default {
   name: "AdsProject",
   components: {
     FooterContent,
     PreSignupVue,
   },
-
   data() {
     return {
       images: [
@@ -90,38 +77,63 @@ export default {
         require("@/assets/ads2.png"),
         require("@/assets/ads3.png"),
       ],
-
       text: [
         "Your Personal Task Manager To Help You Stay Organised And Productive",
         "Stay on top of your tasks and boost your productivity with your ultimate personal organizer",
-        "Effortlessly manage your tasks and achieve more .",
+        "Effortlessly manage your tasks and achieve more.",
       ],
-
       imgIndex: 0,
+      startX: 0,
+      swipeOffset: 0,
+      isSwiping: false,
     };
   },
-
+  computed: {
+    swipeStyle() {
+      return {
+        transform: `translateX(calc(-${this.imgIndex * 100}% + ${
+          this.swipeOffset
+        }px))`,
+        transition: this.isSwiping ? "none" : "transform 0.3s ease-in-out",
+      };
+    },
+    showPreSignUp() {
+      return this.imgIndex === this.images.length;
+    },
+  },
   methods: {
     nextImage() {
       if (this.imgIndex < this.images.length) {
-        this.imgIndex += 1;
+        this.imgIndex++;
       }
     },
-
-    skipAds() {
-      return (this.imgIndex = 3);
-    },
-
-    backAds() {
+    prevImage() {
       if (this.imgIndex > 0) {
-        this.imgIndex -= 1;
+        this.imgIndex--;
       }
     },
-  },
+    skipAds() {
+      this.imgIndex = this.images.length;
+    },
+    startSwipe(event) {
+      this.startX = event.touches[0].clientX;
+      this.isSwiping = true;
+    },
+    moveSwipe(event) {
+      let currentX = event.touches[0].clientX;
+      this.swipeOffset = currentX - this.startX;
+    },
+    endSwipe(event) {
+      let endX = event.changedTouches[0].clientX;
+      this.isSwiping = false;
 
-  computed: {
-    showPreSignUp() {
-      return this.imgIndex === 3;
+      if (this.startX - endX > 50 && this.imgIndex < this.images.length - 1) {
+        this.imgIndex++;
+      } else if (endX - this.startX > 50 && this.imgIndex > 0) {
+        this.imgIndex--;
+      }
+
+      this.swipeOffset = 0;
     },
   },
 };
@@ -131,112 +143,98 @@ export default {
 .container {
   padding: 10px 16px;
 }
-
-/* advert-text */
 .advert-button {
-  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
 }
-
 .advert-button button {
   position: absolute;
-  top: -25px;
-  right: 10px;
+  top: 1rem;
+  right: 1rem;
   border: none;
-  outline: none;
   background: transparent;
   color: #a8a9aa;
   font-size: 18px;
   cursor: pointer;
-  padding: 0;
+}
+
+.back-btn {
+  position: absolute;
+  top: 1.1rem;
+  left: 1rem;
 }
 
 .advert-img {
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin-top: 35px;
+  /* margin-top: 35px; */
 }
-
-.back-btn {
-  width: fit-content;
-  padding: 0 3px 0 0;
-  position: absolute;
-  top: -25px;
-  left: 0;
-}
-
 .advert-img-container {
-  width: 70%;
-  height: 208px;
-  background: transparent;
+  width: 80%;
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.swipe-wrapper {
+  display: flex;
+  width: 300%;
 }
 
-.advert-img-container img {
+.advert-image {
   width: 100%;
-  max-width: 300px;
+  flex: 0 0 100%;
+  transition: transform 0.3s ease-in-out;
 }
 
-/* welcome */
 .welcome {
   text-align: center;
+  margin-top: -17px;
 }
-
 .welcome h3 {
-  color: #000000;
+  color: #000;
   font-size: 18px;
   font-weight: 500;
 }
-
 .welcome h3 span {
   color: #219afd;
   font-weight: 600;
-  font-size: 18px;
 }
-
 .welcome-text {
   font-size: 11px;
   font-weight: 400;
   line-height: 18px;
-  color: #000000;
+  color: #000;
 }
-
 .welcome-btn {
   width: 100%;
   margin-bottom: 3%;
 }
-
 .welcome-btn button {
   background: #09203e;
   padding: 12px 120px;
   border-radius: 25px;
-  border: none;
-  outline: none;
-  color: #ffffff;
+  color: #fff;
   font-size: 16px;
   font-weight: 600;
   transition: 0.3s;
 }
 
-/* scroll */
 .scroll {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 5px;
-  height: 5vh;
 }
-
-.scroll1,
-.scroll2,
-.scroll3 {
+.scroll-dot {
   width: 10px;
   height: 10px;
   background: rgba(217, 217, 217, 1);
-  border-radius: 100px;
+  border-radius: 50%;
 }
-
 .active {
   background: #000;
 }
@@ -249,64 +247,49 @@ export default {
   width: 100%;
   text-align: center;
   padding: 10px;
-  text-align: center;
-  align-items: center;
 }
 
 @media (min-height: 568px) {
-  .advert-img img {
-    width: 100%;
+  .welcome {
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    padding: 0px 25px !important;
   }
 
-  /* .advert-img {
-    margin-top: 80px;
-  } */
+  .advert-img {
+    margin-top: 30%;
+  }
 
-  .footer-container {
-    margin-bottom: 10px;
+  .advert-image {
+    scale: 1.1;
   }
 }
 
 @media (min-height: 620px) {
   .advert-img-container {
-    width: 100%;
     height: 295px;
-    background: transparent;
   }
 
-  .welcome-text {
-    font-size: 13px !important;
-    padding: 3px 15px !important;
+  .welcome {
+    bottom: 80px;
   }
 }
 
 @media (min-height: 700px) {
-  .welcome-text {
-    padding: 3px 15px !important;
+  .advert-img {
+    margin-top: 35%;
   }
 }
 
 @media (min-height: 800px) {
-  .container {
-    padding: 12px 20px;
+  .advert-img {
+    margin-top: 45%;
   }
 
-  .container2 {
-    margin-top: 4rem;
-  }
-
-  .advert-button button,
-  .back-btn {
-    top: -45px;
-  }
-
-  .welcome-text {
-    padding: 3px 20px !important;
-    font-size: 1rem;
-  }
-
-  .welcome h3 {
-    font-size: 1.5rem;
+  .welcome {
+    bottom: 95px;
   }
 }
 </style>
