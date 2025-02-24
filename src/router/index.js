@@ -9,6 +9,8 @@ import AppDashboard from "../components/App/AppDashboard.vue";
 import DashboardCard from "../components/App/DashboardCard.vue";
 import CreateTask from "../components/CreateTask.vue";
 import AppProfile from "../components/App/AppProfile";
+import NotificationVue from "../components/Notification.vue"
+import NotificationView from "../components/NotificationView.vue"
 
 const routes = [
   {
@@ -69,6 +71,16 @@ const routes = [
     path: "/appProfile",
     name: "appProfile",
     component: AppProfile,
+  },
+  {
+    path: "/notification",
+    name: "notification",
+    component: NotificationVue,
+  },
+  {
+    path: "/notificationView",
+    name: "notificationView",
+    component: NotificationView,
   },
 ];
 
