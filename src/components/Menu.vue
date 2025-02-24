@@ -6,7 +6,7 @@
     }"
   >
     <div class="menu-content-container">
-      <div class="menu-item">
+      <div class="menu-item"  @click="$router.push('/dashboard')">
         <i class="fa-solid fa-house active"></i>
         <span class="active">Home</span>
       </div>
@@ -14,11 +14,11 @@
         <i class="fa-solid fa-calendar-days"></i>
         <span>Calendar</span>
       </div>
-      <div class="menu-item">
+      <div class="menu-item"  @click="$router.push('/createTask')">
         <i class="fa-solid fa-circle-plus"></i>
         <span>Add Task</span>
       </div>
-      <div class="menu-item">
+      <div class="menu-item" @click="$router.push('/appProfile')" >
         <i class="fa-solid fa-user"></i>
         <span>Profile</span>
       </div>

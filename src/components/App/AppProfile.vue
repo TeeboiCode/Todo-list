@@ -41,17 +41,22 @@
       <!-- Done Button -->
       <button type="submit" class="btn">Done</button>
     </form>
+<div class="menu-containerBar">
+      <MenuBar :menuPosition="menuPositionBar" />
+    </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="footer">
-      <button><i class="fa-solid fa-house"></i></button>
-      <button><i class="fa-solid fa-calendar"></i></button>
-      <button ><i class="fa-solid fa-plus"></i></button>
-      <button class="active"><i class="fa-solid fa-user"></i></button>
-    </nav>
   </div>
 </template>
-
+<script>
+import MenuBar from  "../Menu.vue";
+export default {
+name:"AppProfileVue",
+components: {
+    MenuBar,
+  },
+  
+}
+</script>
 <style scoped>
 /* General Container */
 .container {

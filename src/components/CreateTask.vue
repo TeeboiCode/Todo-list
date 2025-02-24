@@ -6,14 +6,14 @@
       <h2>Create Your Task</h2>
     </div>
 
-    <!-- Task Form -->
+    <!-- Task Form -->  
     <form>
-      <input type="text" placeholder="Title" required />
-      <textarea placeholder="Task Description"></textarea>
+      <input type="text" id="taskTitle" placeholder="Title" required />
+      <textarea id="taskDescription" placeholder="Task Description"></textarea>
 
       <div class="time-container">
         <!-- All Day Toggle -->
-        <div class="all-day">
+        <div class="all-day" >
           <span>All Day</span>
           <label class="switch">
             <input type="checkbox">
@@ -31,7 +31,7 @@
         </div>
 
         <!-- End Date & Time -->
-        <div class="datetime">
+        <div class="datetime" >
           <label>End</label>
           <div class="datetime-box">
             <input type="date" value="2024-06-05">
@@ -41,21 +41,23 @@
       </div>
 
       <!-- Create Task Button -->
-      <button type="submit" class="btn">Create Task</button>
+      <button type="submit" class="btn" >Create Task</button>
     </form>
 
-    <!-- Bottom Navigation -->
-    <nav class="footer">
-      <button><i class="fa-sharp fa-solid fa-house"></i></button>
-      <button><i class="fa-regular fa-calendar-days"></i></button>
-      <button class="add-task " ><i class="fa-solid fa-plus"></i></button>
-      <button><i class="fa-solid fa-user"></i></button>
-    </nav>
+<div class="menu-containerBar">
+      <MenuBar :menuPosition="menuPositionBar" />
+    </div>
   </div>
 </template>
 <script>
+import MenuBar from "../components/Menu.vue";
+
 export default {
   name: "CreateTaskVue",
+  components: {
+    MenuBar,
+  },
+  
 };
 </script>
 <style scoped>
