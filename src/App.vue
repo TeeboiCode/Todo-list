@@ -1,9 +1,9 @@
 <template>
   <div>
-    <nav>
+    <!-- <nav>
       <router-link to="/createTask">Create Task</router-link> |
-      <router-link to="/notification"> notification</router-link>
-    </nav>
+      <router-link to="/forgotPasswordOne"> Forgot Password Two</router-link>
+    </nav> -->
     <router-view />
   </div>
 </template>

@@ -11,6 +11,7 @@ import CreateTask from "../components/CreateTask.vue";
 import AppProfile from "../components/App/AppProfile";
 import NotificationVue from "../components/Notification.vue"
 import NotificationView from "../components/NotificationView.vue"
+import ForgotPasswordOne from "../components/ForgotPasswordOne.vue"
 
 const routes = [
   {
@@ -81,6 +82,11 @@ const routes = [
     path: "/notificationView",
     name: "notificationView",
     component: NotificationView,
+  },
+  {
+    path: "/forgotPasswordOne",
+    name: "forgotPasswordOne",
+    component: ForgotPasswordOne,
   },
 ];
 
