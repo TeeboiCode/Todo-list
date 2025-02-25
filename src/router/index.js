@@ -9,9 +9,12 @@ import AppDashboard from "../components/App/AppDashboard.vue";
 import DashboardCard from "../components/App/DashboardCard.vue";
 import CreateTask from "../components/CreateTask.vue";
 import AppProfile from "../components/App/AppProfile";
-import NotificationVue from "../components/Notification.vue"
-import NotificationView from "../components/NotificationView.vue"
-import ForgotPasswordOne from "../components/ForgotPasswordOne.vue"
+import NotificationVue from "../components/Notification.vue";
+import NotificationView from "../components/NotificationView.vue";
+import ForgotPasswordOne from "../components/ForgotPasswordOne.vue";
+import ForgotPasswordTwo from "../components/ForgotPasswordTwo.vue";
+import ForgotPasswordThree from "../components/ForgotPasswordThree.vue";
+import SuccessfulPassword from "../components/SuccessfulPassword.vue";
 
 const routes = [
   {
@@ -21,7 +24,7 @@ const routes = [
   },
   {
     path: "/about",
-    name: "about",
+    name: "about",   
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -87,6 +90,21 @@ const routes = [
     path: "/forgotPasswordOne",
     name: "forgotPasswordOne",
     component: ForgotPasswordOne,
+  },
+  {
+    path: "/forgotPasswordTwo",
+    name: "forgotPasswordTwo",
+    component: ForgotPasswordTwo,
+  },
+  {
+    path: "/forgotPasswordThree",
+    name: "forgotPasswordThree",
+    component: ForgotPasswordThree,
+  },
+  {
+    path: "/successfulPassword",
+    name: "successfulPassword",
+    component: SuccessfulPassword,
   },
 ];
 
