@@ -56,13 +56,15 @@ export default {
 
 .forgotPassword {
     padding: 20px 20px;
-    width: 100%;
+    width: 80%;
+    max-width: 355px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-radius: 10px;
     background: #fff;
 }
 
 .forgotPassword-img {
+    margin-bottom: 20px;
     align-items: center;
     justify-self: center;
 }
@@ -72,7 +74,7 @@ export default {
 }
 
 .forgotPassword-text h4 {
-    margin: 5px 0;
+    margin: 20px 0;
     font-size: 15px;
     font-weight: 500;
     text-align: center;
@@ -90,7 +92,7 @@ label {
     display: flex;
     align-items: center;
     border: 1px solid #000;
-    padding: 12px 20px;
+    padding: 12px 15px;
     border-radius: 10px;
 }
 
@@ -102,8 +104,10 @@ label {
 .input-container input {
     border: none;
     outline: none;
-    flex: 1;
+    padding: 0;
+    /* flex: 1; */
 }
+
 
 /* confitm-btn */
 .confirm-btn {
@@ -124,7 +128,8 @@ label {
 
 /* return */
 .return {
-    margin-top: 3%;
+    margin-top: 20px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;

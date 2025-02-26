@@ -5,9 +5,9 @@
         <!-- forgotPassword -->
         <div class="forgotPassword">
 
-            <!-- key-icon -->
-            <div class="key-icon">
-                <i class="fa-solid fa-key"></i>
+            <!-- forgortPassword-img -->
+            <div class="forgotPassword-img">
+                <img src="../assets/key-icon.png" alt="">
             </div>
 
             <!-- forgotPassword-text -->
@@ -78,34 +78,30 @@ export default {
 /* forgotPassword */
 .forgotPassword {
     padding: 20px;
-    width: 100%;
+    width: 80%;
+    max-width: 355px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-radius: 10px;
     background: #fff;
     text-align: center;
 }
 
-/* key-icon */
-.key-icon {
-    width: 70px;
-    height: 70px;
-    display: flex;
+.forgotPassword-img {
+    margin-bottom: 20px;
     align-items: center;
-    justify-content: center;
-    margin: auto;
-    border-radius: 50%;
-    background: #3386ec;
+    justify-self: center;
 }
 
-.key-icon i {
-    color: #fff;
-    font-size: 30px;
+.forgotPassword-img img {
+    width: 50px;
 }
 
 .forgotPassword-text h4 {
+    margin: 20px 0;
     font-size: 15px;
     font-weight: 500;
-    color: #000;
+    text-align: center;
+    color: #000000;
 }
 
 /* pin-container */
@@ -128,6 +124,7 @@ export default {
 
 .confirm-btn {
     margin-top: 10%;
+    margin-bottom: 25px;
 }
 
 .confirm-btn button {

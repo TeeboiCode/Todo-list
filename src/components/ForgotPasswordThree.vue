@@ -5,9 +5,9 @@
         <!-- forgotPassword -->
         <div class="forgotPassword">
 
-            <!-- key-icon -->
-            <div class="key-icon">
-                <i class="fa-solid fa-key"></i>
+            <!-- forgortPassword-img -->
+            <div class="forgotPassword-img">
+                <img src="../assets/key-icon.png" alt="">
             </div>
 
             <!-- password -->
@@ -99,28 +99,22 @@ export default {
 /* forgotPassword */
 .forgotPassword {
     padding: 20px;
-    width: 100%;
+    max-width: 355px;
+    width: 80%;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-radius: 10px;
     background: #fff;
     text-align: center;
 }
 
-/* key-icon */
-.key-icon {
-    width: 70px;
-    height: 70px;
-    display: flex;
+.forgotPassword-img {
+    margin-bottom: 20px;
     align-items: center;
-    justify-content: center;
-    margin: auto;
-    border-radius: 50%;
-    background: #3386ec;
+    justify-self: center;
 }
 
-.key-icon i {
-    color: #fff;
-    font-size: 30px;
+.forgotPassword-img img {
+    width: 50px;
 }
 
 /* input-field */
@@ -188,7 +182,8 @@ export default {
 
 /* return */
 .return {
-    margin-top: 3%;
+    margin-top: 20px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;
