@@ -239,6 +239,13 @@ export default {
           confirmButtonColor: "#09203e",
         });
 
+        // reset
+        this.formValue = {
+          email: "",
+          password: "",
+          rememberMe: false,
+        },
+
         // Navigate to dashboard
         this.$router.push("/dashboard");
       } catch (error) {
