@@ -113,9 +113,7 @@
               <label class="form-check-label" for="invalidCheck">
                 remember me
               </label>
-              <!-- <div class="invalid-feedback">
-              You must agree before submitting.
-            </div> -->
+
             </div>
           </div>
           <div class="col-12 mt-5">
