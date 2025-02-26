@@ -1,0 +1,21 @@
+{
+  "users": [
+    {
+      "id": "8d57",
+      "full_name": "Oluwaleye Taiwo",
+      "email": "oluwaleyetaiwo822f5@gmail.com",
+      "phone_number": "08023456789",
+      "password": "12345678"
+    },
+    {
+      "id": "8b9e",
+      "full_name": "Damilare Taiwo",
+      "email": "oluwaleyetaiwo8225@gmail.com",
+      "phone_number": "08023456789",
+      "password": "12345678"
+    },
+    {
+      "id": "de2e"
+    }
+  ]
+}
