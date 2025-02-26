@@ -2,6 +2,7 @@
   <div>
     <!-- <nav>
       <router-link to="/createTask">Create Task</router-link> |
+      <router-link to="/successfulPassword"> Password </router-link>
       <router-link to="/notification"> notification</router-link>
     </nav> -->
     <router-view />
