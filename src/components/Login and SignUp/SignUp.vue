@@ -119,14 +119,26 @@
             </div>
           </div>
           <div class="col-12 mt-5">
-            <button class="btn btn-primary p-3 submitForm w-100" type="submit">
-              Sign Up
+            <button
+              class="btn btn-primary p-3 submitForm w-100"
+              type="submit"
+              :disabled="isLoading"
+            >
+              <span
+                v-if="isLoading"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <span v-else>Sign Up</span>
             </button>
           </div>
           <div class="col-12 mb-3">
             <p class="footer-link">
               already have an account ?
-              <span class="login-link" @click="$emit('login')">Login</span>
+              <span class="login-link" @click="$router.push('/login')"
+                >Login</span
+              >
             </p>
           </div>
         </form>
@@ -136,7 +148,7 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 export default {
   name: "SignUpVue",
@@ -155,31 +167,32 @@ export default {
         email: false,
         phoneNum: false,
         password: false,
-      }
+      },
+      isLoading: false,
     };
   },
   watch: {
     // Watch each form field and clear its error when it's filled
-    'formValue.fullName'(newValue) {
+    "formValue.fullName"(newValue) {
       if (newValue.trim()) {
         this.errors.fullName = false;
       }
     },
-    'formValue.email'(newValue) {
+    "formValue.email"(newValue) {
       if (newValue.trim()) {
         this.errors.email = false;
       }
     },
-    'formValue.phoneNum'(newValue) {
+    "formValue.phoneNum"(newValue) {
       if (newValue.trim()) {
         this.errors.phoneNum = false;
       }
     },
-    'formValue.password'(newValue) {
+    "formValue.password"(newValue) {
       if (newValue) {
         this.errors.password = false;
       }
-    }
+    },
   },
   methods: {
     resetErrors() {
@@ -191,80 +204,92 @@ export default {
       };
     },
     checkExistingEmail(email) {
-      const existingUsers = JSON.parse(localStorage.getItem('usersData')) || [];
-      return existingUsers.some(user => user.email === email);
+      const existingUsers = JSON.parse(localStorage.getItem("usersData")) || [];
+      return existingUsers.some((user) => user.email === email);
     },
-    submitForm() {
+    async submitForm() {
+      this.isLoading = true;
       try {
         this.resetErrors();
         let hasError = false;
-        let firstEmptyField = null;
 
-        // Check each field and mark errors
+        // Validate fields
         if (!this.formValue.fullName.trim()) {
           this.errors.fullName = true;
           hasError = true;
-          firstEmptyField = 'fullName';
         }
         if (!this.formValue.email.trim()) {
           this.errors.email = true;
           hasError = true;
-          firstEmptyField = firstEmptyField || 'email';
         }
         if (!this.formValue.phoneNum.trim()) {
           this.errors.phoneNum = true;
           hasError = true;
-          firstEmptyField = firstEmptyField || 'phoneNum';
         }
         if (!this.formValue.password) {
           this.errors.password = true;
           hasError = true;
-          firstEmptyField = firstEmptyField || 'password';
         }
 
         if (hasError) {
-          if (firstEmptyField) {
-            this.$refs[firstEmptyField].focus();
+          // Handle validation errors
+          Swal.fire({
+            icon: "error",
+            title: "Validation Error",
+            text: "Please fill in all required fields.",
+            confirmButtonColor: "#09203e",
+          });
+          return;
+        }
+
+        // Prepare the user data to send to the API
+        const newUser = {
+          full_name: this.formValue.fullName,
+          email: this.formValue.email,
+          phone_number: this.formValue.phoneNum,
+          password: this.formValue.password,
+        };
+
+        // Send new user data to the external API
+        const postResponse = await fetch(
+          "https://task.fashion-life-agency.com/signup.php",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newUser),
           }
-          
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: `Please fill in the ${firstEmptyField.replace(/([A-Z])/g, ' $1').toLowerCase()} field`,
-            confirmButtonColor: '#09203e'
+        );
+
+        // Log the response for debugging
+        const responseData = await postResponse.json();
+        console.log("Response Data:", responseData);
+
+        // Check if the response indicates an error
+        if (responseData.status === "error") {
+          if (responseData.message === "Email already exists") {
+            await Swal.fire({
+              icon: "warning",
+              title: "Email Already Used",
+              text: "This email is already registered. Please log in.",
+              confirmButtonColor: "#09203e",
+            });
+            this.$emit("login"); // Emit the login event to navigate to the login page
+            return;
+          }
+          // Handle other potential error messages from the API
+          await Swal.fire({
+            icon: "error",
+            title: "Error",
+            text:
+              responseData.message || "An error occurred. Please try again.",
+            confirmButtonColor: "#09203e",
           });
           return;
         }
 
-        // Check for existing email
-        if (this.checkExistingEmail(this.formValue.email.trim())) {
-          this.errors.email = true;
-          this.$refs.email.focus();
-          Swal.fire({
-            icon: 'error',
-            title: 'Email Already Exists',
-            text: 'This email is already registered. Please use a different email.',
-            confirmButtonColor: '#09203e'
-          });
-          return;
-        }
-
-        // Get existing users or initialize empty array
-        const existingUsers = JSON.parse(localStorage.getItem('usersData')) || [];
-        
-        // Add new user to array
-        existingUsers.push({
-          ...this.formValue,
-          id: Date.now(), // Add unique ID for each user
-          createdAt: new Date().toISOString()
-        });
-
-        // Save updated array back to localStorage
-        localStorage.setItem('usersData', JSON.stringify(existingUsers));
-        
-        console.log('All users:', existingUsers);
-        
-        // Clear the form
+        // Clear the form and show success message
         this.formValue = {
           fullName: "",
           email: "",
@@ -273,20 +298,23 @@ export default {
           rememberMe: false,
         };
 
+        // Show success message
         Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: 'Registration successful!',
-          confirmButtonColor: '#09203e'
+          icon: "success",
+          title: "Registration Successful",
+          text: "You can now log in.",
+          confirmButtonColor: "#09203e",
         });
       } catch (error) {
-        console.error('Error saving data:', error);
+        console.error("Error saving data:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error saving your data. Please try again.',
-          confirmButtonColor: '#09203e'
+          icon: "error",
+          title: "Error",
+          text: "An error occurred during registration. Please try again.",
+          confirmButtonColor: "#09203e",
         });
+      } finally {
+        this.isLoading = false;
       }
     },
   },
@@ -340,6 +368,14 @@ label {
   outline: 0;
   box-shadow: none !important;
 }
+.form-control {
+  height: 3rem;
+}
+
+.form-check-input:checked {
+  background-color: #09203e;
+  border-color: #09203e;
+}
 
 .input-group-text {
   background-color: transparent !important;
@@ -379,5 +415,9 @@ label {
 
 .form-check-label {
   font-weight: 400;
+}
+
+.spinner-border {
+  margin-right: 5px;
 }
 </style>
