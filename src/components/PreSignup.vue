@@ -174,12 +174,12 @@ export default {
 }
 
 .signup-btn:hover {
-  background: #174884;
+  background: #09203e;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(9, 32, 62, 0.2);
 }
 
-/* Separator */
+/* separator */
 .separator {
   display: flex;
   align-items: center;
