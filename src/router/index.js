@@ -15,6 +15,7 @@ import ForgotPasswordOne from "../components/ForgotPasswordOne.vue";
 import ForgotPasswordTwo from "../components/ForgotPasswordTwo.vue";
 import ForgotPasswordThree from "../components/ForgotPasswordThree.vue";
 import SuccessfulPassword from "../components/SuccessfulPassword.vue";
+import ForgotPassword from "../components/ForgotPassword.vue"
 
 const routes = [
   {
@@ -105,6 +106,11 @@ const routes = [
     path: "/successfulPassword",
     name: "successfulPassword",
     component: SuccessfulPassword,
+  },
+  {
+    path: "/forgotPassword",
+    name: "forgotPassword",
+    component: ForgotPassword,
   },
 ];
 
