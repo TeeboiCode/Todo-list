@@ -71,6 +71,7 @@
           </div>
 
           <div class="col-12">
+            <div class="head_container">
             <div class="form-check">
               <input
                 class="form-check-input"
@@ -81,6 +82,10 @@
               <label class="form-check-label" for="rememberMe">
                 remember me
               </label>
+            </div>
+            <div class="forget">
+              <label for="" @click="$router.push('/')">Forget Password</label>
+            </div>
             </div>
           </div>
           <div class="col-12 mt-5">
@@ -268,6 +273,10 @@ export default {
 .login-contain {
   padding: 15px 16px;
 }
+.head_container{
+  display: flex;
+  justify-content: space-between;
+}
 
 .header {
   display: flex;
@@ -297,6 +306,9 @@ input {
 label {
   font-size: 16px !important;
   font-weight: 500;
+}
+.forget{
+  color: #a8a9aa;
 }
 
 .heading {
