@@ -16,11 +16,20 @@
       <div class="login-form-container">
         <p class="des">enter your details below</p>
 
-        <form class="row g-3 needs-validation" novalidate @submit.prevent="handleLogin">
+        <form
+          class="row g-3 needs-validation"
+          novalidate
+          @submit.prevent="handleLogin"
+        >
           <div class="col-md-4">
-            <label for="validationDefaultUsername" class="form-label">Email</label>
+            <label for="validationDefaultUsername" class="form-label"
+              >Email</label
+            >
             <div class="input-group">
-              <span class="input-group-text border-end-0" id="inputGroupPrepend2">
+              <span
+                class="input-group-text border-end-0"
+                id="inputGroupPrepend2"
+              >
                 <i class="fa-solid fa-envelope" style="color: #a8a9aa"></i>
               </span>
               <input
@@ -78,14 +87,23 @@
             <button
               class="btn btn-primary p-3 submitForm w-100"
               type="submit"
+              :disabled="isLoading"
             >
-              login
+              <span
+                v-if="isLoading"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <span v-else>Login</span>
             </button>
           </div>
           <div class="col-12 mb-3">
             <p class="footer-link">
               already have an account ?
-              <span class="login-link" @click="$emit('signup')">Sign Up</span>
+              <span class="login-link" @click="$router.push('/signPg')"
+                >Sign Up</span
+              >
             </p>
           </div>
         </form>
@@ -95,7 +113,7 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 export default {
   name: "loginVue",
@@ -105,35 +123,45 @@ export default {
       formValue: {
         email: "",
         password: "",
-        rememberMe: false
+        rememberMe: false,
       },
       errors: {
         email: false,
-        password: false
-      }
+        password: false,
+      },
+      isLoading: false,
     };
   },
+  mounted() {
+    // Check for existing user in localStorage
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (currentUser) {
+      this.formValue.email = currentUser.email;
+      this.formValue.rememberMe = true;
+    }
+  },
   watch: {
-    'formValue.email'(newValue) {
+    "formValue.email"(newValue) {
       if (newValue.trim()) {
         this.errors.email = false;
       }
     },
-    'formValue.password'(newValue) {
+    "formValue.password"(newValue) {
       if (newValue) {
         this.errors.password = false;
       }
-    }
+    },
   },
   methods: {
     resetErrors() {
       this.errors = {
         email: false,
-        password: false
+        password: false,
       };
     },
 
     async handleLogin() {
+      this.isLoading = true;
       try {
         this.resetErrors();
         let hasError = false;
@@ -152,25 +180,27 @@ export default {
 
         if (hasError) {
           Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please fill in all required fields',
-            confirmButtonColor: '#09203e'
+            icon: "error",
+            title: "Oops...",
+            text: "Please fill in all required fields",
+            confirmButtonColor: "#09203e",
           });
           return;
         }
+        // http://localhost:3000/users
 
-        // Get users from localStorage
-        const users = JSON.parse(localStorage.getItem('usersData')) || [];
-        const user = users.find(u => u.email === this.formValue.email.trim());
+        // Get users from JSON server
+        const response = await fetch("https://task.fashion-life-agency.com/signup.php");
+        const users = await response.json();
+        const user = users.find((u) => u.email === this.formValue.email.trim());
 
         if (!user) {
           this.errors.email = true;
           await Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: 'Email not found. Please check your email or sign up.',
-            confirmButtonColor: '#09203e'
+            icon: "error",
+            title: "Login Failed",
+            text: "Email not found. Please check your email or sign up.",
+            confirmButtonColor: "#09203e",
           });
           return;
         }
@@ -178,45 +208,52 @@ export default {
         if (user.password !== this.formValue.password) {
           this.errors.password = true;
           await Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: 'Incorrect password. Please try again.',
-            confirmButtonColor: '#09203e'
+            icon: "error",
+            title: "Login Failed",
+            text: "Incorrect password. Please try again.",
+            confirmButtonColor: "#09203e",
           });
           return;
         }
 
         // If remember me is checked, store the login state
         if (this.formValue.rememberMe) {
-          localStorage.setItem('currentUser', JSON.stringify({
-            id: user.id,
-            email: user.email,
-            fullName: user.fullName
-          }));
+          localStorage.setItem(
+            "currentUser",
+            JSON.stringify({
+              id: user.id,
+              email: user.email,
+              fullName: user.full_name,
+            })
+          );
         }
+
+        // Show spinner for 3 seconds before success message
+        await new Promise((resolve) => setTimeout(resolve, 3000));
 
         // Successful login
         await Swal.fire({
-          icon: 'success',
-          title: 'Welcome back!',
-          text: `Hello, ${user.fullName}`,
-          confirmButtonColor: '#09203e'
+          icon: "success",
+          title: "Welcome back to Taskly!",
+          text: `Hello, ${user.full_name}`,
+          confirmButtonColor: "#09203e",
         });
 
         // Navigate to dashboard
-        this.$router.push('/dashboard');
-
+        this.$router.push("/dashboard");
       } catch (error) {
-        console.error('Login error:', error);
+        console.error("Login error:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An error occurred during login. Please try again.',
-          confirmButtonColor: '#09203e'
+          icon: "error",
+          title: "Error",
+          text: "An error occurred during login. Please try again.",
+          confirmButtonColor: "#09203e",
         });
+      } finally {
+        this.isLoading = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -268,6 +305,15 @@ label {
   box-shadow: none !important;
 }
 
+.form-control {
+  height: 3rem;
+}
+
+.form-check-input:checked {
+  background-color: #09203e;
+  border-color: #09203e;
+}
+
 .input-group-text {
   background-color: transparent !important;
   border-color: #3532326b !important;
@@ -311,5 +357,9 @@ label {
 
 .input-group .form-control.is-invalid {
   z-index: 0;
+}
+
+.spinner-border {
+  margin-right: 5px;
 }
 </style>
