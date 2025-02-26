@@ -25,8 +25,8 @@
         <div class="datetime">
           <label>Start</label>
           <div class="datetime-box">
-            <input type="date" value="2024-06-05">
-            <input type="time" value="08:00">
+            <input type="date" v-model="startDate">
+            <input type="time" v-model="startTime" >
           </div>
         </div>
 
@@ -34,8 +34,8 @@
         <div class="datetime" >
           <label>End</label>
           <div class="datetime-box">
-            <input type="date" value="2024-06-05">
-            <input type="time" value="20:00">
+            <input type="date" v-model="endDate" >
+            <input type="time" v-model="endTime" >
           </div>
         </div>
       </div>
@@ -57,6 +57,15 @@ export default {
   components: {
     MenuBar,
   },
+  data:{
+return:{
+startDate:"",
+startTime:"",
+endTime:"",
+endDate:"",
+}
+  },
+  
   
 };
 </script>
@@ -171,6 +180,9 @@ textarea {
   background-color: #ccc;
   border-radius: 20px;
   transition: 0.3s;
+}
+.switch input:checked + .slider{
+  background-color: blue;
 }
 
 .slider:before {
