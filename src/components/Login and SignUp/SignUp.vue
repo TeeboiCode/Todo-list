@@ -167,6 +167,7 @@ export default {
         password: false,
       },
       isLoading: false,
+      userDataApi: [],
     };
   },
   watch: {
@@ -193,6 +194,20 @@ export default {
     },
   },
   methods: {
+    //getting data from local server //http://localhost:3000/users
+    async getData() {
+      try {
+        const response = await fetch("http://localhost:3000/users");
+        const data = await response.json();
+        this.userDataApi = data;
+      } catch (error) {
+        console.error(error);
+      }
+      console.log(this.userDataApi)
+      return this.userDataApi;
+    },
+
+
     resetErrors() {
       this.errors = {
         fullName: false,
@@ -248,46 +263,36 @@ export default {
           password: this.formValue.password,
         };
 
-        // Send new user data to the external API
-        const postResponse = await fetch(
-          "https://task.fashion-life-agency.com/signup.php",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newUser),
-          }
-        );
-
-        // Log the response for debugging
-        const responseData = await postResponse.json();
-        console.log("Response Data:", responseData);
-
-        // Check if the response indicates an error
-        if (responseData.status === "error") {
-          if (responseData.message === "Email already exists") {
-            await Swal.fire({
-              icon: "warning",
-              title: "Email Already Used",
-              text: "This email is already registered. Please log in.",
-              confirmButtonColor: "#09203e",
-            });
-            this.$emit("login"); // Emit the login event to navigate to the login page
-            return;
-          }
-          // Handle other potential error messages from the API
+        // Check if the email is already registered on the json server http://localhost:3000/users
+        const existingUsers = await this.getData();
+        const emailExists = existingUsers.some((user) => user.email === newUser.email);
+        if (emailExists) {
           await Swal.fire({
-            icon: "error",
-            title: "Error",
-            text:
-              responseData.message || "An error occurred. Please try again.",
+            icon: "warning",
+            title: "Email Already Used",
+            text: "This email is already registered. Please log in.",
             confirmButtonColor: "#09203e",
           });
+          this.$router.push("/login"); // Navigate to the login page
           return;
-        }
+        }else{
+          // Send new user data to the json serve "http://localhost:3000/users"
+          const postResponse = await fetch(
+            "http://localhost:3000/users",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(newUser),
+            }
+          );
 
-        // Clear the form and show success message
+          // Log the response for debugging
+          const responseData = await postResponse.json();
+          console.log("Response Data:", responseData);
+
+          // Clear the form and show success message
         this.formValue = {
           fullName: "",
           email: "",
@@ -302,7 +307,11 @@ export default {
           title: "Registration Successful",
           text: "You can now log in.",
           confirmButtonColor: "#09203e",
-        });
+        }).then(() => {
+          this.$router.push("/login");
+        })
+
+        }
       } catch (error) {
         console.error("Error saving data:", error);
         Swal.fire({
@@ -316,6 +325,10 @@ export default {
       }
     },
   },
+
+  mounted(){
+    this.getData();
+  }
 };
 </script>
 
