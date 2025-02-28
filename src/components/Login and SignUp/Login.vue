@@ -230,8 +230,7 @@ export default {
         //checking if user input is inside json server database http://localhost:3000/users
         const existingUsers = await this.getData();
         const emailExists = existingUsers.some((user) => user.email === newUser.email);
-        console.log(existingUsers);
-        const passwordExists = existingUsers.some((user) => user.email === newUser.email);
+        const passwordExists = existingUsers.some((user) => user.password === newUser.password);
         if (!emailExists) {
           await Swal.fire({
             icon: "error",
@@ -253,7 +252,9 @@ export default {
           // this.$router.push("/login"); // Navigate to the login page
           return;
         }
-         
+        //saving the user data to local storage using the email as the key to retrieve the data
+       const user =  existingUsers.find((u) => u.email === newUser.email); //users.find((u) => u.email === this.formValue.email.trim());
+        localStorage.setItem("currentUser", JSON.stringify(user.full_name));  
 
         // http://localhost:3000/users
 
@@ -303,8 +304,8 @@ export default {
         await Swal.fire({
           icon: "success",
           title: "Welcome back to Taskly!",
-          text: `Hello`,
-          // text: `Hello, ${user.full_name}`,
+          // text: `Hello`,
+          text: `Hello, ${user.full_name}`,
           confirmButtonColor: "#09203e",
         });
 
@@ -402,7 +403,7 @@ label {
     top: 18px;
     right: 17px;
     color: #a8a9aa;
-    z-index: 9999;
+    z-index: 10;
 }
 
 .input-group-text {
