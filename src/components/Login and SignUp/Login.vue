@@ -47,7 +47,7 @@
 
           <div class="col-md-4">
             <label for="Password" class="form-label">Password</label>
-            <div class="input-group">
+            <div class="input-group position-relative">
               <span class="input-group-text border-end-0" id="password">
                 <div class="icon">
                   <img
@@ -56,9 +56,11 @@
                     height="24"
                   />
                 </div>
+                <i class="fa-solid" id="togglePassword" :class="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
+                  @click="togglePassword('confirmPassword')"></i>
               </span>
               <input
-                type="password"
+                :type="showConfirmPassword ? 'text' : 'password'"
                 placeholder="Password"
                 class="form-control pass border-start-0"
                 :class="{ 'is-invalid': errors.password }"
@@ -136,15 +138,18 @@ export default {
       },
       isLoading: false,
       userDataApi: [],
+      showConfirmPassword: false,
     };
   },
   mounted() {
     // Check for existing user in localStorage
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (currentUser) {
-      this.formValue.email = currentUser.email;
-      this.formValue.rememberMe = true;
-    }
+    // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    // if (currentUser) {
+    //   this.formValue.email = currentUser.email;
+    //   this.formValue.rememberMe = true;
+    // }
+
+    this.getData();
   },
   watch: {
     "formValue.email"(newValue) {
@@ -157,8 +162,29 @@ export default {
         this.errors.password = false;
       }
     },
+    
   },
   methods: {
+    togglePassword(type) {
+            if (type === "password") {
+                this.showPassword = !this.showPassword;
+            } else {
+                this.showConfirmPassword = !this.showConfirmPassword;
+            }
+        },
+
+    //getting data from local server //http://localhost:3000/users
+    async getData() {
+      try {
+        const response = await fetch("http://localhost:3000/users");
+        const data = await response.json();
+        this.userDataApi = data;
+      } catch (error) {
+        console.error(error);
+      }
+      return this.userDataApi;
+    },
+
     resetErrors() {
       this.errors = {
         email: false,
@@ -193,55 +219,92 @@ export default {
           });
           return;
         }
-        // http://localhost:3000/users
 
-        // Get users from JSON server
-        const response = await fetch("https://task.fashion-life-agency.com/signup.php");
-        await response.json();
-        const user = users.find((u) => u.email === this.formValue.email.trim());
+        // Prepare the user data to send to the API
+        const newUser = {
+          email: this.formValue.email,
+          password: this.formValue.password,
+          rememberMe: this.formValue.rememberMe,
+        };
 
-        if (!user) {
-          this.errors.email = true;
+        //checking if user input is inside json server database http://localhost:3000/users
+        const existingUsers = await this.getData();
+        const emailExists = existingUsers.some((user) => user.email === newUser.email);
+        console.log(existingUsers);
+        const passwordExists = existingUsers.some((user) => user.email === newUser.email);
+        if (!emailExists) {
           await Swal.fire({
             icon: "error",
             title: "Login Failed",
             text: "Email not found. Please check your email or sign up.",
             confirmButtonColor: "#09203e",
           });
+          // this.$router.push("/login"); // Navigate to the login page
           return;
         }
 
-        if (user.password !== this.formValue.password) {
-          this.errors.password = true;
+        if (!passwordExists) {
           await Swal.fire({
             icon: "error",
             title: "Login Failed",
             text: "Incorrect password. Please try again.",
             confirmButtonColor: "#09203e",
           });
+          // this.$router.push("/login"); // Navigate to the login page
           return;
         }
+         
+
+        // http://localhost:3000/users
+
+        // // Get users from JSON server
+        // const response = await fetch("https://task.fashion-life-agency.com/signup.php");
+        // await response.json();
+        // const user = users.find((u) => u.email === this.formValue.email.trim());
+
+        // if (!user) {
+        //   this.errors.email = true;
+        //   await Swal.fire({
+        //     icon: "error",
+        //     title: "Login Failed",
+        //     text: "Email not found. Please check your email or sign up.",
+        //     confirmButtonColor: "#09203e",
+        //   });
+        //   return;
+        // }
+
+        // if (user.password !== this.formValue.password) {
+        //   this.errors.password = true;
+        //   await Swal.fire({
+        //     icon: "error",
+        //     title: "Login Failed",
+        //     text: "Incorrect password. Please try again.",
+        //     confirmButtonColor: "#09203e",
+        //   });
+        //   return;
+        // }
 
         // If remember me is checked, store the login state
-        if (this.formValue.rememberMe) {
-          localStorage.setItem(
-            "currentUser",
-            JSON.stringify({
-              id: user.id,
-              email: user.email,
-              fullName: user.full_name,
-            })
-          );
-        }
+        // if (this.formValue.rememberMe) {
+        //   localStorage.setItem(
+        //     "currentUser",
+        //     JSON.stringify({
+        //       id: user.id,
+        //       email: user.email,
+        //       fullName: user.full_name,
+        //     })
+        //   );
+        // }
 
-        // Show spinner for 3 seconds before success message
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        // // Show spinner for 3 seconds before success message
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
 
         // Successful login
         await Swal.fire({
           icon: "success",
           title: "Welcome back to Taskly!",
-          text: `Hello, ${user.full_name}`,
+          text: `Hello`,
+          // text: `Hello, ${user.full_name}`,
           confirmButtonColor: "#09203e",
         });
 
@@ -334,13 +397,21 @@ label {
   border-color: #09203e;
 }
 
+#togglePassword {
+    position: absolute;
+    top: 18px;
+    right: 17px;
+    color: #a8a9aa;
+    z-index: 9999;
+}
+
 .input-group-text {
   background-color: transparent !important;
   border-color: #3532326b !important;
 }
 
 .form-control.pass {
-  padding: 0.375rem 2.5rem 0.375rem 0.5rem;
+  padding: 0.375rem 3rem 0.375rem 0.5rem;
 }
 
 .btn-primary.submitForm {
