@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div class="preSignUp-container">
     <Preloader :isLoading="isLoading" />
     <div class="container-fluid">
       <div class="login-box">
         <!-- Header -->
         <div class="header">
-          <div class="back-btn" @click="$emit('back')">
+          <!-- <div class="back-btn" @click="$emit('back')">
             <img
               src="../assets/back-arrow-icon.png"
               width="28"
               height="25"
               alt=""
             />
-          </div>
+          </div> -->
           <button class="login-btn" @click="$router.push('/login')">
             Login
           </button>
@@ -100,12 +100,13 @@ export default {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  padding: 16px 20px;
 }
 
 /* Header */
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
   padding: 5px 0;
 }
@@ -276,13 +277,13 @@ export default {
     margin-left: -20px;
   }
 
-  .login-btn {
+  /* .login-btn {
     margin-right: -20px;
-  }
+  } */
 
-  .container-fluid {
-    padding: 0 20px;
-  }
+  /* .container-fluid {
+    padding: 16px 20px;
+  } */
 }
 
 @media (min-height: 700px) {

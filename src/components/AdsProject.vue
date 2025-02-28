@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container p-0">
     <div v-if="!showPreSignUp" class="container2">
       <div class="advert-button">
         <div class="back-btn" v-if="imgIndex !== 0" @click="prevImage">
@@ -140,7 +140,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
+.container2 {
   padding: 10px 16px;
 }
 .advert-button {
