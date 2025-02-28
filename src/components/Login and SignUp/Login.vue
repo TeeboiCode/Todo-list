@@ -135,6 +135,7 @@ export default {
         password: false,
       },
       isLoading: false,
+      userDataApi: [],
     };
   },
   mounted() {
@@ -196,7 +197,7 @@ export default {
 
         // Get users from JSON server
         const response = await fetch("https://task.fashion-life-agency.com/signup.php");
-        const users = await response.json();
+        await response.json();
         const user = users.find((u) => u.email === this.formValue.email.trim());
 
         if (!user) {
