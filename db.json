@@ -30,6 +30,13 @@
       "email": "ade@mail.com",
       "phone_number": "0706574532",
       "password": "8989"
+    },
+    {
+      "id": "22ab",
+      "full_name": "keshinro hikmat",
+      "email": "keshinrohikmat@gmail.com",
+      "phone_number": "07033349264",
+      "password": "1234"
     }
   ]
 }
