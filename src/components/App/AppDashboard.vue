@@ -12,7 +12,7 @@
           <div class="greeting-img">
             <img src="../../assets/greeting-img-2.jpeg" />
           </div>
-          <h3>Good Morning, Jasmine</h3>
+          <h3>Hello, {{ Username }}</h3>
         </div>
 
         <!-- greeting-icon -->
@@ -94,6 +94,7 @@ export default {
     return {
       images: [require("@/assets/dashboard-img.png")],
       imgIndex: 0,
+      Username: "",
       isHidden: false,
       menuPositionBar: "10px",
       scrollTimeout: null,
@@ -120,6 +121,16 @@ export default {
         this.menuPositionBar = "10px";
       }, 500);
     },
+
+    // get user's data from local storage
+    getUserData() {
+      const userData = localStorage.getItem("currentUser");
+      if (userData) {
+        return this.Username =JSON.parse(userData);
+      } else {
+        return null;
+      }
+    },
   },
 
   mounted() {
@@ -127,7 +138,10 @@ export default {
     setTimeout(() => {
       this.isLoading = false;
     }, 3500);
+
+    this.getUserData();
   },
+
 
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);

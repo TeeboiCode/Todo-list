@@ -37,6 +37,20 @@
       "email": "keshinrohikmat@gmail.com",
       "phone_number": "07033349264",
       "password": "1234"
+    },
+    {
+      "id": "95b8",
+      "full_name": "Bashorun Temiloluwa",
+      "email": "ade567@gmail.com",
+      "phone_number": "090567845",
+      "password": "13579"
+    },
+    {
+      "id": "b30b",
+      "full_name": "Ajenifunja Ayoola",
+      "email": "ajenifunja@gmail.com",
+      "phone_number": "08045324176",
+      "password": "123456"
     }
   ]
 }
