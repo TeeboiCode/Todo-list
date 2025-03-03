@@ -1,431 +1,293 @@
 <template>
-  <!-- container -->
   <div class="container">
-    <div v-if="!showPreSignUp" class="container2">
-      <!-- advert-button -->
-      <div class="advert-button">
-        <div class="back-btn" v-if="imgIndex !== 0" @click="prevImage">
-          <img
-            src="../assets/back-arrow-icon.png"
-            width="28"
-            height="25"
-            alt=""
-          />
-        </div>
-        <button
-          type="button"
-          v-show="!(imgIndex === images.length - 1)"
-          @click="skipAds"
-        >
-          Skip
-        </button>
-      </div>
-
-      <!-- advert-img -->
-      <div class="advert-img">
-        <div class="advert-img-container">
-          <div class="swipe-wrapper">
-            <template v-for="image in images" :key="image">
-              <img
-                @touchstart="startSwipe"
-                @touchmove="moveSwipe"
-                @touchend="endSwipe"
-                :src="image"
-                v-if="imgIndex === images.indexOf(image)"
-                :style="{
-                  transform: `translateX(${swipeOffset}px)`,
-                  transition: isSwiping ? 'none' : 'transform 0.3s ease-in-out',
-                }"
-              />
-            </template>
-          </div>
-
-          <!-- <div v-if="imgIndex === 1" :key="imgIndex">
-            <img :src="images[1]" />
-          </div>
-
-          <div v-if="imgIndex === 2" :key="imgIndex">
-            <img :src="images[2]" />
-          </div> -->
-        </div>
-      </div>
-
-      <!-- data-aos="fade-left" -->
-
-      <!-- welcome -->
-      <div class="welcome">
-        <h3>Welcome to <span>Taskly</span></h3>
-        <p class="welcome-text">{{ text[imgIndex] }}</p>
-
-        <!-- welcome-btn -->
-        <div class="welcome-btn">
-          <button type="button" @click="nextImage">Next</button>
-        </div>
-
-        <!-- scroll -->
-        <div class="scroll">
-          <div
-            class="scroll1"
-            v-bind:class="imgIndex === 0 ? 'active' : ''"
-          ></div>
-          <div
-            class="scroll2"
-            v-bind:class="imgIndex === 1 ? 'active' : ''"
-          ></div>
-          <div
-            class="scroll3"
-            v-bind:class="imgIndex === 2 ? 'active' : ''"
-          ></div>
-        </div>
-      </div>
+    <!-- Header with Back Button -->
+    <div class="header">
+      <button class="back-button"><i class="fa-duotone fa-regular fa-less-than"></i></button>
+      <h2>Create Your Task</h2>
     </div>
 
-    <div v-else>
-      <PreSignupVue @back="imgIndex = 2" />
-    </div>
+    <!-- Task Form -->  
+    <form>
+      <input type="text" id="taskTitle" placeholder="Title" required />
+      <textarea id="taskDescription" placeholder="Task Description"></textarea>
 
-    <!-- imported footer-content -->
-    <div v-if="!showPreSignUp" class="footerContainer">
-      <FooterContent />
+      <div class="time-container">
+        <!-- All Day Toggle -->
+        <div class="all-day" >
+          <span>All Day</span>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Start Date & Time -->
+        <div class="datetime">
+          <label>Start</label>
+          <div class="datetime-box">
+            <input type="date" v-model="startDate">
+            <input type="time" v-model="startTime" >
+          </div>
+        </div>
+
+        <!-- End Date & Time -->
+        <div class="datetime" >
+          <label>End</label>
+          <div class="datetime-box">
+            <input type="date" v-model="endDate" >
+            <input type="time" v-model="endTime" >
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Task Button -->
+      <button type="submit" class="btn" >Create Task</button>
+    </form>
+
+<div class="menu-containerBar">
+      <MenuBar :menuPosition="menuPositionBar" />
     </div>
   </div>
 </template>
-
 <script>
-import FooterContent from "./FooterContent.vue";
-import PreSignupVue from "./PreSignup.vue";
-export default {
-  name: "AdsProject",
-  components: {
-    FooterContent,
-    PreSignupVue,
-  },
+import MenuBar from "../components/Menu.vue";
 
+export default {
+  name: "CreateTaskVue",
+  components: {
+    MenuBar,
+  },
   data() {
     return {
-      images: [
-        require("@/assets/ads1.png"),
-        require("@/assets/ads2.png"),
-        require("@/assets/ads3.png"),
-      ],
-
-      text: [
-        "Your Personal Task Manager To Help You Stay Organised And Productive",
-        "Stay on top of your tasks and boost your productivity with your ultimate personal organizer",
-        "Effortlessly manage your tasks and achieve more .",
-      ],
-      startX: 0,
-      swipeOffset: 0,
-      isSwiping: false,
-      imgIndex: 0,
-    };
+      startDate: "",
+      startTime: "",
+      endDate: "",
+      endTime: "",}
   },
-
-  methods: {
-    nextImage() {
-      if (this.imgIndex < this.images.length) {
-        this.imgIndex += 1;
-      }
-    },
-
-    skipAds() {
-      return (this.imgIndex = 3);
-    },
-
-    prevImage() {
-      if (this.imgIndex > 0) {
-        this.imgIndex -= 1;
-      }
-    },
-    startSwipe(event) {
-      this.startX = event.touches[0].clientX; // Store starting touch position
-      this.isSwiping = true; // Disable transition while swiping
-    },
-    moveSwipe(event) {
-      let currentX = event.touches[0].clientX;
-      this.swipeOffset = currentX - this.startX; // Update the swipe position dynamically
-    },
-    endSwipe(event) {
-      let endX = event.changedTouches[0].clientX;
-      this.isSwiping = false; // Enable transition
-
-      if (this.startX - endX > 50) {
-        this.nextImage(); // Swiped left
-      } else if (endX - this.startX > 50) {
-        this.prevImage(); // Swiped right
-      }
-
-      this.swipeOffset = 0; // Reset swipe offset
-    },
-    nextImage() {
-      if (this.currentIndex < this.images.length - 1) {
-        this.currentIndex++;
-      }
-    },
-    prevImage() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-      }
-    },
-  },
-
-  computed: {
-    showPreSignUp() {
-      return this.imgIndex === 3;
-    },
-  },
+  
+  
 };
 </script>
-
 <style scoped>
+/* General Container */
 .container {
-  padding: 10px 16px;
+  max-width: 400px;
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
 }
 
-/* advert-text */
-.advert-button {
+/* Header - Back Button & Title */
+.header {
   display: flex;
-  align-content: center;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
+  justify-content: space-evenly;
 }
-.advert-button button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+
+.back-button {
+  background: none;
   border: none;
-  outline: none;
-  background: transparent;
-  color: #a8a9aa;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  padding: 0;
-  z-index: 999;
 }
 
-.advert-img {
+/* Input Fields */
+input, textarea {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin-top: 35px;
-}
-
-.back-btn {
-  padding: 0 3px 0 0;
-  position: absolute;
-  top: 1.1rem;
-  left: 1rem;
-  z-index: 999;
-}
-
-.advert-img-container {
-  width: 70%;
-  height: 208px;
-  background: transparent;
-}
-
-.advert-img-container img {
-  width: 100%;
-  max-width: 300px;
-  transition: transform 0.3s ease-in-out;
-}
-
-/* welcome */
-.welcome {
-  text-align: center;
-}
-
-.welcome h3 {
-  color: #000000;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.welcome h3 span {
-  color: #219afd;
-  font-weight: 600;
-  font-size: 18px;
-}
-
-.welcome-text {
-  font-size: 11px;
-  font-weight: 400;
-  line-height: 18px;
-  color: #000000;
-}
-
-.welcome-btn {
-  width: 100%;
-  margin-bottom: 3%;
-}
-
-.welcome-btn button {
-  background: #09203e;
-  padding: 12px 120px;
-  border-radius: 25px;
-  border: none;
-  outline: none;
-  color: #ffffff;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   font-size: 16px;
-  font-weight: 600;
+}
+
+textarea {
+  height: 80px;
+  resize: none;
+}
+
+/* Time Selection */
+.time-container {
+  /* background: #f4f4f4; */
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  border: 1px solid #9DA1A4;
+}
+
+.all-day {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #9DA1A4;
+
+}
+
+.datetime {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+   border-bottom: 1px solid #9DA1A4;
+
+
+}
+
+.datetime label {
+  font-size: 14px;
+  text-align: left;
+  flex: 1;
+}
+
+.datetime-box {
+  display: flex;
+  gap: 10px;
+  flex: 2;
+}
+
+.datetime-box input {
+  width: 48%;
+  font-size: 14px;
+  padding: 6px;
+    background: #f4f4f4;
+}
+
+/* Switch Toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+.switch input:checked + .slider{
+  background-color: blue;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
   transition: 0.3s;
 }
 
-.swipe-wrapper {
-  display: flex;
-  width: 300%;
-}
-
-/* scroll */
-.scroll {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  height: 5vh;
-}
-
-.scroll1,
-.scroll2,
-.scroll3 {
-  width: 10px;
-  height: 10px;
-  background: rgba(217, 217, 217, 1);
-  border-radius: 100px;
-}
-
-.active {
-  background: #000;
-}
-
-.footerContainer {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+/* Create Task Button */
+.btn {
   width: 100%;
-  text-align: center;
-  padding: 10px;
-  text-align: center;
-  align-items: center;
+  background: #09203E;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  /* margin-top: 10px; */
+  transition: 3s;
 }
 
-@media (min-height: 568px) {
-  .advert-img img {
-    width: 100%;
-  }
-
-  .back-btn {
-    top: 1.2rem;
-  }
-
-  .advert-button button {
-    position: absolute;
-    top: 1.1rem;
-  }
-
-  .advert-img-container {
-    width: 100%;
-  }
-
-  /* .advert-img {
-    margin-top: 80px;
-  } */
-
-  .footer-container {
-    margin-bottom: 10px;
-  }
-
-  .welcome {
-    position: absolute;
-    bottom: 60px;
-    left: 0;
-    right: 0;
-  }
-
-  .welcome-text {
-    padding: 0px 25px !important;
-  }
+.btn:hover {
+ background: #09203E;
 }
 
-@media (min-height: 620px) {
-  .advert-img-container {
-    width: 100%;
-    height: 295px;
-    background: transparent;
-  }
-
-  .back-btn {
-    top: 1.5rem;
-  }
-
-  .advert-button button {
-    top: 1.6rem;
-  }
-
-  .welcome-text {
-    font-size: 13px !important;
-    padding: 3px 25px !important;
-  }
-  .welcome {
-    bottom: 80px;
-  }
-
-  .advert-img {
-    margin-top: 20%;
-  }
-
-  .advert-img img {
-    scale: 1.2;
-  }
-
-  /* .advert-button button,
-  .back-btn {
-    top: -30px;
-  } */
+/* Footer Navigation */
+.footer {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 15px ;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  left: 50%;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+  border-radius:20px ;
+  transform: translateX(-50%);
+  /* border-top: 1px solid #ddd; */
 }
 
-@media (min-height: 700px) {
-  .advert-img {
-    margin-top: 30%;
-  }
+.footer button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
 
-  .content-container-presignup {
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-  }
 }
 
-@media (min-height: 800px) {
+.add-task {
+  background-color: blue;
+  color: black;
+  border-radius: 50%;
+  font-size: 18px;
+  
+}
+
+/* Responsive Styles */
+@media (max-width: 360px) {
   .container {
-    padding: 12px 20px;
+    width: 95%;
+    padding: 15px;
   }
 
-  .container2 {
-    margin-top: 4rem;
+  .header {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .welcome-text {
-    padding: 3px 25px !important;
-    font-size: 1rem;
+  h2 {
+    font-size: 16px;
   }
 
-  .welcome h3 {
-    font-size: 1.5rem;
+  .back-button {
+    font-size: 18px;
   }
-  .welcome {
-    bottom: 100px;
+
+  .datetime-box input {
+    width: 45%;
+    font-size: 12px;
+  }
+
+  .footer {
+    padding: 20px 0;
+  }
+
+  .footer button {
+    font-size: 12px;
   }
 }
 
-@media (max-width: 400px) {
-  .advert-img img {
-    scale: 1.3;
+@media (min-width: 768px) {
+  .container {
+    max-width: 500px;
   }
+
+  .btn {
+    font-size: 18px;
+ }
 }
 </style>
