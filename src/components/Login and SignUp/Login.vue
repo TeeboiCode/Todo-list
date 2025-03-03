@@ -14,7 +14,7 @@
       </div>
 
       <div class="login-form-container">
-        <p class="des">enter your details below</p>
+        <p class="des">Enter Your Details Below</p>
 
         <form
           class="row g-3 needs-validation"
@@ -82,7 +82,7 @@
                 v-model="formValue.rememberMe"
               />
               <label class="form-check-label" for="rememberMe">
-                remember me
+                Remember Me
               </label>
             </div>
             <div class="forget">
@@ -90,6 +90,7 @@
             </div>
             </div>
           </div>
+        
           <div class="col-12 mt-5">
             <button
               class="btn btn-primary p-3 submitForm w-100"
