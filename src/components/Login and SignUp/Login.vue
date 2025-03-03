@@ -2,7 +2,7 @@
   <div>
     <div class="login-contain">
       <div class="header">
-        <div class="back-btn" @click="$router.back()">
+        <div class="back-btn" @click="$router.push('/presignup')">
           <img
             src="../../assets/back-arrow-icon.png"
             width="28"
