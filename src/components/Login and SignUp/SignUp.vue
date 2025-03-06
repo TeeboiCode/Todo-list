@@ -1,146 +1,123 @@
 <template>
-  <div>
-    <div class="sign-up-contain">
-      <div class="header">
-        <div class="back-btn" @click="$router.push('/presignup')">
-          <img
-            src="../../assets/back-arrow-icon.png"
-            width="28"
-            height="25"
-            alt=""
-          />
+  <div class="signUp-container">
+    <div class="signUp-content">
+      <form class="form-container" @submit.prevent="submitForm">
+        <div class="header">
+          <button class="back-button" @click="$router.push('/presignup')">
+            <img
+              src="../../assets/back-arrow-icon.png"
+              width="28"
+              height="25"
+              alt=""
+            />
+          </button>
+          <h2 class="m-0">Sign Up</h2>
         </div>
-        <h3 class="heading">Sign Up</h3>
-      </div>
 
-      <div class="signUp-form-container">
-        <p class="des">enter your details below</p>
+        <p class="des">Enter Your Details Below</p>
 
-        <form
-          class="row g-3 needs-validation"
-          novalidate
-          @submit.prevent="submitForm"
-        >
-          <div class="col-md-4">
-            <label for="fullName" class="form-label">Full Name</label>
-            <input
-              type="text"
-              class="form-control"
-              :class="{ 'is-invalid': errors.fullName }"
-              id="fullName"
-              v-model.trim="formValue.fullName"
-              placeholder="Full Name"
-              ref="fullName"
-              required
+        <div class="form-group">
+          <label for="fullName" class="form-label-text">Full Name</label>
+          <input
+            type="text"
+            placeholder="Full Name"
+            id="fullName"
+            class="input fullName-input"
+            :class="{ 'error-border': errorsBorder.fullName }"
+            v-model.trim="formValue.fullName"
+            ref="fullName"
+          />
+          <span class="error" v-if="errors.fullName">{{
+            errors.fullName
+          }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label-text">Email</label>
+          <input
+            type="email"
+            placeholder="Email"
+            id="email"
+            class="input email-input"
+            :class="{ 'error-border': errorsBorder.email }"
+            v-model="formValue.email"
+            ref="email"
+          />
+          <i id="email-icon" class="fa-solid fa-envelope"></i>
+          <span class="error" v-if="errors.email">{{ errors.email }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone" class="form-label-text">Phone Number</label>
+          <input
+            type="tel"
+            placeholder="07050419815"
+            id="telephone"
+            class="input tel-input"
+            :class="{ 'error-border': errorsBorder.phoneNum }"
+            v-model.trim="formValue.phoneNum"
+            ref="phoneNum"
+          />
+          <span class="error" v-if="errors.phoneNum">{{
+            errors.phoneNum
+          }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label-text">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            id="password"
+            class="input password-input"
+            :class="{ 'error-border': errorsBorder.password }"
+            v-model="formValue.password"
+            ref="password"
+          />
+          <div class="img-container">
+            <img
+              src="../../assets/icon-park-solid_personal-privacy.png"
+              width="27"
             />
-            <div class="valid-feedback">Please provide a valid name.</div>
           </div>
+          <i id="password-eye" class="fa-solid fa-eye"></i>
+          <span class="error" v-if="errors.password">{{
+            errors.password
+          }}</span>
+        </div>
 
-          <div class="col-md-4">
-            <label for="email" class="form-label">Email</label>
-            <div class="input-group">
-              <span
-                class="input-group-text border-end-0"
-                id="inputGroupPrepend2"
-              >
-                <i class="fa-solid fa-envelope" style="color: #a8a9aa"></i>
-              </span>
-              <input
-                type="email"
-                placeholder="ayomideakorede0@gmail.com"
-                class="form-control border-start-0"
-                :class="{ 'is-invalid': errors.email }"
-                id="email"
-                v-model="formValue.email"
-                ref="email"
-                required
-              />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <label for="phoneNum" class="form-label">Phone Number</label>
+        <div class="container-checkbox">
+          <div class="checkbox">
             <input
-              type="text"
-              class="form-control"
-              :class="{ 'is-invalid': errors.phoneNum }"
-              id="phoneNum"
-              v-model.trim="formValue.phoneNum"
-              placeholder="07050419815"
-              ref="phoneNum"
-              required
+              type="checkbox"
+              id="remember-me"
+              v-model="formValue.rememberMe"
             />
-            <div class="invalid-feedback">
-              Please provide a valid phone number.
-            </div>
+            <label class="m-0" for="remember-me">Remember Me</label>
           </div>
+          <div class="forgot">
+            <label for="" @click="$router.push('/')">Forget Password</label>
+          </div>
+        </div>
 
-          <div class="col-md-4">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-group">
-              <span class="input-group-text border-end-0" id="password">
-                <div class="icon">
-                  <img
-                    src="../../assets/icon-park-solid_personal-privacy.png"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-              </span>
-              <input
-                type="password"
-                placeholder="Password"
-                class="form-control pass border-start-0"
-                :class="{ 'is-invalid': errors.password }"
-                id="password"
-                v-model="formValue.password"
-                ref="password"
-                required
-              />
-            </div>
-            <div class="valid-feedback">Please provide a valid password.</div>
-          </div>
-
-          <div class="col-12">
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                value="remember-me"
-                id="invalidCheck"
-                v-model="formValue.rememberMe"
-                required
-              />
-              <label class="form-check-label" for="invalidCheck">
-                remember me
-              </label>
-
-            </div>
-          </div>
-          <div class="col-12 mt-5">
-            <button
-              class="btn btn-primary p-3 submitForm w-100"
-              type="submit"
-              :disabled="isLoading"
-            >
-              <span
-                v-if="isLoading"
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-              <span v-else>Sign Up</span>
-            </button>
-          </div>
-          <div class="col-12 mb-3">
-            <p class="footer-link">
-              already have an account ?
-              <span class="login-link" @click="$router.push('/login')"
-                >Login</span
-              >
-            </p>
-          </div>
-        </form>
-      </div>
+        <div class="signUp-button-container">
+          <button type="submit" class="signUp-button" :disabled="isLoading">
+            <span
+              v-if="isLoading"
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Sign Up
+          </button>
+          <p class="footer-link">
+            already have an account ?
+            <span class="signUp-link" @click="$router.push('/login')">
+              Login
+            </span>
+          </p>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -150,7 +127,6 @@ import Swal from "sweetalert2";
 
 export default {
   name: "SignUpVue",
-  emits: ["login"],
   data() {
     return {
       formValue: {
@@ -160,38 +136,22 @@ export default {
         password: "",
         rememberMe: false,
       },
-      errors: {
+      errors: {},
+      userDataApi: [],
+      isLoading: false,
+      errorsBorder: {
         fullName: false,
         email: false,
         phoneNum: false,
         password: false,
       },
-      isLoading: false,
-      userDataApi: [],
+      result: {
+        fullName: false,
+        email: false,
+        phoneNum: false,
+        password: false,
+      },
     };
-  },
-  watch: {
-    // Watch each form field and clear its error when it's filled
-    "formValue.fullName"(newValue) {
-      if (newValue.trim()) {
-        this.errors.fullName = false;
-      }
-    },
-    "formValue.email"(newValue) {
-      if (newValue.trim()) {
-        this.errors.email = false;
-      }
-    },
-    "formValue.phoneNum"(newValue) {
-      if (newValue.trim()) {
-        this.errors.phoneNum = false;
-      }
-    },
-    "formValue.password"(newValue) {
-      if (newValue) {
-        this.errors.password = false;
-      }
-    },
   },
   methods: {
     //getting data from local server //http://localhost:3000/users
@@ -203,117 +163,123 @@ export default {
       } catch (error) {
         console.error(error);
       }
-      console.log(this.userDataApi)
       return this.userDataApi;
     },
 
+    //form validation
+    validateForm() {
+      this.errors = {}; // Reset errors before validation
 
-    resetErrors() {
-      this.errors = {
-        fullName: false,
-        email: false,
-        phoneNum: false,
-        password: false,
-      };
+      // Full Name Validation
+      if (!this.formValue.fullName.trim()) {
+        this.errors.fullName = "Full name is required.";
+        this.errorsBorder.fullName = true;
+      } else {
+        this.errorsBorder.fullName = false;
+      }
+
+      // Email Validation
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!this.formValue.email.trim()) {
+        this.errors.email = "Email is required.";
+        this.errorsBorder.email = true;
+      } else if (!emailPattern.test(this.formValue.email)) {
+        this.errors.email = "Enter a valid email address.";
+        this.errorsBorder.email = true;
+      } else {
+        this.errorsBorder.email = false;
+      }
+
+      // Phone Number Validation
+      const phonePattern = /^[0-9]{10,15}$/;
+      if (!this.formValue.phoneNum.trim()) {
+        this.errors.phoneNum = "Phone number is required.";
+        this.errorsBorder.phoneNum = true;
+      } else if (!phonePattern.test(this.formValue.phoneNum)) {
+        this.errors.phoneNum = "Enter a valid phone number.";
+        this.errorsBorder.phoneNum = true;
+      } else {
+        this.errorsBorder.phoneNum = false;
+      }
+
+      // Password Validation
+      if (!this.formValue.password.trim()) {
+        this.errors.password = "Password is required.";
+        this.errorsBorder.password = true;
+      } else if (this.formValue.password.length < 6) {
+        this.errors.password = "Password must be at least 6 characters.";
+        this.errorsBorder.password = true;
+      } else {
+        this.errorsBorder.password = false;
+      }
+
+      // Return true if there are no errors
+      return Object.keys(this.errors).length === 0;
     },
-    checkExistingEmail(email) {
-      const existingUsers = JSON.parse(localStorage.getItem("usersData")) || [];
-      return existingUsers.some((user) => user.email === email);
-    },
+
+    //submit form
     async submitForm() {
       this.isLoading = true;
+
       try {
-        this.resetErrors();
-        let hasError = false;
+        if (this.validateForm()) {
+          // Prepare the user data to send to the API
+          const newUser = {
+            full_name: this.formValue.fullName,
+            email: this.formValue.email,
+            phone_number: this.formValue.phoneNum,
+            password: this.formValue.password,
+          };
 
-        // Validate fields
-        if (!this.formValue.fullName.trim()) {
-          this.errors.fullName = true;
-          hasError = true;
-        }
-        if (!this.formValue.email.trim()) {
-          this.errors.email = true;
-          hasError = true;
-        }
-        if (!this.formValue.phoneNum.trim()) {
-          this.errors.phoneNum = true;
-          hasError = true;
-        }
-        if (!this.formValue.password) {
-          this.errors.password = true;
-          hasError = true;
-        }
-
-        if (hasError) {
-          // Handle validation errors
-          Swal.fire({
-            icon: "error",
-            title: "Validation Error",
-            text: "Please fill in all required fields.",
-            confirmButtonColor: "#09203e",
-          });
-          return;
-        }
-
-        // Prepare the user data to send to the API
-        const newUser = {
-          full_name: this.formValue.fullName,
-          email: this.formValue.email,
-          phone_number: this.formValue.phoneNum,
-          password: this.formValue.password,
-        };
-
-        // Check if the email is already registered on the json server http://localhost:3000/users
-        const existingUsers = await this.getData();
-        const emailExists = existingUsers.some((user) => user.email === newUser.email);
-        if (emailExists) {
-          await Swal.fire({
-            icon: "warning",
-            title: "Email Already Used",
-            text: "This email is already registered. Please log in.",
-            confirmButtonColor: "#09203e",
-          });
-          this.$router.push("/login"); // Navigate to the login page
-          return;
-        }else{
-          // Send new user data to the json serve "http://localhost:3000/users"
-          const postResponse = await fetch(
-            "http://localhost:3000/users",
-            {
+          // Check if the email is already registered on the json server http://localhost:3000/users
+          const existingUser = this.userDataApi.find(
+            (user) => user.email === this.formValue.email
+          );
+          if (existingUser) {
+            await Swal.fire({
+              icon: "warning",
+              title: "Email Already Used",
+              text: "This email is already registered. Please log in.",
+              confirmButtonColor: "#09203e",
+            });
+            this.isLoading = false;
+            this.$router.push("/login");
+            return;
+          } else {
+            // Send new user data to the json serve "http://localhost:3000/users"
+            const postResponse = await fetch("http://localhost:3000/users", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(newUser),
-            }
-          );
+            });
 
-          // Log the response for debugging
-          const responseData = await postResponse.json();
-          console.log("Response Data:", responseData);
+            // Log the response for debugging
+            const responseData = await postResponse.json();
+            console.log("Response Data:", responseData);
 
-          // Clear the form and show success message
-        this.formValue = {
-          fullName: "",
-          email: "",
-          phoneNum: "",
-          password: "",
-          rememberMe: false,
-        };
-
-        // Show success message
-        Swal.fire({
-          icon: "success",
-          title: "Registration Successful",
-          text: "You can now log in.",
-          confirmButtonColor: "#09203e",
-        }).then(() => {
-          this.$router.push("/login");
-        })
-
+            // Clear the form and show success message
+            this.formValue = {
+              fullName: "",
+              email: "",
+              phoneNum: "",
+              password: "",
+              rememberMe: false,
+            };
+            this.isLoading = false;
+            await Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Registration Successful",
+              confirmButtonColor: "#09203e",
+            });
+            this.$router.push("/login");
+          }
         }
       } catch (error) {
         console.error("Error saving data:", error);
+
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -326,88 +292,245 @@ export default {
     },
   },
 
-  mounted(){
+  watch: {
+    "formValue.fullName"(newValue) {
+      if (newValue.trim()) {
+        this.errorsBorder.fullName = false;
+        this.errors.fullName = "";
+      } else {
+        this.errorsBorder.fullName = true;
+        this.errors.fullName = "Full name is required.";
+      }
+    },
+    "formValue.email"(newValue) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (newValue.trim()) {
+        if (emailPattern.test(this.formValue.email)) {
+          this.errorsBorder.email = false;
+          this.errors.email = "";
+        } else {
+          this.errorsBorder.email = true;
+          this.errors.email = "Enter a valid email address.";
+        }
+      }
+    },
+    "formValue.phoneNum"(newValue) {
+      const phonePattern = /^[0-9]{10,15}$/;
+      if (newValue.trim()) {
+        if (phonePattern.test(this.formValue.phoneNum)) {
+          this.errorsBorder.phoneNum = false;
+          this.errors.phoneNum = "";
+        } else {
+          this.errorsBorder.phoneNum = true;
+          this.errors.phoneNum = "Enter a valid phone number.";
+        }
+      }
+    },
+    "formValue.password"(newValue) {
+      if (newValue) {
+        if (this.formValue.password.length < 6) {
+          this.errorsBorder.password = true;
+          this.errors.password = "Password must be at least 6 characters.";
+        } else {
+          this.errorsBorder.password = false;
+          this.errors.password = "";
+        }
+      }
+    },
+  },
+
+  mounted() {
     this.getData();
-  }
+  },
 };
 </script>
 
 <style scoped>
-.sign-up-contain {
-  padding: 15px 16px;
+.signUp-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.signUp-content {
+  padding: 20px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .header {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 0 10px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
 }
 
-.signUp-form-container .des {
+.header h2 {
+  font-weight: 600;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.form-container .des {
   color: #a8a9aa;
   font-size: 14px;
-  margin-top: 20px;
   font-weight: 300 !important;
+  margin-bottom: 5px;
 }
 
-input::placeholder {
-  color: #a8a9aa !important;
-  font-size: 14px !important;
-  font-weight: 300 !important;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 20px;
 }
 
-input {
-  font-size: 14px !important;
-  font-weight: 300 !important;
+#email-icon {
+  position: absolute;
+  top: 58%;
+  left: 16px;
+  font-size: 25px;
+  color: #9e9e9e;
 }
 
-label {
-  font-size: 16px !important;
-  font-weight: 500;
+.form-group .img-container img {
+  position: absolute;
+  top: 58%;
+  left: 16px;
+  color: #9e9e9e;
 }
 
-.heading {
-  font-size: 20px !important;
+#password-eye {
+  position: absolute;
+  top: 55%;
+  right: 16px;
+  color: #9e9e9e;
+  font-size: 25px;
 }
 
-.form-control:focus {
-  color: #212529 !important;
-  background-color: transparent !important;
-  /* border-color: #dee2e6 !important; */
-  border-color: #3532326b !important;
-  outline: 0;
-  box-shadow: none !important;
-}
-.form-control {
-  height: 3rem;
+.form-label-text {
+  font-weight: 600;
+  font-size: 16px;
+  color: #09203e;
+  cursor: pointer;
 }
 
-.form-check-input:checked {
+.input {
+  width: 100%;
+  /* border: 1px solid #e0e0e0; */
+  border: 1px solid #3532326b !important;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 16px;
+  outline: none;
+}
+
+.input.email-input {
+  padding: 13px 13px 13px 56px;
+}
+
+.input::placeholder {
+  color: #9e9e9e;
+}
+
+.password-input {
+  padding: 16px 56px 16px 56px;
+}
+
+.container-checkbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* .checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  transform: scale(1);
+  cursor: pointer;
+  border-radius: 5px;
+} */
+
+.checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #9e9e9e;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox input[type="checkbox"]:checked {
   background-color: #09203e;
   border-color: #09203e;
 }
 
-.input-group-text {
-  background-color: transparent !important;
-  border-color: #3532326b !important;
+.checkbox input[type="checkbox"]::after {
+  content: "✔";
+  font-size: 14px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
 }
 
-.form-control.pass {
-  padding: 0.375rem 2.5rem 0.375rem 0.5rem;
+.checkbox input[type="checkbox"]:checked::after {
+  display: block;
 }
 
-.btn-primary.submitForm {
-  border-radius: 50px !important;
-  background: #09203e !important;
-  border-color: #09203e !important;
+.forgot {
+  color: #9e9e9e;
+  cursor: pointer;
 }
 
-.btn.submitForm {
-  padding: 12px auto !important;
+.signUp-button {
+  background: #09203e;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 16px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 600 !important;
+  cursor: pointer;
+  margin: 20px 0 6px;
 }
 
-.login-link {
+.signUp-button-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.signUp-link {
   color: #09203e;
   font-weight: 500;
 }
@@ -419,16 +542,35 @@ label {
   color: #a8a9aa;
 }
 
-.form-check-input,
-.form-control {
-  border-color: #3532326b !important;
-}
-
-.form-check-label {
-  font-weight: 400;
-}
-
 .spinner-border {
   margin-right: 5px;
 }
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* error */
+.error {
+  font-size: 11px;
+  margin-top: 2px;
+  color: #dc3545;
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+}
+
+.error-border {
+  border: 1px solid #dc3545 !important;
+}
+
+/* .input:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  outline: none;
+} */
 </style>

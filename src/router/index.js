@@ -15,6 +15,7 @@ import ForgotPasswordOne from "../components/ForgotPasswordOne.vue";
 import ForgotPasswordTwo from "../components/ForgotPasswordTwo.vue";
 import ForgotPasswordThree from "../components/ForgotPasswordThree.vue";
 import SuccessfulPassword from "../components/SuccessfulPassword.vue";
+import Note from "../components/Note.vue";
 
 const routes = [
   {
@@ -24,7 +25,7 @@ const routes = [
   },
   {
     path: "/about",
-    name: "about",   
+    name: "about",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -105,6 +106,11 @@ const routes = [
     path: "/successfulPassword",
     name: "successfulPassword",
     component: SuccessfulPassword,
+  },
+  {
+    path: "/note",
+    name: "note",
+    component: Note,
   },
 ];
 
