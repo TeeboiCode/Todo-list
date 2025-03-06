@@ -1,394 +1,316 @@
 <template>
-  <div>
-    <div class="createTask-container">
-      <div class="header">
-        <div class="back-btn" @click="$router.push('/dashboard')">
-          <img
-            src="../assets/back-arrow-icon.png"
-            width="28"
-            height="25"
-            alt=""
-          />
+  <div class="createTask-container">
+    <div class="createTask-content">
+      <form class="form-container">
+        <div class="header">
+          <button class="back-button" @click="$router.push('/dashboard')">
+            <!-- <i class="fas fa-chevron-left"></i> -->
+            <img
+              src="../assets/back-arrow-icon.png"
+              width="28"
+              height="25"
+              alt=""
+            />
+          </button>
+          <h2 class="m-0">Create Your Task</h2>
         </div>
-        <h3 class="heading">Create Task</h3>
-      </div>
 
-      <div class="login-form-container">
+        <div class="form-group">
+          <input placeholder="Title" class="input title-input" />
+        </div>
 
-        <form
-          class="row g-3 needs-validation mt-3"  
-          novalidate
-          @submit.prevent="handlecreateTask"
-        >
-          <div class="col-md-4">
-            <div class="input-group">
-              
-              <input
-                type="text"
-                placeholder="Title"
-                class="form-control"
-                id="validationDefaultUsername"
-                v-model.trim="formValue.title"
-                required
-              />
+        <div class="form-group">
+          <div class="des-container">
+            <div class="des-header">Task Description</div>
+            <hr class="m-0" />
+            <textarea
+              placeholder="Task Description"
+              class="input description-input"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="time-section">
+          <div class="all-day">
+            <span>All Day</span>
+            <label class="switch">
+              <input type="checkbox" role="switch" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+
+          <div class="time-row">
+            <label>Start</label>
+            <div class="time-inputs">
+              <button class="date-button">5 June 2024</button>
+              <button class="time-button">12:00 AM</button>
+
+              <!-- Date Picker Modal -->
+              <!-- <div class="picker-modal">
+                <div class="picker-content">
+                  <input type="date" class="date-input" />
+                </div>
+              </div> -->
+
+              <!-- Time Picker Modal -->
+              <!-- <div class="picker-modal">
+                <div class="picker-content">
+                  <input type="time" class="time-input" />
+                </div>
+              </div> -->
             </div>
           </div>
 
+          <div class="time-row">
+            <label>End</label>
+            <div class="time-inputs">
+              <button class="date-button">5 June 2024</button>
+              <button class="time-button">08:00 PM</button>
 
-          <div class="col-md-4">
-            
-            <div class="card p-0">
-              <div class="card-header">
-                Task Description
-              </div>
-              <div class="card-body p-1">
-                <textarea class="form-control h-100 border-0" id="exampleFormControlTextarea1" rows="3" placeholder="Description..." v-model.trim="formValue.description"></textarea>
-              </div>
+              <!-- Date Picker Modal -->
+              <!-- <div class="picker-modal">
+                <div class="picker-content">
+                  <input type="date" class="date-input" />
+                </div>
+              </div> -->
+
+              <!-- Time Picker Modal -->
+              <!-- <div class="picker-modal">
+                <div class="picker-content">
+                  <input
+                    type="time"
+                    v-model="task.endTime"
+                    class="time-input"/>
+                </div>
+              </div> -->
             </div>
           </div>
+        </div>
 
-          <div class="col-md-4">
-            
-            <div class="card p-0">
-              <div class="card-header">
-                <div class="date_time_container">
-                  <span>All Day</span>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" v-model="formValue.allDay">
-                    <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                  </div> 
-                </div>
-              </div>
-              
-
-              <div class="card-body p-1">
-                <div class="start_end_container">
-                  <p class="m-0">Start</p>
-                  <div class="start_end_input">
-                    <input type="date" v-model="formValue.startValue.selectedDate" @change="handleStartDateChange">
-                    <input type="time" v-model="formValue.startValue.selectedTime"  @change="handleStartTimeChange">
-                  </div>
-                  
-                </div>
-                <hr class="m-0">
-                <div class="start_end_container">
-                  <p class="m-0">End</p>
-                  <div class="start_end_input">
-                    <input type="date" v-model="formValue.endValue.selectedDate" @change="handleEndDateChange">
-                    <input type="time" v-model="formValue.endValue.selectedTime" @change="handleEndTimeChane" >
-                  </div>
-                </div>
-             
-              </div>
-              
-            </div>
-          </div>
-
-        
-          <div class="col-12 mt-5">
-            <button
-              class="btn btn-primary p-3 submitForm w-100"
-              type="submit"
-              :disabled="isLoading"
-            >
-              <span
-                v-if="isLoading"
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-              <span v-else>Create Task</span>
-            </button>
-          </div>
-        </form>
-      </div>
+        <button class="create-button">Create Task</button>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import Swal from "sweetalert2";
-
 export default {
-  name: "loginVue",
-  emits: ["signup"],
+  name: "CreateTask",
   data() {
     return {
-      formValue: {
-        email: "",
-        password: "",
-        rememberMe: false,
-      },
-      errors: {
-        email: false,
-        password: false,
-      },
-      isLoading: false,
-      userDataApi: [],
-      showConfirmPassword: false,
-      formValue: {
+      task: {
         title: "",
         description: "",
-        allDay: false,
-        startValue:{
-          selectedTime:this.currentStartTime(),
-          selectedDate: this.currentStartDate(),
-        },
-       endValue:{
-        selectedTime:"",
-        selectedDate:"",
-        },
       },
     };
-  },
-  // watch: {
-  //   "formValue.email"(newValue) {
-  //     if (newValue.trim()) {
-  //       this.errors.email = false;
-  //     }
-  //   },
-  //   "formValue.password"(newValue) {
-  //     if (newValue) {
-  //       this.errors.password = false;
-  //     }
-  //   },
-  // },
-  methods: {
-    togglePassword(type) {
-            if (type === "password") {
-                this.showPassword = !this.showPassword;
-            } else {
-                this.showConfirmPassword = !this.showConfirmPassword;
-            }
-        },
-
-    //getting data from local server //http://localhost:3000/users
-    async getData() {
-      try {
-        const response = await fetch("http://localhost:3000/users");
-        const data = await response.json();
-        this.userDataApi = data;
-      } catch (error) {
-        console.error(error);
-      }
-      return this.userDataApi;
-    },
-
-    currentStartDate() {
-      const today = new Date();
-      const date = today.toISOString().split("T")[0];
-      return date ;
-    },
-
-    currentStartTime() {
-      const nowTime = new Date();
-      const time = nowTime.toTimeString().split(0,5);
-      return time; // e.g. "12:34:56"
-    },
-
-    formatDate(dateString) {
-      if (!dateString) return "";
-
-      const date = new Date(dateString);
-      return new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "long", // full name of the month (e.g., "January")
-        day: "numeric",
-      }).format(date); // output: "February 20, 2023"
-    },
-
-    formatTime(timeString) {
-      if (!timeString) return "";
-      const [hours, minutes] = timeString.split(":").map(Number);
-      return new Intl.DateTimeFormat("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }).format(new Date(2025, 0, 1, hours, minutes));
-    },
-
-    // formattedDate() {
-    //   return this.formatDate(this.formValue.startValue.selectedDate); 
-    // },
-
-    // formattedTime() {
-    //   return this.formatTime(this.formValue.startValue.selectedTime);
-    // },
-
-    // handleStartDateChange() {
-    
-    // }
-  },
-  mounted() {
-    this.getData();
-    this.currentStartDate();
   },
 };
 </script>
 
 <style scoped>
 .createTask-container {
-  padding:  16px;
-}
-.head_container{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 1000;
   display: flex;
-  justify-content: space-between;
-}
-
-.date_time_container{
-  display: flex;
-  justify-content: space-between;
-}
-.start_end_container{
-    display: flex;
-    padding: 16px;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.start_end_input{
-  display: flex;
-  gap: 10px 0;
   flex-direction: column;
+  overflow: auto;
 }
 
-@media (min-width: 389px){
-  .start_end_input{
-  gap: 0 10px;
-  flex-direction: row;
-}
+.createTask-content {
+  padding: 20px;
 }
 
-.form-switch .form-check-input {
-    width: 3em;
-    height: 1.5em;
-}
-
-.start_end_input input{
-    border: 1px solid #d9d9d9;
-    border-radius: 5px;
-    font-size: 14px;
-    background: #d9d9d9;
-    padding: 3px 5px;
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
 }
 
 .header {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 0 10px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.login-form-container .des {
-  color: #a8a9aa;
-  font-size: 14px;
-  margin-top: 20px;
-  font-weight: 300 !important;
+.header h2 {
+  font-weight: 600;
 }
 
-textarea::placeholder,
-input::placeholder {
-  color: #a8a9aa !important;
-  font-size: 14px !important;
-  font-weight: 300 !important;
+.back-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px 0;
 }
 
-input {
-  font-size: 14px !important;
-  font-weight: 300 !important;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-label {
-  font-size: 16px !important;
-  font-weight: 500;
-}
-.forget{
-  color: #a8a9aa;
-}
-
-.card-header{
-    color: #a8a9aa !important;
-    background-color: transparent !important;
-    border-color: #3532326b !important;
-
+.input {
+  width: 100%;
+  /* border: 1px solid #e0e0e0; */
+  border: 1px solid #3532326b !important;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 16px;
+  outline: none;
 }
 
-.heading {
-  font-size: 20px !important;
+.input::placeholder {
+  color: #9e9e9e;
 }
 
-.form-control:focus {
-  color: #212529 !important;
-  background-color: transparent !important;
-  /* border-color: #dee2e6 !important; */
-  border-color: #3532326b !important;
-  outline: 0;
-  box-shadow: none !important;
+.title-input {
+  font-size: 18px;
 }
 
-.form-control {
-  height: 3rem;
+.description-input {
+  resize: none;
+  border: none;
+  border: none !important;
 }
 
-.form-check-input:checked {
-  background-color: #09203e;
-  border-color: #09203e;
+.time-section {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #e0e0e0;
 }
 
-#togglePassword {
-    position: absolute;
-    top: 18px;
-    right: 17px;
-    color: #a8a9aa;
-    z-index: 10;
+.des-container {
+  width: 100%;
+  /* border: 1px solid #e0e0e0; */
+  border: 1px solid #3532326b !important;
+  border-radius: 12px;
+  outline: none;
 }
 
-.input-group-text {
-  background-color: transparent !important;
-  border-color: #3532326b !important;
-}
-
-.form-control.pass {
-  padding: 0.375rem 3rem 0.375rem 0.5rem;
-}
-
-.btn-primary.submitForm {
-  border-radius: 50px !important;
-  background: #09203e !important;
-  border-color: #09203e !important;
-}
-
-.login-link {
-  color: #09203e;
+.des-header {
+  padding: 16px;
+  font-size: 16px;
   font-weight: 500;
 }
 
-.footer-link {
+.all-day {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e0e0e0;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #0a2647;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.time-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.date-button,
+.time-button {
+  background: #f5f5f5;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-size: 14px;
-  text-align: center;
-  font-weight: 300;
-  color: #a8a9aa;
+  color: #000;
+  cursor: pointer;
+  font-weight: 600;
 }
 
-.form-check-input,
-.form-control {
-  border-color: #3532326b !important;
+.picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
 }
 
-.form-check-label {
-  font-weight: 400;
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.form-control.is-invalid {
-  border-color: #dc3545 !important;
-  background-image: none !important;
-}
-
-.input-group .form-control.is-invalid {
-  z-index: 0;
-}
-
-.spinner-border {
-  margin-right: 5px;
+.create-button {
+  background: #09203e;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 16px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 600 !important;
+  cursor: pointer;
+  margin: 20px 0 6px;
 }
 </style>

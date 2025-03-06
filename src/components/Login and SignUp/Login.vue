@@ -1,425 +1,254 @@
 <template>
-  <div>
-    <div class="login-contain">
-      <div class="header">
-        <div class="back-btn" @click="$router.push('/presignup')">
-          <img
-            src="../../assets/back-arrow-icon.png"
-            width="28"
-            height="25"
-            alt=""
-          />
+  <div class="login-container">
+    <div class="login-content">
+      <form class="form-container">
+        <div class="header">
+          <button class="back-button" @click="$router.push('/presignup')">
+            <img
+              src="../../assets/back-arrow-icon.png"
+              width="28"
+              height="25"
+              alt=""
+            />
+          </button>
+          <h2 class="m-0">Login</h2>
         </div>
-        <h3 class="heading">Login</h3>
-      </div>
 
-      <div class="login-form-container">
         <p class="des">Enter Your Details Below</p>
 
-        <form
-          class="row g-3 needs-validation"
-          novalidate
-          @submit.prevent="handleLogin"
-        >
-          <div class="col-md-4">
-            <label for="validationDefaultUsername" class="form-label"
-              >Email</label
-            >
-            <div class="input-group">
-              <span
-                class="input-group-text border-end-0"
-                id="inputGroupPrepend2"
-              >
-                <i class="fa-solid fa-envelope" style="color: #a8a9aa"></i>
-              </span>
-              <input
-                type="email"
-                placeholder="ayomideakorede0@gmail.com"
-                class="form-control border-start-0"
-                :class="{ 'is-invalid': errors.email }"
-                id="validationDefaultUsername"
-                v-model.trim="formValue.email"
-                ref="email"
-                required
-              />
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="email" class="form-label-text">Email</label>
+          <input
+            type="email"
+            placeholder="Email"
+            id="email"
+            class="input email-input"
+          />
+          <i id="email-icon" class="fa-solid fa-envelope"></i>
+        </div>
 
-          <div class="col-md-4">
-            <label for="Password" class="form-label">Password</label>
-            <div class="input-group position-relative">
-              <span class="input-group-text border-end-0" id="password">
-                <div class="icon">
-                  <img
-                    src="../../assets/icon-park-solid_personal-privacy.png"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <i class="fa-solid" id="togglePassword" :class="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
-                  @click="togglePassword('confirmPassword')"></i>
-              </span>
-              <input
-                :type="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Password"
-                class="form-control pass border-start-0"
-                :class="{ 'is-invalid': errors.password }"
-                id="password"
-                v-model="formValue.password"
-                ref="password"
-                required
-              />
-            </div>
+        <div class="form-group">
+          <label for="password" class="form-label-text">Password</label>
+          <input
+            type="password"
+            placeholder="**********"
+            id="password"
+            class="input password-input"
+          />
+          <div class="img-container">
+            <img
+              src="../../assets/icon-park-solid_personal-privacy.png"
+              width="27"
+            />
           </div>
+          <i id="password-eye" class="fa-solid fa-eye"></i>
+        </div>
 
-          <div class="col-12">
-            <div class="head_container">
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="rememberMe"
-                v-model="formValue.rememberMe"
-              />
-              <label class="form-check-label" for="rememberMe">
-                Remember Me
-              </label>
-            </div>
-            <div class="forget">
-              <label for="" @click="$router.push('/')">Forget Password</label>
-            </div>
-            </div>
+        <div class="container-checkbox">
+          <div class="checkbox">
+            <input type="checkbox" id="remember-me" />
+            <label class="m-0" for="remember-me">Remember Me</label>
           </div>
-        
-          <div class="col-12 mt-5">
-            <button
-              class="btn btn-primary p-3 submitForm w-100"
-              type="submit"
-              :disabled="isLoading"
+          <div class="forgot">
+            <label for="" @click="$router.push('/')">Forget Password</label>
+          </div>
+        </div>
+
+        <div class="login-button-container">
+          <button class="login-button">Login</button>
+          <p class="footer-link">
+            already have an account ?
+            <span class="login-link" @click="$router.push('/signPg')"
+              >Sign Up</span
             >
-              <span
-                v-if="isLoading"
-                class="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-              <span v-else>Login</span>
-            </button>
-          </div>
-          <div class="col-12 mb-3">
-            <p class="footer-link">
-              already have an account ?
-              <span class="login-link" @click="$router.push('/signPg')"
-                >Sign Up</span
-              >
-            </p>
-          </div>
-        </form>
-      </div>
+          </p>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import Swal from "sweetalert2";
-
 export default {
-  name: "loginVue",
-  emits: ["signup"],
-  data() {
-    return {
-      formValue: {
-        email: "",
-        password: "",
-        rememberMe: false,
-      },
-      errors: {
-        email: false,
-        password: false,
-      },
-      isLoading: false,
-      userDataApi: [],
-      showConfirmPassword: false,
-    };
-  },
-  mounted() {
-    // Check for existing user in localStorage
-    // const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    // if (currentUser) {
-    //   this.formValue.email = currentUser.email;
-    //   this.formValue.rememberMe = true;
-    // }
-
-    this.getData();
-  },
-  watch: {
-    "formValue.email"(newValue) {
-      if (newValue.trim()) {
-        this.errors.email = false;
-      }
-    },
-    "formValue.password"(newValue) {
-      if (newValue) {
-        this.errors.password = false;
-      }
-    },
-    
-  },
-  methods: {
-    togglePassword(type) {
-            if (type === "password") {
-                this.showPassword = !this.showPassword;
-            } else {
-                this.showConfirmPassword = !this.showConfirmPassword;
-            }
-        },
-
-    //getting data from local server //http://localhost:3000/users
-    async getData() {
-      try {
-        const response = await fetch("http://localhost:3000/users");
-        const data = await response.json();
-        this.userDataApi = data;
-      } catch (error) {
-        console.error(error);
-      }
-      return this.userDataApi;
-    },
-
-    resetErrors() {
-      this.errors = {
-        email: false,
-        password: false,
-      };
-    },
-
-    async handleLogin() {
-      this.isLoading = true;
-      try {
-        this.resetErrors();
-        let hasError = false;
-
-        // Validate empty fields
-        if (!this.formValue.email.trim()) {
-          this.errors.email = true;
-          this.$refs.email.focus();
-          hasError = true;
-        }
-        if (!this.formValue.password) {
-          this.errors.password = true;
-          if (!hasError) this.$refs.password.focus();
-          hasError = true;
-        }
-
-        if (hasError) {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Please fill in all required fields",
-            confirmButtonColor: "#09203e",
-          });
-          return;
-        }
-
-        // Prepare the user data to send to the API
-        const newUser = {
-          email: this.formValue.email,
-          password: this.formValue.password,
-          rememberMe: this.formValue.rememberMe,
-        };
-
-        //checking if user input is inside json server database http://localhost:3000/users
-        const existingUsers = await this.getData();
-        const emailExists = existingUsers.some((user) => user.email === newUser.email);
-        const passwordExists = existingUsers.some((user) => user.password === newUser.password);
-        if (!emailExists) {
-          await Swal.fire({
-            icon: "error",
-            title: "Login Failed",
-            text: "Email not found. Please check your email or sign up.",
-            confirmButtonColor: "#09203e",
-          });
-          // this.$router.push("/login"); // Navigate to the login page
-          return;
-        }
-
-        if (!passwordExists) {
-          await Swal.fire({
-            icon: "error",
-            title: "Login Failed",
-            text: "Incorrect password. Please try again.",
-            confirmButtonColor: "#09203e",
-          });
-          // this.$router.push("/login"); // Navigate to the login page
-          return;
-        }
-        //saving the user data to local storage using the email as the key to retrieve the data
-       const user =  existingUsers.find((u) => u.email === newUser.email); //users.find((u) => u.email === this.formValue.email.trim());
-        localStorage.setItem("currentUser", JSON.stringify(user.full_name));  
-
-        // http://localhost:3000/users
-
-        // // Get users from JSON server
-        // const response = await fetch("https://task.fashion-life-agency.com/signup.php");
-        // await response.json();
-        // const user = users.find((u) => u.email === this.formValue.email.trim());
-
-        // if (!user) {
-        //   this.errors.email = true;
-        //   await Swal.fire({
-        //     icon: "error",
-        //     title: "Login Failed",
-        //     text: "Email not found. Please check your email or sign up.",
-        //     confirmButtonColor: "#09203e",
-        //   });
-        //   return;
-        // }
-
-        // if (user.password !== this.formValue.password) {
-        //   this.errors.password = true;
-        //   await Swal.fire({
-        //     icon: "error",
-        //     title: "Login Failed",
-        //     text: "Incorrect password. Please try again.",
-        //     confirmButtonColor: "#09203e",
-        //   });
-        //   return;
-        // }
-
-        // If remember me is checked, store the login state
-        // if (this.formValue.rememberMe) {
-        //   localStorage.setItem(
-        //     "currentUser",
-        //     JSON.stringify({
-        //       id: user.id,
-        //       email: user.email,
-        //       fullName: user.full_name,
-        //     })
-        //   );
-        // }
-
-        // // Show spinner for 3 seconds before success message
-        // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-        // Successful login
-        await Swal.fire({
-          icon: "success",
-          title: "Welcome back to Taskly!",
-          // text: `Hello`,
-          text: `Hello, ${user.full_name}`,
-          confirmButtonColor: "#09203e",
-        });
-
-        // reset
-        this.formValue = {
-          email: "",
-          password: "",
-          rememberMe: false,
-        },
-
-        // Navigate to dashboard
-        this.$router.push("/dashboard");
-      } catch (error) {
-        console.error("Login error:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred during login. Please try again.",
-          confirmButtonColor: "#09203e",
-        });
-      } finally {
-        this.isLoading = false;
-      }
-    },
-  },
+  name: "LoginVue",
 };
 </script>
 
 <style scoped>
-.login-contain {
-  padding: 15px 16px;
-}
-.head_container{
+.login-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 1000;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.login-content {
+  padding: 20px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: 100%;
 }
 
 .header {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 0 10px;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
 }
 
-.login-form-container .des {
+.header h2 {
+  font-weight: 600;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.form-container .des {
   color: #a8a9aa;
   font-size: 14px;
-  margin-top: 20px;
   font-weight: 300 !important;
+  margin-bottom: 5px;
 }
 
-input::placeholder {
-  color: #a8a9aa !important;
-  font-size: 14px !important;
-  font-weight: 300 !important;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 20px;
 }
 
-input {
-  font-size: 14px !important;
-  font-weight: 300 !important;
+#email-icon {
+  position: absolute;
+  top: 58%;
+  left: 16px;
+  font-size: 25px;
+  color: #9e9e9e;
 }
 
-label {
-  font-size: 16px !important;
-  font-weight: 500;
-}
-.forget{
-  color: #a8a9aa;
-}
-
-.heading {
-  font-size: 20px !important;
+.form-group .img-container img {
+  position: absolute;
+  top: 58%;
+  left: 16px;
+  color: #9e9e9e;
 }
 
-.form-control:focus {
-  color: #212529 !important;
-  background-color: transparent !important;
-  /* border-color: #dee2e6 !important; */
-  border-color: #3532326b !important;
-  outline: 0;
-  box-shadow: none !important;
+#password-eye {
+  position: absolute;
+  top: 55%;
+  right: 16px;
+  color: #9e9e9e;
+  font-size: 25px;
 }
 
-.form-control {
-  height: 3rem;
+.form-label-text {
+  font-weight: 600;
+  font-size: 16px;
+  color: #09203e;
+  cursor: pointer;
 }
 
-.form-check-input:checked {
+.input {
+  width: 100%;
+  /* border: 1px solid #e0e0e0; */
+  border: 1px solid #3532326b !important;
+  border-radius: 12px;
+  padding: 13px 13px 13px 56px;
+  font-size: 16px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: #9e9e9e;
+}
+
+.password-input {
+  padding: 13px 56px 13px 56px;
+}
+
+.container-checkbox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* .checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  transform: scale(1);
+  cursor: pointer;
+  border-radius: 5px;
+} */
+
+.checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #9e9e9e;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox input[type="checkbox"]:checked {
   background-color: #09203e;
   border-color: #09203e;
 }
 
-#togglePassword {
-    position: absolute;
-    top: 18px;
-    right: 17px;
-    color: #a8a9aa;
-    z-index: 10;
+.checkbox input[type="checkbox"]::after {
+  content: "✔";
+  font-size: 14px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
 }
 
-.input-group-text {
-  background-color: transparent !important;
-  border-color: #3532326b !important;
+.checkbox input[type="checkbox"]:checked::after {
+  display: block;
 }
 
-.form-control.pass {
-  padding: 0.375rem 3rem 0.375rem 0.5rem;
+.forgot {
+  color: #9e9e9e;
+  cursor: pointer;
 }
 
-.btn-primary.submitForm {
-  border-radius: 50px !important;
-  background: #09203e !important;
-  border-color: #09203e !important;
+.login-button {
+  background: #09203e;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 16px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 600 !important;
+  cursor: pointer;
+  margin: 20px 0 6px;
 }
 
 .login-link {
@@ -434,25 +263,8 @@ label {
   color: #a8a9aa;
 }
 
-.form-check-input,
-.form-control {
-  border-color: #3532326b !important;
-}
-
-.form-check-label {
-  font-weight: 400;
-}
-
-.form-control.is-invalid {
-  border-color: #dc3545 !important;
-  background-image: none !important;
-}
-
-.input-group .form-control.is-invalid {
-  z-index: 0;
-}
-
-.spinner-border {
-  margin-right: 5px;
+.login-button-container {
+  display: flex;
+  flex-direction: column;
 }
 </style>
