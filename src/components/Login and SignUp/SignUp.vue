@@ -36,7 +36,7 @@
           <label for="email" class="form-label-text">Email</label>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="ayomideakorede0@gmail.com"
             id="email"
             class="input email-input"
             :class="{ 'error-border': errorsBorder.email }"
@@ -66,7 +66,7 @@
         <div class="form-group">
           <label for="password" class="form-label-text">Password</label>
           <input
-            type="password"
+            :type="showConfirmPassword ? 'text' : 'password'"
             placeholder="Password"
             id="password"
             class="input password-input"
@@ -80,7 +80,12 @@
               width="27"
             />
           </div>
-          <i id="password-eye" class="fa-solid fa-eye"></i>
+          <i
+            id="password-eye"
+            class="fa-solid"
+            :class="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
+            @click="togglePassword('confirmPassword')"
+          ></i>
           <span class="error" v-if="errors.password">{{
             errors.password
           }}</span>
@@ -138,6 +143,7 @@ export default {
       },
       errors: {},
       userDataApi: [],
+      showConfirmPassword: false,
       isLoading: false,
       errorsBorder: {
         fullName: false,
@@ -164,6 +170,14 @@ export default {
         console.error(error);
       }
       return this.userDataApi;
+    },
+
+    togglePassword(type) {
+      if (type === "password") {
+        this.showPassword = !this.showPassword;
+      } else {
+        this.showConfirmPassword = !this.showConfirmPassword;
+      }
     },
 
     //form validation
@@ -229,6 +243,7 @@ export default {
             email: this.formValue.email,
             phone_number: this.formValue.phoneNum,
             password: this.formValue.password,
+            remember_me: this.formValue.rememberMe,
           };
 
           // Check if the email is already registered on the json server http://localhost:3000/users
@@ -404,7 +419,7 @@ export default {
 
 #email-icon {
   position: absolute;
-  top: 58%;
+  top: 55%;
   left: 16px;
   font-size: 25px;
   color: #9e9e9e;

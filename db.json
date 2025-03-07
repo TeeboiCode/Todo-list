@@ -1,56 +1,20 @@
 {
   "users": [
     {
-      "id": "8d57",
+      "id": "cd2a",
       "full_name": "Oluwaleye Taiwo",
-      "email": "oluwaleyetaiwo822f5@gmail.com",
-      "phone_number": "08023456789",
-      "password": "12345678"
-    },
-    {
-      "id": "8b9e",
-      "full_name": "Damilare Taiwo",
       "email": "oluwaleyetaiwo8225@gmail.com",
-      "phone_number": "08023456789",
-      "password": "12345678"
+      "phone_number": "0802534228",
+      "password": "123456",
+      "remember_me": false
     },
     {
-      "id": "de2e"
-    },
-    {
-      "id": "e843",
-      "full_name": "Adebowale",
-      "email": "adebowalejasmine437@gmail.com",
-      "phone_number": "08045324176",
-      "password": "12345678"
-    },
-    {
-      "id": "4950",
-      "full_name": "Taiwo Olaleye",
-      "email": "ade@mail.com",
-      "phone_number": "0706574532",
-      "password": "8989"
-    },
-    {
-      "id": "22ab",
-      "full_name": "keshinro hikmat",
-      "email": "keshinrohikmat@gmail.com",
-      "phone_number": "07033349264",
-      "password": "1234"
-    },
-    {
-      "id": "95b8",
-      "full_name": "Bashorun Temiloluwa",
-      "email": "ade567@gmail.com",
-      "phone_number": "090567845",
-      "password": "13579"
-    },
-    {
-      "id": "b30b",
-      "full_name": "Ajenifunja Ayoola",
-      "email": "ajenifunja@gmail.com",
-      "phone_number": "08045324176",
-      "password": "123456"
+      "id": "4262",
+      "full_name": "DamilareTaiwo",
+      "email": "oluwaleyemicheal8225@gmail.com",
+      "phone_number": "0802534228",
+      "password": "1234567",
+      "remember_me": true
     }
   ]
 }
