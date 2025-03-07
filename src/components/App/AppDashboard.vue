@@ -12,7 +12,7 @@
           <div class="greeting-img">
             <img src="../../assets/greeting-img-2.jpeg" />
           </div>
-          <h3>Hello, {{ Username }}</h3>
+          <h3>Hello, {{ Username.full_name }}</h3>
         </div>
 
         <!-- greeting-icon -->
@@ -126,7 +126,7 @@ export default {
     getUserData() {
       const userData = localStorage.getItem("currentUser");
       if (userData) {
-        return this.Username =JSON.parse(userData);
+        return (this.Username = JSON.parse(userData));
       } else {
         return null;
       }
@@ -141,7 +141,6 @@ export default {
 
     this.getUserData();
   },
-
 
   beforeUnmount() {
     window.removeEventListener("scroll", this.handleScroll);

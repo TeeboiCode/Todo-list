@@ -1,7 +1,7 @@
 <template>
-  <div class="login-container">
-    <div class="login-content">
-      <form class="form-container">
+  <div class="signUp-container">
+    <div class="signUp-content">
+      <form class="form-container" @submit.prevent="submitForm">
         <div class="header">
           <button class="back-button" @click="$router.push('/presignup')">
             <img
@@ -20,20 +20,27 @@
           <label for="email" class="form-label-text">Email</label>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="ayomideakorede0@gmail.com"
             id="email"
             class="input email-input"
+            :class="{ 'error-border': errorsBorder.email }"
+            v-model="formValue.email"
+            ref="email"
           />
           <i id="email-icon" class="fa-solid fa-envelope"></i>
+          <span class="error" v-if="errors.email">{{ errors.email }}</span>
         </div>
 
         <div class="form-group">
           <label for="password" class="form-label-text">Password</label>
           <input
-            type="password"
-            placeholder="**********"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder="Password"
             id="password"
             class="input password-input"
+            :class="{ 'error-border': errorsBorder.password }"
+            v-model="formValue.password"
+            ref="password"
           />
           <div class="img-container">
             <img
@@ -41,12 +48,25 @@
               width="27"
             />
           </div>
-          <i id="password-eye" class="fa-solid fa-eye"></i>
+          <i
+            id="password-eye"
+            class="fa-solid"
+            :class="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
+            @click="togglePassword('confirmPassword')"
+          ></i>
+          <span class="error" v-if="errors.password">{{
+            errors.password
+          }}</span>
         </div>
 
         <div class="container-checkbox">
           <div class="checkbox">
-            <input type="checkbox" id="remember-me" />
+            <input
+              type="checkbox"
+              id="remember-me"
+              v-model="formValue.rememberMe"
+              @click="changeRe"
+            />
             <label class="m-0" for="remember-me">Remember Me</label>
           </div>
           <div class="forgot">
@@ -54,13 +74,22 @@
           </div>
         </div>
 
-        <div class="login-button-container">
-          <button class="login-button">Login</button>
+        <div class="signUp-button-container">
+          <button type="submit" class="signUp-button" :disabled="isLoading">
+            <span
+              v-if="isLoading"
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            {{ result2 }}
+            Login {{ formValue.rememberMe }}
+          </button>
           <p class="footer-link">
             already have an account ?
-            <span class="login-link" @click="$router.push('/signPg')"
-              >Sign Up</span
-            >
+            <span class="signUp-link" @click="$router.push('/signPg')">
+              Sign Up
+            </span>
           </p>
         </div>
       </form>
@@ -69,13 +98,211 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
+
 export default {
-  name: "LoginVue",
+  name: "SignUpVue",
+  data() {
+    return {
+      formValue: {
+        email: "",
+        password: "",
+        rememberMe: false,
+      },
+      errors: {},
+      userDataApi: [],
+      isLoading: false,
+      showConfirmPassword: false,
+      result2: "",
+      errorsBorder: {
+        email: false,
+        password: false,
+      },
+      result: {
+        email: false,
+        password: false,
+      },
+    };
+  },
+  methods: {
+    changeRe() {
+      this.formValue.rememberMe = !this.formValue.rememberMe;
+    },
+    //getting data from local server //http://localhost:3000/users
+    async getData() {
+      try {
+        const response = await fetch("http://localhost:3000/users");
+        const data = await response.json();
+        this.userDataApi = data;
+        console.log(this.userDataApi);
+      } catch (error) {
+        console.error(error);
+      }
+      return this.userDataApi;
+    },
+
+    togglePassword(type) {
+      if (type === "password") {
+        this.showPassword = !this.showPassword;
+      } else {
+        this.showConfirmPassword = !this.showConfirmPassword;
+      }
+    },
+
+    //form validation
+    validateForm() {
+      this.errors = {}; // Reset errors before validation
+
+      // Email Validation
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!this.formValue.email.trim()) {
+        this.errors.email = "Email is required.";
+        this.errorsBorder.email = true;
+      } else if (!emailPattern.test(this.formValue.email)) {
+        this.errors.email = "Enter a valid email address.";
+        this.errorsBorder.email = true;
+      } else {
+        this.errorsBorder.email = false;
+      }
+
+      // Password Validation
+      if (!this.formValue.password.trim()) {
+        this.errors.password = "Password is required.";
+        this.errorsBorder.password = true;
+      } else if (this.formValue.password.length < 6) {
+        this.errors.password = "Password must be at least 6 characters.";
+        this.errorsBorder.password = true;
+      } else {
+        this.errorsBorder.password = false;
+      }
+
+      // Return true if there are no errors
+      return Object.keys(this.errors).length === 0;
+    },
+
+    //submit form
+    async submitForm() {
+      this.isLoading = true;
+
+      try {
+        if (this.validateForm()) {
+          // Prepare the user data to send to the API
+          const newUser = {
+            email: this.formValue.email,
+            password: this.formValue.password,
+          };
+
+          // Check if the email is already registered on the json server http://localhost:3000/users
+          const existingUsers = await this.getData();
+          const emailExists = existingUsers.some(
+            (user) => user.email === newUser.email
+          );
+          const passwordExists = existingUsers.some(
+            (user) => user.password === newUser.password
+          );
+
+          if (!emailExists) {
+            await Swal.fire({
+              icon: "error",
+              title: "Login Failed",
+              text: "Email not found. Please check your email or sign up.",
+              confirmButtonColor: "#09203e",
+            });
+            // this.$router.push("/login"); // Navigate to the login page
+            return;
+          }
+
+          if (!passwordExists) {
+            await Swal.fire({
+              icon: "error",
+              title: "Login Failed",
+              text: "Incorrect password. Please try again.",
+              confirmButtonColor: "#09203e",
+            });
+            // this.$router.push("/login"); // Navigate to the login page
+            return;
+          }
+
+          //saving and get the user data to local storage using the email as the key to retrieve the data
+          const user = existingUsers.find((u) => u.email === newUser.email);
+
+          let data = JSON.parse(localStorage.getItem("currentUser"));
+          data.remember_me = this.formValue.rememberMe;
+          localStorage.setItem("currentUser", JSON.stringify(data));
+
+          localStorage.setItem(
+            "currentUser",
+            JSON.stringify({
+              full_name: user.full_name,
+              email: user.email,
+              remember_me: user.remember_me,
+            })
+          );
+
+          // Clear the form and show success message
+          this.formValue = {
+            email: "",
+            password: "",
+            rememberMe: false,
+          };
+          this.isLoading = false;
+          await Swal.fire({
+            icon: "success",
+            title: "Welcome back to Taskly!",
+            text: `Hello, ${user.full_name}`,
+            confirmButtonColor: "#09203e",
+          });
+          this.$router.push("/dashboard");
+        }
+      } catch (error) {
+        console.error("Error saving data:", error);
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred during login. Please try again.",
+          confirmButtonColor: "#09203e",
+        });
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  },
+
+  watch: {
+    "formValue.email"(newValue) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (newValue.trim()) {
+        if (emailPattern.test(this.formValue.email)) {
+          this.errorsBorder.email = false;
+          this.errors.email = "";
+        } else {
+          this.errorsBorder.email = true;
+          this.errors.email = "Enter a valid email address.";
+        }
+      }
+    },
+    "formValue.password"(newValue) {
+      if (newValue) {
+        if (this.formValue.password.length < 6) {
+          this.errorsBorder.password = true;
+          this.errors.password = "Password must be at least 6 characters.";
+        } else {
+          this.errorsBorder.password = false;
+          this.errors.password = "";
+        }
+      }
+    },
+  },
+
+  mounted() {
+    this.getData();
+  },
 };
 </script>
 
 <style scoped>
-.login-container {
+.signUp-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -88,14 +315,13 @@ export default {
   overflow: auto;
 }
 
-.login-content {
+.signUp-content {
   padding: 20px;
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
   height: 100%;
 }
 
@@ -134,7 +360,7 @@ export default {
 
 #email-icon {
   position: absolute;
-  top: 58%;
+  top: 55%;
   left: 16px;
   font-size: 25px;
   color: #9e9e9e;
@@ -167,9 +393,13 @@ export default {
   /* border: 1px solid #e0e0e0; */
   border: 1px solid #3532326b !important;
   border-radius: 12px;
-  padding: 13px 13px 13px 56px;
+  padding: 13px;
   font-size: 16px;
   outline: none;
+}
+
+.input.email-input {
+  padding: 13px 13px 13px 56px;
 }
 
 .input::placeholder {
@@ -177,7 +407,7 @@ export default {
 }
 
 .password-input {
-  padding: 13px 56px 13px 56px;
+  padding: 16px 56px 16px 56px;
 }
 
 .container-checkbox {
@@ -238,7 +468,7 @@ export default {
   cursor: pointer;
 }
 
-.login-button {
+.signUp-button {
   background: #09203e;
   color: #fff;
   font-weight: 600;
@@ -251,7 +481,12 @@ export default {
   margin: 20px 0 6px;
 }
 
-.login-link {
+.signUp-button-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.signUp-link {
   color: #09203e;
   font-weight: 500;
 }
@@ -263,8 +498,35 @@ export default {
   color: #a8a9aa;
 }
 
-.login-button-container {
-  display: flex;
-  flex-direction: column;
+.spinner-border {
+  margin-right: 5px;
 }
+
+button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* error */
+.error {
+  font-size: 11px;
+  margin-top: 2px;
+  color: #dc3545;
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+}
+
+.error-border {
+  border: 1px solid #dc3545 !important;
+}
+
+/* .input:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  outline: none;
+} */
 </style>
