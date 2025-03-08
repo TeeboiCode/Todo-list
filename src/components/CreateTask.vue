@@ -1,7 +1,7 @@
 <template>
   <div class="createTask-container">
     <div class="createTask-content">
-      <form class="form-container">
+      <form class="form-container" @submit.prevent="createTask">
         <div class="header">
           <button class="back-button" @click="$router.push('/dashboard')">
             <!-- <i class="fas fa-chevron-left"></i> -->
@@ -16,7 +16,11 @@
         </div>
 
         <div class="form-group">
-          <input placeholder="Title" class="input title-input" />
+          <input
+            v-model="task.title"
+            placeholder="Title"
+            class="input title-input"
+          />
         </div>
 
         <div class="form-group">
@@ -24,6 +28,7 @@
             <div class="des-header">Task Description</div>
             <hr class="m-0" />
             <textarea
+              v-model="task.description"
               placeholder="Task Description"
               class="input description-input"
               rows="3"
@@ -35,7 +40,7 @@
           <div class="all-day">
             <span>All Day</span>
             <label class="switch">
-              <input type="checkbox" role="switch" />
+              <input type="checkbox" v-model="task.allDay" role="switch" />
               <span class="slider round"></span>
             </label>
           </div>
@@ -43,67 +48,155 @@
           <div class="time-row">
             <label>Start</label>
             <div class="time-inputs">
-              <button class="date-button">5 June 2024</button>
-              <button class="time-button">12:00 AM</button>
+              <DatePicker
+                v-model="task.startDate"
+                :min-date="new Date()"
+                :masks="dateMasks"
+                mode="date"
+              >
+                <template v-slot="{ inputValue, inputEvents }">
+                  <button class="date-button" v-on="inputEvents">
+                    {{ formatDate(task.startDate) || "Select Date" }}
+                  </button>
+                </template>
+              </DatePicker>
 
-              <!-- Date Picker Modal -->
-              <!-- <div class="picker-modal">
-                <div class="picker-content">
-                  <input type="date" class="date-input" />
-                </div>
-              </div> -->
-
-              <!-- Time Picker Modal -->
-              <!-- <div class="picker-modal">
-                <div class="picker-content">
-                  <input type="time" class="time-input" />
-                </div>
-              </div> -->
+              <DatePicker
+                v-model="task.startTime"
+                mode="time"
+                :is24hr="true"
+                :masks="timeMasks"
+                :model-config="timeModelConfig"
+              >
+                <template v-slot="{ inputValue, inputEvents }">
+                  <button class="time-button" v-on="inputEvents">
+                    {{ formatTime(task.startTime) || "Select Time" }}
+                  </button>
+                </template>
+              </DatePicker>
             </div>
           </div>
 
           <div class="time-row">
             <label>End</label>
             <div class="time-inputs">
-              <button class="date-button">5 June 2024</button>
-              <button class="time-button">08:00 PM</button>
+              <DatePicker
+                v-model="task.endDate"
+                :min-date="task.startDate || new Date()"
+                :masks="dateMasks"
+                mode="date"
+              >
+                <template v-slot="{ inputValue, inputEvents }">
+                  <button class="date-button" v-on="inputEvents">
+                    {{ formatDate(task.endDate) || "Select Date" }}
+                  </button>
+                </template>
+              </DatePicker>
 
-              <!-- Date Picker Modal -->
-              <!-- <div class="picker-modal">
-                <div class="picker-content">
-                  <input type="date" class="date-input" />
-                </div>
-              </div> -->
-
-              <!-- Time Picker Modal -->
-              <!-- <div class="picker-modal">
-                <div class="picker-content">
-                  <input
-                    type="time"
-                    v-model="task.endTime"
-                    class="time-input"/>
-                </div>
-              </div> -->
+              <DatePicker
+                v-model="task.endTime"
+                mode="time"
+                :is24hr="true"
+                :masks="timeMasks"
+                :model-config="timeModelConfig"
+              >
+                <template v-slot="{ inputValue, inputEvents }">
+                  <button class="time-button" v-on="inputEvents">
+                    {{ formatTime(task.endTime) || "Select Time" }}
+                  </button>
+                </template>
+              </DatePicker>
             </div>
           </div>
         </div>
 
-        <button class="create-button">Create Task</button>
+        <button class="create-button" type="submit">Create Task</button>
       </form>
     </div>
   </div>
 </template>
 
 <script>
+import { DatePicker } from "v-calendar";
+import "v-calendar/style.css";
+
 export default {
   name: "CreateTask",
+  components: {
+    DatePicker,
+  },
   data() {
     return {
       task: {
         title: "",
         description: "",
+        allDay: false,
+        startDate: new Date(),
+        startTime: new Date(),
+        endDate: new Date(),
+        endTime: new Date(),
+      },
+      dateMasks: {
+        input: "YYYY-MM-DD",
+      },
+      timeMasks: {
+        input: "HH:mm",
+      },
+      timeModelConfig: {
+        type: "date",
+        mask: "HH:mm",
       },
     };
+  },
+  methods: {
+    createTask() {
+      // Combine date and time before sending to API
+      const startDateTime = this.combineDateTime(
+        this.task.startDate,
+        this.task.startTime
+      );
+      const endDateTime = this.combineDateTime(
+        this.task.endDate,
+        this.task.endTime
+      );
+
+      const taskData = {
+        ...this.task,
+        startDateTime,
+        endDateTime,
+      };
+
+      // console.log("Task Created:", taskData);
+      // Add API call here to save the task
+    },
+    formatDate(date) {
+      if (!date) return "";
+      return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    },
+    formatTime(time) {
+      if (!time) return "";
+      return new Date(time).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    },
+    combineDateTime(date, time) {
+      if (!date) return null;
+
+      const combinedDate = new Date(date);
+      if (time) {
+        const timeDate = new Date(time);
+        combinedDate.setHours(timeDate.getHours());
+        combinedDate.setMinutes(timeDate.getMinutes());
+      }
+
+      return combinedDate;
+    },
   },
 };
 </script>
@@ -280,6 +373,11 @@ input:checked + .slider:before {
   color: #000;
   cursor: pointer;
   font-weight: 600;
+  min-width: 140px;
+}
+
+.time-button {
+  min-width: 100px;
 }
 
 .picker-modal {
