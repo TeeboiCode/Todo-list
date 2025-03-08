@@ -1,6 +1,6 @@
 <template>
   <div class="preSignUp-container">
-    <Preloader :isLoading="isLoading" />
+    <!-- <Preloader :isLoading="isLoading" /> -->
     <div class="container-fluid">
       <div class="login-box">
         <!-- Header -->

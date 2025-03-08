@@ -82,8 +82,7 @@
               role="status"
               aria-hidden="true"
             ></span>
-            {{ result2 }}
-            Login {{ formValue.rememberMe }}
+            Login
           </button>
           <p class="footer-link">
             already have an account ?
@@ -113,7 +112,6 @@ export default {
       userDataApi: [],
       isLoading: false,
       showConfirmPassword: false,
-      result2: "",
       errorsBorder: {
         email: false,
         password: false,
@@ -134,7 +132,6 @@ export default {
         const response = await fetch("http://localhost:3000/users");
         const data = await response.json();
         this.userDataApi = data;
-        console.log(this.userDataApi);
       } catch (error) {
         console.error(error);
       }
@@ -223,21 +220,42 @@ export default {
             return;
           }
 
-          //saving and get the user data to local storage using the email as the key to retrieve the data
-          const user = existingUsers.find((u) => u.email === newUser.email);
-
-          let data = JSON.parse(localStorage.getItem("currentUser"));
-          data.remember_me = this.formValue.rememberMe;
-          localStorage.setItem("currentUser", JSON.stringify(data));
-
-          localStorage.setItem(
-            "currentUser",
-            JSON.stringify({
-              full_name: user.full_name,
-              email: user.email,
-              remember_me: user.remember_me,
-            })
+          // user data from the json server http://localhost:3000/users
+          const user = existingUsers.find(
+            (user) => user.email === newUser.email
           );
+
+          if (user) {
+            //patch the user remember me
+            await fetch(`http://localhost:3000/users/${user.id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                remember_me: this.formValue.rememberMe,
+              }),
+            });
+
+            // getting the updated user data from the json server http://localhost:3000/users
+            const updatedUserData = await this.getData();
+            const updatedUser = updatedUserData.find(
+              (user) => user.email === newUser.email
+            );
+            // save the user id, email, and remember me to local storage
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify({
+                id: updatedUser.id,
+                full_name: updatedUser.full_name,
+                email: updatedUser.email,
+                remember_me: updatedUser.remember_me,
+              })
+            );
+          }
+
+          // getting local storage
+          const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
           // Clear the form and show success message
           this.formValue = {
@@ -249,7 +267,7 @@ export default {
           await Swal.fire({
             icon: "success",
             title: "Welcome back to Taskly!",
-            text: `Hello, ${user.full_name}`,
+            text: `Hello, ${currentUser.full_name}`,
             confirmButtonColor: "#09203e",
           });
           this.$router.push("/dashboard");
