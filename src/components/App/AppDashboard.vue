@@ -5,25 +5,24 @@
       <Preloader :isLoading="isLoading" />
     </div>
     <div class="container" v-else>
-      <!-- greeting -->
-      <div class="greeting">
-        <!-- greeting-img -->
-        <div class="greeting-img-containers">
-          <div class="greeting-img">
-            <img src="../../assets/greeting-img-2.jpeg" />
-          </div>
-          <h3>Hello, {{ Username.full_name }}</h3>
-        </div>
-
-        <!-- greeting-icon -->
-        <div class="greeting-icon">
-          <i class="fa-solid fa-bell"></i>
-          <i class="fa-solid fa-gear"></i>
-        </div>
-      </div>
-
-      <!-- dashboard -->
       <div>
+        <!-- greeting -->
+        <div class="greeting">
+          <!-- greeting-img -->
+          <div class="greeting-img-containers">
+            <div class="greeting-img">
+              <img src="../../assets/greeting-img-2.jpeg" />
+            </div>
+            <h3>Hello, {{ Username.full_name }}</h3>
+          </div>
+
+          <!-- greeting-icon -->
+          <div class="greeting-icon">
+            <i class="fa-solid fa-bell"></i>
+            <i class="fa-solid fa-gear"></i>
+          </div>
+        </div>
+
         <!-- dashboard-container -->
         <div class="dashboard-container">
           <!-- dashboard-content -->
@@ -40,37 +39,51 @@
           <div class="dashboard-button">
             <button
               type="button"
-              class="btn btn-outline-primary w-100 px-2 py-1 active"
+              class="btn btn-outline-primary w-100 px-2 py-1"
+              :class="{ active: filterStatus === 'all' }"
+              @click="filterStatus = 'all'"
             >
               All
             </button>
             <button
               type="button"
               class="btn btn-outline-primary w-100 px-2 py-1"
+              :class="{ active: filterStatus === 'pending' }"
+              @click="filterStatus = 'pending'"
             >
               in progress
             </button>
             <button
               type="button"
               class="btn btn-outline-primary w-100 px-2 py-1"
+              :class="{ active: filterStatus === 'completed' }"
+              @click="filterStatus = 'completed'"
             >
               completed
             </button>
           </div>
         </div>
+      </div>
+      <!-- dashboard -->
+      <div>
+        <div v-if="noTask">
+          <!-- dashboard-img -->
+          <div class="dashboard-img">
+            <img :src="images[imgIndex]" />
+          </div>
 
-        <!-- dashboard-img -->
-        <div class="dashboard-img">
-          <img :src="images[imgIndex]" />
+          <!-- dashboard-text -->
+          <div class="dashboard-text mb-5">
+            <h4>Get a clear view of the day ahead</h4>
+            <p>
+              All your tasks that are due today will show up here Tap + to add a
+              task
+            </p>
+          </div>
         </div>
 
-        <!-- dashboard-text -->
-        <div class="dashboard-text mb-5">
-          <h4>Get a clear view of the day ahead</h4>
-          <p>
-            All your tasks that are due today will show up here Tap + to add a
-            task
-          </p>
+        <div class="mt-4" v-else>
+          <CardTaskVue :userDataApi="filteredTasks" />
         </div>
       </div>
     </div>
@@ -84,11 +97,13 @@
 <script>
 import MenuBar from "../Menu.vue";
 import Preloader from "../Preloader.vue";
+import CardTaskVue from "../CardTask.vue";
 export default {
   name: "AppDashboardVue",
   components: {
     MenuBar,
     Preloader,
+    CardTaskVue,
   },
   data() {
     return {
@@ -100,9 +115,39 @@ export default {
       scrollTimeout: null,
       lastScrollTop: 0,
       isLoading: true,
+      userId: null,
+      userDataApi: [],
+      noTask: true,
+      filterStatus: "all",
     };
   },
   methods: {
+    //getting id from local storage
+    getId() {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      this.userId = currentUser.id;
+    },
+
+    //getting tasks data from api using id
+    async getData() {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/tasks?userId=${this.userId}`
+        );
+        const data = await response.json();
+        this.userDataApi = data;
+
+        if (this.userDataApi.length > 0) {
+          this.noTask = false;
+        } else {
+          this.noTask = true;
+        }
+        console.log(this.userDataApi);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     handleScroll() {
       clearTimeout(this.scrollTimeout);
 
@@ -133,12 +178,26 @@ export default {
     },
   },
 
+  computed: {
+    // filtering tasks by status
+    filteredTasks() {
+      if (this.filterStatus === "all") {
+        return this.userDataApi;
+      }
+      return this.userDataApi.filter(
+        (task) => task.status === this.filterStatus
+      );
+    },
+  },
+
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
     setTimeout(() => {
       this.isLoading = false;
     }, 3500);
 
+    this.getId();
+    this.getData();
     this.getUserData();
   },
 

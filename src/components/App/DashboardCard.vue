@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="dashboardCard-container">
     <!-- dashboardCard -->
     <div class="dashboardCard">
       <h3>Home/Chores</h3>
@@ -27,17 +27,13 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  padding: 10px 16px;
-}
-
 .dashboardCard {
   padding: 10px;
   width: 100%;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08); 
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
   border-radius: 10px;
   background: #fff;
-  border-left: 8px solid #f8bd00; 
+  border-left: 8px solid #f8bd00;
   border-right: 8px solid #f8bd00;
 }
 
@@ -52,8 +48,8 @@ export default {
   background: #f8bd00;
   padding: 8px;
   display: flex;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   border-radius: 10px;
 }
 

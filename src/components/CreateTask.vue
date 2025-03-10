@@ -54,10 +54,10 @@
                 :masks="dateMasks"
                 mode="date"
               >
-                <template v-slot="{ inputValue, inputEvents }">
-                  <button class="date-button" v-on="inputEvents">
+                <template v-slot="{ inputEvents }">
+                  <div class="date-button" v-on="inputEvents">
                     {{ formatDate(task.startDate) || "Select Date" }}
-                  </button>
+                  </div>
                 </template>
               </DatePicker>
 
@@ -68,10 +68,10 @@
                 :masks="timeMasks"
                 :model-config="timeModelConfig"
               >
-                <template v-slot="{ inputValue, inputEvents }">
-                  <button class="time-button" v-on="inputEvents">
+                <template v-slot="{ inputEvents }">
+                  <div class="time-button" v-on="inputEvents">
                     {{ formatTime(task.startTime) || "Select Time" }}
-                  </button>
+                  </div>
                 </template>
               </DatePicker>
             </div>
@@ -86,10 +86,10 @@
                 :masks="dateMasks"
                 mode="date"
               >
-                <template v-slot="{ inputValue, inputEvents }">
-                  <button class="date-button" v-on="inputEvents">
+                <template v-slot="{ inputEvents }">
+                  <div class="date-button" v-on="inputEvents">
                     {{ formatDate(task.endDate) || "Select Date" }}
-                  </button>
+                  </div>
                 </template>
               </DatePicker>
 
@@ -100,10 +100,10 @@
                 :masks="timeMasks"
                 :model-config="timeModelConfig"
               >
-                <template v-slot="{ inputValue, inputEvents }">
-                  <button class="time-button" v-on="inputEvents">
+                <template v-slot="{ inputEvents }">
+                  <div class="time-button" v-on="inputEvents">
                     {{ formatTime(task.endTime) || "Select Time" }}
-                  </button>
+                  </div>
                 </template>
               </DatePicker>
             </div>
@@ -146,10 +146,51 @@ export default {
         type: "date",
         mask: "HH:mm",
       },
+      userDataApi: [],
     };
   },
   methods: {
-    createTask() {
+    // getting data from json server
+    async getData() {
+      try {
+        const response = await fetch("http://localhost:3000/users");
+        const data = await response.json();
+        this.userDataApi = data;
+      } catch (error) {
+        console.error(error);
+      }
+      return this.userDataApi;
+    },
+
+    validateForm() {
+      // Check if title and description are provided
+      if (!this.task.title.trim()) {
+        alert("Title is required.");
+        return false;
+      }
+      if (!this.task.description.trim()) {
+        alert("Description is required.");
+        return false;
+      }
+      // check if start date is before end date
+      if (this.task.startDate > this.task.endDate) {
+        alert("Start date must be before end date.");
+        return false;
+      }
+      // check if start time is before end time
+      if (this.task.startTime > this.task.endTime) {
+        alert("Start time must be before end time.");
+        return false;
+      }
+      return true;
+    },
+
+    async createTask() {
+      // Validate the form before proceeding
+      if (!this.validateForm()) {
+        return;
+      }
+
       // Combine date and time before sending to API
       const startDateTime = this.combineDateTime(
         this.task.startDate,
@@ -160,15 +201,33 @@ export default {
         this.task.endTime
       );
 
+      // getting local storage
+      const getCurrentUser = JSON.parse(localStorage.getItem("currentUser"));
+
       const taskData = {
-        ...this.task,
+        userId: getCurrentUser.id,
+        title: this.task.title,
+        description: this.task.description,
+        allDay: this.task.allDay,
         startDateTime,
         endDateTime,
+        status: "pending",
       };
 
       // console.log("Task Created:", taskData);
-      // Add API call here to save the task
+
+      // Add the task to the API tasks
+      await fetch("http://localhost:3000/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      this.$router.push("/dashboard");
     },
+
     formatDate(date) {
       if (!date) return "";
       return new Date(date).toLocaleDateString("en-US", {
@@ -197,6 +256,9 @@ export default {
 
       return combinedDate;
     },
+  },
+  mounted() {
+    this.getData();
   },
 };
 </script>
