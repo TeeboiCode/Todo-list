@@ -126,7 +126,7 @@ export default {
     changeRe() {
       this.formValue.rememberMe = !this.formValue.rememberMe;
     },
-    //getting data from local server //http://localhost:3000/users
+    //getting data from api //http://localhost:3000/users
     async getData() {
       try {
         const response = await fetch("http://localhost:3000/users");

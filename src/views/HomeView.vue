@@ -44,7 +44,7 @@ export default {
         return null;
       }
 
-      console.log(this.userRememberMe);
+      // console.log(this.userRememberMe);
     },
   },
   mounted() {
