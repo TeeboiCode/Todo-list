@@ -11,27 +11,31 @@
           <!-- greeting-img -->
           <div class="greeting-img-containers">
             <div class="greeting-img">
-              <img src="../../assets/greeting-img-2.jpeg" />
+              <img src="../../assets/user-img.png" />
             </div>
             <h3>Hello, {{ Username.full_name }}</h3>
           </div>
 
           <!-- greeting-icon -->
           <div class="greeting-icon">
-            <i class="fa-solid fa-bell"></i>
+            <span>
+              <i
+                class="fa-solid fa-bell"
+                @click="$router.push('/notification')"
+              ></i>
+              <span class="badge-icon"> 99+ </span>
+            </span>
             <i class="fa-solid fa-gear"></i>
           </div>
         </div>
 
         <!-- dashboard-container -->
         <div class="dashboard-container">
-          <!-- dashboard-content -->
           <div class="dashboard-content">
             <h3>Today's Task</h3>
-            <p>0 <span> Tasks</span></p>
+            <p>{{ filteredTasks.length }} <span> Tasks</span></p>
           </div>
 
-          <!-- dashboard-icon -->
           <div class="dashboard-icon">
             <img src="../../assets/render-todo-check-list.png" width="113" />
           </div>
@@ -51,7 +55,7 @@
               :class="{ active: filterStatus === 'pending' }"
               @click="filterStatus = 'pending'"
             >
-              in progress
+              In Progress
             </button>
             <button
               type="button"
@@ -59,31 +63,32 @@
               :class="{ active: filterStatus === 'completed' }"
               @click="filterStatus = 'completed'"
             >
-              completed
+              Completed
             </button>
           </div>
         </div>
       </div>
+
       <!-- dashboard -->
       <div>
-        <div v-if="noTask">
-          <!-- dashboard-img -->
+        <div v-if="noTaskValue">
           <div class="dashboard-img">
             <img :src="images[imgIndex]" />
           </div>
-
-          <!-- dashboard-text -->
           <div class="dashboard-text mb-5">
             <h4>Get a clear view of the day ahead</h4>
             <p>
-              All your tasks that are due today will show up here Tap + to add a
-              task
+              All your tasks that are due today will show up here. Tap + to add
+              a task.
             </p>
           </div>
         </div>
 
         <div class="mt-4" v-else>
-          <CardTaskVue :userDataApi="filteredTasks" />
+          <CardTaskVue
+            :userDataApi="filteredTasks"
+            @update-checked="handleStatusChange"
+          />
         </div>
       </div>
     </div>
@@ -98,6 +103,7 @@
 import MenuBar from "../Menu.vue";
 import Preloader from "../Preloader.vue";
 import CardTaskVue from "../CardTask.vue";
+
 export default {
   name: "AppDashboardVue",
   components: {
@@ -117,34 +123,33 @@ export default {
       isLoading: true,
       userId: null,
       userDataApi: [],
-      noTask: true,
       filterStatus: "all",
     };
   },
   methods: {
-    //getting id from local storage
-    getId() {
-      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-      this.userId = currentUser.id;
+    async initializeData() {
+      this.getId();
+      await this.getData();
+      this.getUserData();
+      this.isLoading = false;
     },
 
-    //getting tasks data from api using id
+    getId() {
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser && currentUser.id) {
+        this.userId = currentUser.id;
+      }
+    },
+
     async getData() {
+      if (!this.userId) return;
       try {
         const response = await fetch(
           `http://localhost:3000/tasks?userId=${this.userId}`
         );
-        const data = await response.json();
-        this.userDataApi = data;
-
-        if (this.userDataApi.length > 0) {
-          this.noTask = false;
-        } else {
-          this.noTask = true;
-        }
-        console.log(this.userDataApi);
+        this.userDataApi = await response.json();
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching tasks:", error);
       }
     },
 
@@ -154,51 +159,60 @@ export default {
       const currentScroll =
         window.pageYOffset || document.documentElement.scrollTop;
 
-      if (currentScroll > this.lastScrollTop) {
-        this.menuPositionBar = "-100px";
-      } else {
-        this.menuPositionBar = "10px";
-      }
-
-      this.lastScrollTop = currentScroll != 0 ? 0 : currentScroll;
+      this.menuPositionBar =
+        currentScroll > this.lastScrollTop ? "-100px" : "10px";
+      this.lastScrollTop = currentScroll !== 0 ? 0 : currentScroll;
 
       this.scrollTimeout = setTimeout(() => {
         this.menuPositionBar = "10px";
       }, 500);
     },
 
-    // get user's data from local storage
     getUserData() {
       const userData = localStorage.getItem("currentUser");
       if (userData) {
-        return (this.Username = JSON.parse(userData));
-      } else {
-        return null;
+        this.Username = JSON.parse(userData);
+      }
+    },
+
+    async handleStatusChange({ id, status }) {
+      console.log(`Task ID: ${id}, New Status: ${status}`);
+
+      try {
+        const response = await fetch(`http://localhost:3000/tasks/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+
+        if (response.ok) {
+          this.userDataApi = this.userDataApi.map((task) =>
+            task.id === id ? { ...task, status } : task
+          );
+        } else {
+          console.error("Failed to update task status.");
+        }
+      } catch (error) {
+        console.error("Error updating task:", error);
       }
     },
   },
 
   computed: {
-    // filtering tasks by status
     filteredTasks() {
-      if (this.filterStatus === "all") {
-        return this.userDataApi;
-      }
-      return this.userDataApi.filter(
-        (task) => task.status === this.filterStatus
-      );
+      return this.filterStatus === "all"
+        ? this.userDataApi
+        : this.userDataApi.filter((task) => task.status === this.filterStatus);
+    },
+
+    noTaskValue() {
+      return this.userDataApi.length === 0;
     },
   },
 
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 3500);
-
-    this.getId();
-    this.getData();
-    this.getUserData();
+    this.initializeData();
   },
 
   beforeUnmount() {
@@ -208,7 +222,6 @@ export default {
 </script>
 
 <style scoped>
-/* container */
 .container {
   padding: 16px;
 }
@@ -220,7 +233,6 @@ export default {
   align-items: center;
 }
 
-/* greeting-img */
 .greeting-img {
   width: 50px;
   height: 50px;
@@ -250,13 +262,12 @@ export default {
 .greeting-icon {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  position: relative;
 }
 
 .greeting-icon i {
-  color: #333333;
-  align-items: center;
-  font-size: 20px;
+  font-size: 25px;
   color: #a8a9aa;
   transition: all 0.3s ease-in-out;
 }
@@ -267,31 +278,33 @@ export default {
   cursor: pointer;
 }
 
+.badge-icon {
+  background: red;
+  border-radius: 60%;
+  font-size: 8px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  font-weight: 700;
+  color: #fff;
+  position: absolute;
+  top: -8px;
+  right: 28px;
+  justify-content: center;
+  align-items: center;
+}
+
 /* dashboard */
 .dashboard-container {
   position: relative;
 }
 
 .dashboard-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 1rem;
   background: #3386ec;
-  color: #ffffff;
+  color: white;
   padding: 22px 20px;
   border-radius: 10px;
-  width: 100%;
-}
-
-.dashboard h3 {
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.dashboard-content p {
-  font-size: 16px;
-  margin-bottom: 0;
+  margin-top: 1rem;
 }
 
 .dashboard-icon {
@@ -302,23 +315,13 @@ export default {
 
 .dashboard-button {
   display: flex;
-  justify-content: space-between;
-  white-space: nowrap;
-  margin-top: 10px;
   gap: 15px;
+  margin-top: 10px;
 }
 
 .dashboard-button button {
   font-size: 12px;
   text-transform: capitalize;
-}
-
-.btn-outline-primary:not(:disabled):not(.disabled).active,
-.btn-outline-primary:not(:disabled):not(.disabled):active,
-.show > .btn-outline-primary.dropdown-toggle {
-  color: #fff;
-  background-color: #3386ec !important;
-  border-color: #3386ec !important;
 }
 
 .dashboard-img {
@@ -331,19 +334,6 @@ export default {
 }
 
 .dashboard-text {
-  padding: 10px 12px;
-  align-items: center;
   text-align: center;
-}
-
-.dashboard-text h4 {
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.dashboard-text p {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 400;
 }
 </style>
