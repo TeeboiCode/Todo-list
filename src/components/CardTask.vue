@@ -1,6 +1,6 @@
 <template>
   <div class="row g-3" style="margin-bottom: 4rem">
-    <template v-for="userTask in userDataApi" :key="userTask">
+    <template v-for="userTask in userDataApi" :key="userTask.id">
       <div class="col-12">
         <div
           class="card-content-container"
@@ -17,7 +17,10 @@
                     class="form-check-input"
                     type="checkbox"
                     role="switch"
-                    id="flexSwitchCheckDefault"
+                    :checked="userTask.status === 'completed'"
+                    @change="
+                      emitCheckedValue(userTask.id, $event.target.checked)
+                    "
                   />
                 </div>
               </div>
@@ -34,8 +37,9 @@
                 }}
               </div>
               <p class="card-text des">
-                {{ userTask.description }}
+                {{ userTask.description }} : id : {{ userTask.id }}
               </p>
+              <p class="card-text des"></p>
 
               <p class="card-text time">
                 <span>Start: 7 June 2025, 8:00am</span>
@@ -56,6 +60,13 @@ export default {
     userDataApi: {
       type: Array,
       required: true,
+    },
+  },
+
+  methods: {
+    emitCheckedValue(taskId, isChecked) {
+      const newStatus = isChecked ? "completed" : "pending";
+      this.$emit("update-checked", { id: taskId, status: newStatus });
     },
   },
 };
@@ -128,15 +139,19 @@ export default {
 }
 
 .form-check-input:checked {
-  background-color: #0a2647;
-}
-
-.form-check-input:focus {
-  box-shadow: 0 0 5px #0a264780;
-  border-color: #0a2647;
+  background-color: green;
 }
 
 .form-check-input:checked:focus {
   box-shadow: 0 0 5px #0a2647b3;
+}
+
+/* .form-switch .form-check-input:focus {
+  --bs-form-switch-bg: url(data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23fff%27/%3e%3c/svg%3e) !important;
+} */
+
+.form-check-input:focus {
+  box-shadow: 0 0 5px #8080807d;
+  border-color: gray;
 }
 </style>

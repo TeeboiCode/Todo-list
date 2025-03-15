@@ -132,10 +132,10 @@ export default {
         const response = await fetch("http://localhost:3000/users");
         const data = await response.json();
         this.userDataApi = data;
+        return this.userDataApi;
       } catch (error) {
         console.error(error);
       }
-      return this.userDataApi;
     },
 
     togglePassword(type) {

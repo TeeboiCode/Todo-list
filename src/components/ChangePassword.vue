@@ -3,7 +3,7 @@
     <div class="signUp-content">
       <form class="form-container" @submit.prevent="submitForm">
         <div class="header">
-          <button class="back-button" @click="$router.push('/dashboard')">
+          <button class="back-button" @click="$router.push('/presignup')">
             <img
               src="../../assets/back-arrow-icon.png"
               width="28"
@@ -11,83 +11,66 @@
               alt=""
             />
           </button>
-          <h2 class="m-0">Account</h2>
-
-          <!-- greeting-icon -->
-          <div class="greeting-icon">
-            <span>
-              <i
-                class="fa-solid fa-bell"
-                @click="$router.push('/notification')"
-              ></i>
-              <span class="badge-icon"> 99+ </span>
-            </span>
-          </div>
+          <h2 class="m-0">change password</h2>
         </div>
 
-        <!-- Profile Picture -->
-        <div class="profile">
-          <div class="profile-img">
-            <img src="@/assets/profile-img.png" alt="Profile" class="avatar" />
-            <div class="camera-icon">
-              <img src="@/assets/camera-icon.png" width="75%" />
-            </div>
-          </div>
-          <div>
-            <p class="m-0">Your Avatar photo will be public.</p>
-            <span class="edit-profile">
-              <span>Edit</span>
-              <img src="@/assets/pen-icon.png" width="15" />
-            </span>
-          </div>
-        </div>
-
-        <p class="des">Enter Your Details Below</p>
+        <p class="des">
+          the new password must be different from the current password
+        </p>
 
         <div class="form-group">
-          <label for="fullName" class="form-label-text">Full Name</label>
+          <label for="password" class="form-label-text">Current Password</label>
           <input
-            type="text"
-            placeholder="Full Name"
-            id="fullName"
-            class="input fullName-input"
-            :class="{ 'error-border': errorsBorder.fullName }"
-            v-model.trim="formValue.fullName"
-            ref="fullName"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder="Password"
+            id="Current Password"
+            class="input password-input"
+            :class="{ 'error-border': errorsBorder.password }"
+            v-model="formValue.password"
+            ref="password"
           />
-          <span class="error" v-if="errors.fullName">{{
-            errors.fullName
+          <div class="img-container">
+            <img
+              src="../../assets/icon-park-solid_personal-privacy.png"
+              width="27"
+            />
+          </div>
+          <i
+            id="password-eye"
+            class="fa-solid"
+            :class="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
+            @click="togglePassword('confirmPassword')"
+          ></i>
+          <span class="error" v-if="errors.password">{{
+            errors.password
           }}</span>
         </div>
 
         <div class="form-group">
-          <label for="email" class="form-label-text">Email</label>
+          <label for="password" class="form-label-text">New Password</label>
           <input
-            type="email"
-            placeholder="ayomideakorede0@gmail.com"
-            id="email"
-            class="input email-input"
-            :class="{ 'error-border': errorsBorder.email }"
-            v-model="formValue.email"
-            ref="email"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder="New Password"
+            id="password"
+            class="input password-input"
+            :class="{ 'error-border': errorsBorder.password }"
+            v-model="formValue.password"
+            ref="password"
           />
-          <i id="email-icon" class="fa-solid fa-envelope"></i>
-          <span class="error" v-if="errors.email">{{ errors.email }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="telephone" class="form-label-text">Phone Number</label>
-          <input
-            type="tel"
-            placeholder="07050419815"
-            id="telephone"
-            class="input tel-input"
-            :class="{ 'error-border': errorsBorder.phoneNum }"
-            v-model.trim="formValue.phoneNum"
-            ref="phoneNum"
-          />
-          <span class="error" v-if="errors.phoneNum">{{
-            errors.phoneNum
+          <div class="img-container">
+            <img
+              src="../../assets/icon-park-solid_personal-privacy.png"
+              width="27"
+            />
+          </div>
+          <i
+            id="password-eye"
+            class="fa-solid"
+            :class="showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'"
+            @click="togglePassword('confirmPassword')"
+          ></i>
+          <span class="error" v-if="errors.password">{{
+            errors.password
           }}</span>
         </div>
 
@@ -99,8 +82,9 @@
               role="status"
               aria-hidden="true"
             ></span>
-            Done
+            Update Password
           </button>
+          <p class="footer-link">cancel</p>
         </div>
       </form>
     </div>
@@ -111,45 +95,42 @@
 import Swal from "sweetalert2";
 
 export default {
-  name: "AppProfileVue",
+  name: "ChangePassword",
   data() {
     return {
       formValue: {
-        fullName: "",
         email: "",
-        phoneNum: "",
         password: "",
         rememberMe: false,
       },
       errors: {},
       userDataApi: [],
-      showConfirmPassword: false,
       isLoading: false,
+      showConfirmPassword: false,
       errorsBorder: {
-        fullName: false,
         email: false,
-        phoneNum: false,
         password: false,
       },
       result: {
-        fullName: false,
         email: false,
-        phoneNum: false,
         password: false,
       },
     };
   },
   methods: {
-    //getting data from local server //http://localhost:3000/users
+    changeRe() {
+      this.formValue.rememberMe = !this.formValue.rememberMe;
+    },
+    //getting data from api //http://localhost:3000/users
     async getData() {
       try {
         const response = await fetch("http://localhost:3000/users");
         const data = await response.json();
         this.userDataApi = data;
+        return this.userDataApi;
       } catch (error) {
         console.error(error);
       }
-      return this.userDataApi;
     },
 
     togglePassword(type) {
@@ -164,14 +145,6 @@ export default {
     validateForm() {
       this.errors = {}; // Reset errors before validation
 
-      // Full Name Validation
-      if (!this.formValue.fullName.trim()) {
-        this.errors.fullName = "Full name is required.";
-        this.errorsBorder.fullName = true;
-      } else {
-        this.errorsBorder.fullName = false;
-      }
-
       // Email Validation
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!this.formValue.email.trim()) {
@@ -182,18 +155,6 @@ export default {
         this.errorsBorder.email = true;
       } else {
         this.errorsBorder.email = false;
-      }
-
-      // Phone Number Validation
-      const phonePattern = /^[0-9]{10,15}$/;
-      if (!this.formValue.phoneNum.trim()) {
-        this.errors.phoneNum = "Phone number is required.";
-        this.errorsBorder.phoneNum = true;
-      } else if (!phonePattern.test(this.formValue.phoneNum)) {
-        this.errors.phoneNum = "Enter a valid phone number.";
-        this.errorsBorder.phoneNum = true;
-      } else {
-        this.errorsBorder.phoneNum = false;
       }
 
       // Password Validation
@@ -219,58 +180,92 @@ export default {
         if (this.validateForm()) {
           // Prepare the user data to send to the API
           const newUser = {
-            full_name: this.formValue.fullName,
             email: this.formValue.email,
-            phone_number: this.formValue.phoneNum,
             password: this.formValue.password,
-            remember_me: this.formValue.rememberMe,
           };
 
           // Check if the email is already registered on the json server http://localhost:3000/users
-          const existingUser = this.userDataApi.find(
-            (user) => user.email === this.formValue.email
+          const existingUsers = await this.getData();
+          const emailExists = existingUsers.some(
+            (user) => user.email === newUser.email
           );
-          if (existingUser) {
+          const passwordExists = existingUsers.some(
+            (user) => user.password === newUser.password
+          );
+
+          if (!emailExists) {
             await Swal.fire({
-              icon: "warning",
-              title: "Email Already Used",
-              text: "This email is already registered. Please log in.",
+              icon: "error",
+              title: "Login Failed",
+              text: "Email not found. Please check your email or sign up.",
               confirmButtonColor: "#09203e",
             });
-            this.isLoading = false;
-            this.$router.push("/login");
+            // this.$router.push("/login"); // Navigate to the login page
             return;
-          } else {
-            // Send new user data to the json serve "http://localhost:3000/users"
-            const postResponse = await fetch("http://localhost:3000/users", {
-              method: "POST",
+          }
+
+          if (!passwordExists) {
+            await Swal.fire({
+              icon: "error",
+              title: "Login Failed",
+              text: "Incorrect password. Please try again.",
+              confirmButtonColor: "#09203e",
+            });
+            // this.$router.push("/login"); // Navigate to the login page
+            return;
+          }
+
+          // user data from the json server http://localhost:3000/users
+          const user = existingUsers.find(
+            (user) => user.email === newUser.email
+          );
+
+          if (user) {
+            //patch the user remember me
+            await fetch(`http://localhost:3000/users/${user.id}`, {
+              method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(newUser),
+              body: JSON.stringify({
+                remember_me: this.formValue.rememberMe,
+              }),
             });
 
-            // Log the response for debugging
-            const responseData = await postResponse.json();
-            console.log("Response Data:", responseData);
-
-            // Clear the form and show success message
-            this.formValue = {
-              fullName: "",
-              email: "",
-              phoneNum: "",
-              password: "",
-              rememberMe: false,
-            };
-            this.isLoading = false;
-            await Swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Registration Successful",
-              confirmButtonColor: "#09203e",
-            });
-            this.$router.push("/login");
+            // getting the updated user data from the json server http://localhost:3000/users
+            const updatedUserData = await this.getData();
+            const updatedUser = updatedUserData.find(
+              (user) => user.email === newUser.email
+            );
+            // save the user id, email, and remember me to local storage
+            localStorage.setItem(
+              "currentUser",
+              JSON.stringify({
+                id: updatedUser.id,
+                full_name: updatedUser.full_name,
+                email: updatedUser.email,
+                remember_me: updatedUser.remember_me,
+              })
+            );
           }
+
+          // getting local storage
+          const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+          // Clear the form and show success message
+          this.formValue = {
+            email: "",
+            password: "",
+            rememberMe: false,
+          };
+          this.isLoading = false;
+          await Swal.fire({
+            icon: "success",
+            title: "Welcome back to Taskly!",
+            text: `Hello, ${currentUser.full_name}`,
+            confirmButtonColor: "#09203e",
+          });
+          this.$router.push("/dashboard");
         }
       } catch (error) {
         console.error("Error saving data:", error);
@@ -278,7 +273,7 @@ export default {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "An error occurred during registration. Please try again.",
+          text: "An error occurred during login. Please try again.",
           confirmButtonColor: "#09203e",
         });
       } finally {
@@ -288,15 +283,6 @@ export default {
   },
 
   watch: {
-    "formValue.fullName"(newValue) {
-      if (newValue.trim()) {
-        this.errorsBorder.fullName = false;
-        this.errors.fullName = "";
-      } else {
-        this.errorsBorder.fullName = true;
-        this.errors.fullName = "Full name is required.";
-      }
-    },
     "formValue.email"(newValue) {
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (newValue.trim()) {
@@ -306,18 +292,6 @@ export default {
         } else {
           this.errorsBorder.email = true;
           this.errors.email = "Enter a valid email address.";
-        }
-      }
-    },
-    "formValue.phoneNum"(newValue) {
-      const phonePattern = /^[0-9]{10,15}$/;
-      if (newValue.trim()) {
-        if (phonePattern.test(this.formValue.phoneNum)) {
-          this.errorsBorder.phoneNum = false;
-          this.errors.phoneNum = "";
-        } else {
-          this.errorsBorder.phoneNum = true;
-          this.errors.phoneNum = "Enter a valid phone number.";
         }
       }
     },
@@ -369,7 +343,6 @@ export default {
   align-items: center;
   gap: 16px;
   margin-bottom: 10px;
-  justify-content: space-between;
 }
 
 .header h2 {
@@ -388,7 +361,10 @@ export default {
   color: #a8a9aa;
   font-size: 14px;
   font-weight: 300 !important;
-  margin-bottom: 5px;
+  margin-bottom: 18px;
+  margin-top: 10px;
+  padding: 0 20px;
+  text-align: center;
 }
 
 .form-group {
@@ -564,87 +540,9 @@ button:disabled {
   border: 1px solid #dc3545 !important;
 }
 
-.greeting-icon {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  margin-right: 10px;
-}
-
-.greeting-icon i {
-  font-size: 25px;
-  color: #a8a9aa;
-  transition: all 0.3s ease-in-out;
-}
-
-.greeting-icon i:hover {
-  color: #09203e;
-  transform: translateY(-2px);
-  cursor: pointer;
-}
-
-.badge-icon {
-  background: red;
-  border-radius: 60%;
-  font-size: 8px;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  font-weight: 700;
-  color: #fff;
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Profile Section */
-
-.profile {
-  display: flex;
-  text-align: center;
-  margin: 10px 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.profile-img {
-  position: relative;
-  width: 130px;
-  margin-bottom: 15px;
-}
-
-.avatar {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  border: 3px solid #ccc;
-}
-
-.edit-profile {
-  display: flex;
-  color: red;
-  margin: 5px;
-  cursor: pointer;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-}
-
-.camera-icon {
-  background: #fff;
-  width: 30px;
-  border-radius: 50%;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  bottom: 11px;
-  right: 5px;
-}
+/* .input:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  outline: none;
+} */
 </style>

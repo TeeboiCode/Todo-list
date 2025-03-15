@@ -119,6 +119,7 @@
 <script>
 import { DatePicker } from "v-calendar";
 import "v-calendar/style.css";
+import Swal from "sweetalert2";
 
 export default {
   name: "CreateTask",
@@ -165,21 +166,37 @@ export default {
     validateForm() {
       // Check if title and description are provided
       if (!this.task.title.trim()) {
-        alert("Title is required.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Title is required.",
+        });
         return false;
       }
       if (!this.task.description.trim()) {
-        alert("Description is required.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Description is required.",
+        });
         return false;
       }
       // check if start date is before end date
       if (this.task.startDate > this.task.endDate) {
-        alert("Start date must be before end date.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Start date must be before end date.",
+        });
         return false;
       }
       // check if start time is before end time
       if (this.task.startTime > this.task.endTime) {
-        alert("Start time must be before end time.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Start time must be before end time.",
+        });
         return false;
       }
       return true;

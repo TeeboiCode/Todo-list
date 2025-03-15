@@ -6,7 +6,7 @@
       "email": "oluwaleyetaiwo8225@gmail.com",
       "phone_number": "0802534228",
       "password": "12345678",
-      "remember_me": true
+      "remember_me": false
     },
     {
       "id": "9400",
@@ -14,6 +14,14 @@
       "email": "oluwaleyemicheal8225@gmail.com",
       "phone_number": "0802534228",
       "password": "12345678",
+      "remember_me": false
+    },
+    {
+      "id": "46e5",
+      "full_name": "Oluwaleye Taiwo Damilare",
+      "email": "oluwaleyetaisssso@gmail.com",
+      "phone_number": "0802534228",
+      "password": "123456789",
       "remember_me": true
     }
   ],
@@ -56,7 +64,27 @@
       "allDay": false,
       "startDateTime": "2025-03-10T15:33:18.248Z",
       "endDateTime": "2025-03-10T15:33:18.248Z",
+      "status": "pending"
+    },
+    {
+      "id": "5995",
+      "userId": "4570",
+      "title": "hell",
+      "description": "sdfghjkl",
+      "allDay": false,
+      "startDateTime": "2025-03-12T20:55:17.675Z",
+      "endDateTime": "2025-03-12T20:55:17.675Z",
       "status": "completed"
+    },
+    {
+      "id": "0128",
+      "userId": "4570",
+      "title": "eaver",
+      "description": "awefaevsre",
+      "allDay": true,
+      "startDateTime": "2025-03-14T09:41:06.104Z",
+      "endDateTime": "2025-03-14T09:41:06.104Z",
+      "status": "pending"
     }
   ]
 }

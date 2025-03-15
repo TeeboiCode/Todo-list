@@ -18,6 +18,8 @@ import SuccessfulPassword from "../components/SuccessfulPassword.vue";
 import Note from "../components/Note.vue";
 import CardTask from "../components/CardTask.vue";
 
+
+
 const routes = [
   {
     path: "/",
