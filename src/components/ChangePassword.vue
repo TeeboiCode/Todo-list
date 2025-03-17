@@ -5,7 +5,7 @@
         <div class="header">
           <button class="back-button" @click="$router.push('/presignup')">
             <img
-              src="../../assets/back-arrow-icon.png"
+              src="@/assets/back-arrow-icon.png"
               width="28"
               height="25"
               alt=""
@@ -31,7 +31,7 @@
           />
           <div class="img-container">
             <img
-              src="../../assets/icon-park-solid_personal-privacy.png"
+              src="@/assets/icon-park-solid_personal-privacy.png"
               width="27"
             />
           </div>
@@ -59,7 +59,7 @@
           />
           <div class="img-container">
             <img
-              src="../../assets/icon-park-solid_personal-privacy.png"
+              src="@/assets/icon-park-solid_personal-privacy.png"
               width="27"
             />
           </div>

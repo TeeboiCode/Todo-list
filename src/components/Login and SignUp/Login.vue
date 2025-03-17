@@ -97,8 +97,6 @@
 </template>
 
 <script>
-import Swal from "sweetalert2";
-
 export default {
   name: "SignUpVue",
   data() {
@@ -122,20 +120,10 @@ export default {
       },
     };
   },
+
   methods: {
     changeRe() {
       this.formValue.rememberMe = !this.formValue.rememberMe;
-    },
-    //getting data from api //http://localhost:3000/users
-    async getData() {
-      try {
-        const response = await fetch("http://localhost:3000/users");
-        const data = await response.json();
-        this.userDataApi = data;
-        return this.userDataApi;
-      } catch (error) {
-        console.error(error);
-      }
     },
 
     togglePassword(type) {
@@ -187,101 +175,26 @@ export default {
           const newUser = {
             email: this.formValue.email,
             password: this.formValue.password,
+            remember_me: this.formValue.rememberMe,
           };
 
-          // Check if the email is already registered on the json server http://localhost:3000/users
-          const existingUsers = await this.getData();
-          const emailExists = existingUsers.some(
-            (user) => user.email === newUser.email
-          );
-          const passwordExists = existingUsers.some(
-            (user) => user.password === newUser.password
-          );
+          // Call Vuex login action
+          const success = await this.$store.dispatch("login", newUser);
 
-          if (!emailExists) {
-            await Swal.fire({
-              icon: "error",
-              title: "Login Failed",
-              text: "Email not found. Please check your email or sign up.",
-              confirmButtonColor: "#09203e",
-            });
-            // this.$router.push("/login"); // Navigate to the login page
-            return;
-          }
-
-          if (!passwordExists) {
-            await Swal.fire({
-              icon: "error",
-              title: "Login Failed",
-              text: "Incorrect password. Please try again.",
-              confirmButtonColor: "#09203e",
-            });
-            // this.$router.push("/login"); // Navigate to the login page
-            return;
-          }
-
-          // user data from the json server http://localhost:3000/users
-          const user = existingUsers.find(
-            (user) => user.email === newUser.email
-          );
-
-          if (user) {
-            //patch the user remember me
-            await fetch(`http://localhost:3000/users/${user.id}`, {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                remember_me: this.formValue.rememberMe,
-              }),
-            });
-
-            // getting the updated user data from the json server http://localhost:3000/users
-            const updatedUserData = await this.getData();
-            const updatedUser = updatedUserData.find(
-              (user) => user.email === newUser.email
-            );
-            // save the user id, email, and remember me to local storage
-            localStorage.setItem(
-              "currentUser",
-              JSON.stringify({
-                id: updatedUser.id,
-                full_name: updatedUser.full_name,
-                email: updatedUser.email,
-                remember_me: updatedUser.remember_me,
-              })
-            );
-          }
-
-          // getting local storage
-          const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-
-          // Clear the form and show success message
+          // Reset form fields
           this.formValue = {
             email: "",
             password: "",
             rememberMe: false,
           };
+
           this.isLoading = false;
-          await Swal.fire({
-            icon: "success",
-            title: "Welcome back to Taskly!",
-            text: `Hello, ${currentUser.full_name}`,
-            confirmButtonColor: "#09203e",
-          });
-          this.$router.push("/dashboard");
+
+          if (success) {
+            this.$router.push("/dashboard");
+          }
         }
       } catch (error) {
-        console.error("Error saving data:", error);
-
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred during login. Please try again.",
-          confirmButtonColor: "#09203e",
-        });
-      } finally {
         this.isLoading = false;
       }
     },
@@ -311,10 +224,6 @@ export default {
         }
       }
     },
-  },
-
-  mounted() {
-    this.getData();
   },
 };
 </script>

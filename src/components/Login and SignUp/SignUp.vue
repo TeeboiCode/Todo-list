@@ -129,6 +129,7 @@
 
 <script>
 import Swal from "sweetalert2";
+import axios from "axios";
 
 export default {
   name: "SignUpVue",
@@ -159,19 +160,8 @@ export default {
       },
     };
   },
-  methods: {
-    //getting data from local server //http://localhost:3000/users
-    async getData() {
-      try {
-        const response = await fetch("http://localhost:3000/users");
-        const data = await response.json();
-        this.userDataApi = data;
-      } catch (error) {
-        console.error(error);
-      }
-      return this.userDataApi;
-    },
 
+  methods: {
     togglePassword(type) {
       if (type === "password") {
         this.showPassword = !this.showPassword;
@@ -180,7 +170,7 @@ export default {
       }
     },
 
-    //form validation
+    //   //form validation
     validateForm() {
       this.errors = {}; // Reset errors before validation
 
@@ -237,7 +227,6 @@ export default {
 
       try {
         if (this.validateForm()) {
-          // Prepare the user data to send to the API
           const newUser = {
             full_name: this.formValue.fullName,
             email: this.formValue.email,
@@ -246,62 +235,24 @@ export default {
             remember_me: this.formValue.rememberMe,
           };
 
-          // Check if the email is already registered on the json server http://localhost:3000/users
-          const existingUser = this.userDataApi.find(
-            (user) => user.email === this.formValue.email
-          );
-          if (existingUser) {
-            await Swal.fire({
-              icon: "warning",
-              title: "Email Already Used",
-              text: "This email is already registered. Please log in.",
-              confirmButtonColor: "#09203e",
-            });
-            this.isLoading = false;
-            this.$router.push("/login");
-            return;
-          } else {
-            // Send new user data to the json serve "http://localhost:3000/users"
-            const postResponse = await fetch("http://localhost:3000/users", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(newUser),
-            });
+          // Dispatch Vuex action
+          await this.$store.dispatch("register", newUser);
 
-            // Log the response for debugging
-            const responseData = await postResponse.json();
-            console.log("Response Data:", responseData);
+          // Reset form fields
+          this.formValue = {
+            fullName: "",
+            email: "",
+            phoneNum: "",
+            password: "",
+            rememberMe: false,
+          };
 
-            // Clear the form and show success message
-            this.formValue = {
-              fullName: "",
-              email: "",
-              phoneNum: "",
-              password: "",
-              rememberMe: false,
-            };
-            this.isLoading = false;
-            await Swal.fire({
-              icon: "success",
-              title: "Success",
-              text: "Registration Successful",
-              confirmButtonColor: "#09203e",
-            });
-            this.$router.push("/login");
-          }
+          this.isLoading = false;
+
+          // Redirect to login after successful registration
+          this.$router.push("/login");
         }
       } catch (error) {
-        console.error("Error saving data:", error);
-
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred during registration. Please try again.",
-          confirmButtonColor: "#09203e",
-        });
-      } finally {
         this.isLoading = false;
       }
     },
@@ -352,10 +303,6 @@ export default {
         }
       }
     },
-  },
-
-  mounted() {
-    this.getData();
   },
 };
 </script>
