@@ -13,7 +13,7 @@
             <div class="greeting-img">
               <img src="../../assets/user-img.png" />
             </div>
-            <h3>Hello, {{ Username.full_name }}</h3>
+            <h3>Hello, {{ userName }}</h3>
           </div>
 
           <!-- greeting-icon -->
@@ -25,7 +25,7 @@
               ></i>
               <span class="badge-icon"> 99+ </span>
             </span>
-            <i class="fa-solid fa-gear"></i>
+            <i class="fa-solid fa-gear" @click="$router.push('/appcard')"></i>
           </div>
         </div>
 
@@ -115,7 +115,6 @@ export default {
     return {
       images: [require("@/assets/dashboard-img.png")],
       imgIndex: 0,
-      Username: "",
       isHidden: false,
       menuPositionBar: "10px",
       scrollTimeout: null,
@@ -130,7 +129,6 @@ export default {
     async initializeData() {
       this.getId();
       await this.getData();
-      this.getUserData();
       this.isLoading = false;
     },
 
@@ -168,13 +166,6 @@ export default {
       }, 500);
     },
 
-    getUserData() {
-      const userData = localStorage.getItem("currentUser");
-      if (userData) {
-        this.Username = JSON.parse(userData);
-      }
-    },
-
     async handleStatusChange({ id, status }) {
       console.log(`Task ID: ${id}, New Status: ${status}`);
 
@@ -207,6 +198,10 @@ export default {
 
     noTaskValue() {
       return this.userDataApi.length === 0;
+    },
+
+    userName() {
+      return this.$store.getters.getUser?.full_name;
     },
   },
 

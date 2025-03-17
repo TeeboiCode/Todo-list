@@ -5,13 +5,13 @@
     <div class="profile">
       <!-- profile-img -->
       <div class="profile-img">
-        <img src="../../assets/default-image.jpg" alt="Profile Picture">
+        <img src="../../assets/user-img.png" alt="Profile Picture" />
       </div>
 
       <!-- profile-text -->
       <div class="profile-text">
-        <h3>Lizzy Daniel</h3>
-        <p>ayomideakorede0@gmail.com</p>
+        <h3>{{ userName }}</h3>
+        <p>{{ userEmail }}</p>
       </div>
     </div>
 
@@ -21,12 +21,10 @@
 
       <!-- personal -->
       <div class="personal">
-
         <!-- user -->
         <div class="user">
-
           <!-- user-details -->
-          <div class="user-details">
+          <div class="user-details" @click="$router.push('/appProfile')">
             <i class="fa-solid fa-user"></i>
             <h4>Personal Details</h4>
           </div>
@@ -39,9 +37,8 @@
 
         <!-- user -->
         <div class="user">
-
           <!-- user-details -->
-          <div class="user-details">
+          <div class="user-details" @click="$router.push('/changepassword')">
             <i class="fa-solid fa-lock"></i>
             <h4>Change Password</h4>
           </div>
@@ -61,7 +58,7 @@
 
           <!-- Toggle Switch -->
           <label class="switch">
-            <input type="checkbox" v-model="isNotificationEnabled">
+            <input type="checkbox" v-model="isNotificationEnabled" />
             <span class="slider"></span>
           </label>
         </div>
@@ -69,10 +66,9 @@
 
       <!-- personal -->
       <div class="personal">
-
         <!-- user -->
         <div class="user">
-          <div class="user-action">
+          <div class="user-action" @click="confirmLogout">
             <i class="fa-solid fa-right-from-bracket"></i>
             <h4>Sign Out</h4>
           </div>
@@ -101,12 +97,50 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
+
 export default {
   name: "AppCardVue",
   data() {
     return {
-      isNotificationEnabled: false, 
+      isNotificationEnabled: false,
     };
+  },
+
+  computed: {
+    userName() {
+      return this.$store.getters.getUser?.full_name;
+    },
+
+    userEmail() {
+      return this.$store.getters.getUser?.email;
+    },
+  },
+
+  methods: {
+    async confirmLogout() {
+      const result = await Swal.fire({
+        icon: "warning",
+        title: "Logout Confirmation",
+        text: "Are you sure you want to logout?",
+        showCancelButton: true,
+        confirmButtonColor: "#09203e",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Logout",
+        cancelButtonText: "Cancel",
+      });
+
+      if (result.isConfirmed) {
+        await this.$store.dispatch("logout");
+        await Swal.fire({
+          icon: "success",
+          title: "Logged Out",
+          text: "You have been successfully logged out.",
+          confirmButtonColor: "#09203e",
+        });
+        this.$router.push("/login");
+      }
+    },
   },
 };
 </script>
