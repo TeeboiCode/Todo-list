@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "https://todo-list-b.glitch.me/";
 
 export default createStore({
   state: {
