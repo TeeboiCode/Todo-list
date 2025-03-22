@@ -151,18 +151,6 @@ export default {
     };
   },
   methods: {
-    // getting data from json server
-    async getData() {
-      try {
-        const response = await fetch("http://localhost:3000/users");
-        const data = await response.json();
-        this.userDataApi = data;
-      } catch (error) {
-        console.error(error);
-      }
-      return this.userDataApi;
-    },
-
     validateForm() {
       // Check if title and description are provided
       if (!this.task.title.trim()) {
@@ -218,11 +206,7 @@ export default {
         this.task.endTime
       );
 
-      // getting local storage
-      const getCurrentUser = JSON.parse(localStorage.getItem("currentUser"));
-
       const taskData = {
-        userId: getCurrentUser.id,
         title: this.task.title,
         description: this.task.description,
         allDay: this.task.allDay,
@@ -231,16 +215,7 @@ export default {
         status: "pending",
       };
 
-      // console.log("Task Created:", taskData);
-
-      // Add the task to the API tasks
-      await fetch("http://localhost:3000/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskData),
-      });
+      await this.$store.dispatch("createTask", taskData);
 
       this.$router.push("/dashboard");
     },
@@ -253,6 +228,7 @@ export default {
         day: "numeric",
       });
     },
+
     formatTime(time) {
       if (!time) return "";
       return new Date(time).toLocaleTimeString("en-US", {
@@ -273,9 +249,6 @@ export default {
 
       return combinedDate;
     },
-  },
-  mounted() {
-    this.getData();
   },
 };
 </script>

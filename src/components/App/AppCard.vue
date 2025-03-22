@@ -93,14 +93,21 @@
         </div>
       </div>
     </div>
+
+    <MenuBar />
   </div>
 </template>
 
 <script>
+import MenuBar from "../Menu.vue";
+
 import Swal from "sweetalert2";
 
 export default {
   name: "AppCardVue",
+  components: {
+    MenuBar,
+  },
   data() {
     return {
       isNotificationEnabled: false,
