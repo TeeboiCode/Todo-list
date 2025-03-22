@@ -101,6 +101,12 @@ export default createStore({
       state.tasks = tasks;
     },
 
+    update_task_status(state, { taskId, status }) {
+      state.tasks = state.tasks.map(task => 
+        task.id === taskId ? { ...task, status } : task
+      );
+    },
+
     update_user(state, user) {
       state.user = user;
       localStorage.setItem("user", JSON.stringify(user));
@@ -215,6 +221,18 @@ export default createStore({
           text: "Failed to create task. Please try again.",
           confirmButtonColor: "#09203e",
         });
+        throw error;
+      }
+    },
+
+    async updateTaskStatus({ commit }, { taskId, status }) {
+      try {
+        const response = await axios.patch(`${API_URL}/tasks/${taskId}`, { status });
+        if (response.status === 200) {
+          commit('update_task_status', { taskId, status });
+        }
+      } catch (error) {
+        console.error('Failed to update task status:', error);
         throw error;
       }
     },
