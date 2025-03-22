@@ -2,7 +2,44 @@ import { createStore } from "vuex";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const API_URL = "https://todo-list-b.glitch.me/";
+const API_URL = "http://localhost:3000";
+
+// Setup axios interceptors
+axios.interceptors.request.use(
+  (config) => {
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      // Instead of using store.commit, we'll handle the logout differently
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+      delete axios.defaults.headers.common["Authorization"];
+
+      await Swal.fire({
+        icon: "error",
+        title: "Session Expired",
+        text: "Please login again",
+        confirmButtonColor: "#09203e",
+      });
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default createStore({
   state: {
@@ -36,7 +73,7 @@ export default createStore({
       sessionStorage.removeItem("user");
 
       state.token = token;
-      state.user = user
+      state.user = user;
 
       // store token based on rememberMe option
       if (rememberMe) {
@@ -111,17 +148,16 @@ export default createStore({
           password,
           remember_me,
         });
-        // commit("setUser", {
-        //   email: response.data.email,
-        //   full_name: response.data.full_name,
-        // });
+
+        // Let's log the response to see what we're getting
+        console.log("Login response:", response.data);
+
         commit("set_auth", {
           token: response.data.token,
           user: response.data,
           rememberMe: remember_me,
         });
 
-        console.log(response.data)
         await Swal.fire({
           icon: "success",
           title: "Welcome to Taskly!",
@@ -131,10 +167,52 @@ export default createStore({
 
         return true;
       } catch (error) {
+        if (error.response?.status === 401) {
+          commit("log_out");
+          await Swal.fire({
+            icon: "error",
+            title: response.data,
+            text: "Please check your credentials and try again.",
+            confirmButtonColor: "#09203e",
+          });
+          throw new Error("Session expired. Please login again.");
+        }
+
         await Swal.fire({
           icon: "error",
           title: response.data,
           text: "Please check your credentials and try again.",
+          confirmButtonColor: "#09203e",
+        });
+        throw error;
+      }
+    },
+
+    async createTask({ commit }, task) {
+      try {
+        const response = await axios.post(`${API_URL}/tasks`, {
+          task,
+        });
+
+        if (response.status === 201) {
+          commit("set_tasks", response.data);
+
+          await Swal.fire({
+            icon: "success",
+            title: "Task created successfully!",
+            confirmButtonColor: "#09203e",
+          });
+          return response.data;
+        }
+      } catch (error) {
+        if (error.response?.status === 401) {
+          commit("log_out");
+          throw new Error("Session expired. Please login again.");
+        }
+        await Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to create task. Please try again.",
           confirmButtonColor: "#09203e",
         });
         throw error;
