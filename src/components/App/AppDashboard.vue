@@ -100,6 +100,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import MenuBar from "../Menu.vue";
 import Preloader from "../Preloader.vue";
 import CardTaskVue from "../CardTask.vue";
@@ -120,34 +121,20 @@ export default {
       scrollTimeout: null,
       lastScrollTop: 0,
       isLoading: true,
-      userId: null,
-      userDataApi: [],
       filterStatus: "all",
     };
   },
   methods: {
+    ...mapActions(["fetchTasks", "updateTaskStatus"]),
+
     async initializeData() {
-      this.getId();
-      await this.getData();
-      this.isLoading = false;
-    },
-
-    getId() {
-      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-      if (currentUser && currentUser.id) {
-        this.userId = currentUser.id;
-      }
-    },
-
-    async getData() {
-      if (!this.userId) return;
       try {
-        const response = await fetch(
-          `http://localhost:3000/tasks?userId=${this.userId}`
-        );
-        this.userDataApi = await response.json();
+        this.isLoading = true;
+        await this.fetchTasks();
       } catch (error) {
         console.error("Error fetching tasks:", error);
+      } finally {
+        this.isLoading = false;
       }
     },
 
@@ -167,29 +154,24 @@ export default {
     },
 
     async handleStatusChange({ id, status }) {
-      console.log(`Task ID: ${id}, New Status: ${status}`);
-
       try {
-        const response = await fetch(`http://localhost:3000/tasks/${id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status }),
-        });
-
-        if (response.ok) {
-          this.userDataApi = this.userDataApi.map((task) =>
-            task.id === id ? { ...task, status } : task
-          );
-        } else {
-          console.error("Failed to update task status.");
-        }
+        await this.updateTaskStatus({ taskId: id, status });
       } catch (error) {
         console.error("Error updating task:", error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to update task status',
+          confirmButtonColor: '#09203e'
+        });
       }
     },
   },
 
   computed: {
+    ...mapState({
+      userDataApi: (state) => state.tasks,
+    }),
+
     filteredTasks() {
       return this.filterStatus === "all"
         ? this.userDataApi
