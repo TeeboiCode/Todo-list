@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
 import Swal from "sweetalert2";
+// import { set } from "core-js/core/dict";
 
 const API_URL = "http://localhost:3000";
 
@@ -57,12 +58,14 @@ export default createStore({
       }
     })(),
     tasks: [], // Store tasks
+    notifications: [],
   },
 
   getters: {
     isAuthenticated: (state) => !!state.token,
     getUser: (state) => state.user,
     getTasks: (state) => state.tasks,
+    getNotification: (state) => state.notifications,
   },
   mutations: {
     set_auth(state, { token, user, rememberMe }) {
@@ -102,7 +105,7 @@ export default createStore({
     },
 
     update_task_status(state, { taskId, status }) {
-      state.tasks = state.tasks.map(task => 
+      state.tasks = state.tasks.map((task) =>
         task.id === taskId ? { ...task, status } : task
       );
     },
@@ -110,6 +113,20 @@ export default createStore({
     update_user(state, user) {
       state.user = user;
       localStorage.setItem("user", JSON.stringify(user));
+    },
+
+    add_notification(state, notification) {
+      state.notifications.unshift(notification);
+    },
+
+    set_notifications(state, notifications) {
+      state.notifications = notifications;
+    },
+
+    remove_notification(state, notificationId) {
+      state.notifications = state.notifications.filter(
+        (notification) => notification.id !== notificationId
+      );
     },
   },
 
@@ -227,12 +244,30 @@ export default createStore({
 
     async updateTaskStatus({ commit }, { taskId, status }) {
       try {
-        const response = await axios.patch(`${API_URL}/tasks/${taskId}`, { status });
+        // console.log("Updating task:", { taskId, status });
+
+        const response = await axios.patch(`${API_URL}/tasks/${taskId}`, {
+          status,
+        });
+
         if (response.status === 200) {
-          commit('update_task_status', { taskId, status });
+          // Update the task in state
+          const updatedTask = response.data;
+          commit("update_task_status", { taskId, status });
+
+          // await Swal.fire({
+          //   icon: "success",
+          //   title: "Task status updated",
+          //   confirmButtonColor: "#09203e",
+          // });
         }
       } catch (error) {
-        console.error('Failed to update task status:', error);
+        // await Swal.fire({
+        //   icon: "error",
+        //   title: "Failed to update task status",
+        //   text: error.response?.data?.error || "Please try again",
+        //   confirmButtonColor: "#09203e",
+        // });
         throw error;
       }
     },
@@ -254,6 +289,15 @@ export default createStore({
       } catch (error) {
         console.error("Failed to update user:", error);
         throw error;
+      }
+    },
+
+    async fetchNotifications({ commit }) {
+      try {
+        const response = await axios.get(`${API_URL}/notifications`);
+        commit('SET_NOTIFICATIONS', response.data);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
       }
     },
 
