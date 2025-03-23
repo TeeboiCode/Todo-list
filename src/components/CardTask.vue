@@ -18,9 +18,7 @@
                     type="checkbox"
                     role="switch"
                     :checked="userTask.status === 'completed'"
-                    @change="
-                      emitCheckedValue(userTask.id, $event.target.checked)
-                    "
+                    @change="emitCheckedValue(userTask.id, $event)"
                   />
                 </div>
               </div>
@@ -37,13 +35,20 @@
                 }}
               </div>
               <p class="card-text des">
-                 {{ userTask.description }} <!-- : id : {{ userTask.id }} -->
+                {{ userTask.description }}
+                <!-- : id : {{ userTask.id }} -->
               </p>
               <p class="card-text des"></p>
 
               <p class="card-text time">
-                <span>Start: 7 June 2025, 8:00am</span>
-                <span>End: 7 June 2025, 8:00am</span>
+                <span>
+                  Start:
+                  <span>{{ formatDateTime(userTask.startDateTime) }}</span>
+                </span>
+                <span>
+                  End:
+                  <span>{{ formatDateTime(userTask.endDateTime) }}</span>
+                </span>
               </p>
             </div>
           </div>
@@ -64,9 +69,27 @@ export default {
   },
 
   methods: {
-    emitCheckedValue(taskId, isChecked) {
-      const newStatus = isChecked ? "completed" : "pending";
+    emitCheckedValue(taskId, event) {
+      // Fix: use event.target.checked instead of event.target.isChecked
+      const newStatus = event.target.checked ? "completed" : "pending";
       this.$emit("update-checked", { id: taskId, status: newStatus });
+    },
+
+    formatDateTime(dateString) {
+      if (!dateString) return "";
+
+      const date = new Date(dateString);
+
+      const options = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true, // Ensures AM/PM format
+      };
+
+      return date.toLocaleString("en-US", options);
     },
   },
 };

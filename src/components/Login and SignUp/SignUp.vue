@@ -223,10 +223,9 @@ export default {
 
     //submit form
     async submitForm() {
-      this.isLoading = true;
-
       try {
         if (this.validateForm()) {
+          this.isLoading = true;
           const newUser = {
             full_name: this.formValue.fullName,
             email: this.formValue.email,

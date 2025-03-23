@@ -13,14 +13,17 @@
       >
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title fw-bolder">{{ notification.title }}</h5>
+            <h5 class="card-title">{{ notification.title }}</h5>
             <p class="card-text des">
               {{ notification.message }}
             </p>
-            <div class="d-flex align-items-center justify-content-between">
-              <span style="color: #00000066"
-                >Start: <span>{{ notification.createdAt }}</span></span
-              >
+            <div
+              class="d-flex align-items-center justify-content-between card-text time"
+            >
+              <span style="color: #00000066">
+                Date: <span>{{ formatDateTime(notification.createdAt) }}</span>
+              </span>
+
               <button
                 type="button"
                 class="btn btn-link"
@@ -38,10 +41,7 @@
 
     <!-- Full Message Modal -->
     <div id="modal" class="container pt-4" v-if="selectedMessage">
-      <i
-        class="fa-solid fa-circle-xmark close"
-        @click="selectedMessage = null"
-      ></i>
+      <i class="fa-solid fa-circle-xmark close" @click="close"></i>
       <h3 class="text-center fw-bold my-4">
         {{ selectedMessage.title }}
       </h3>
@@ -66,72 +66,16 @@ export default {
   data() {
     return {
       selectedMessage: null,
-      notifications: [
-        {
-          id: "1234567891",
-          user_id: "taskly-001",
-          title: "Reminder: Complete Your Task",
-          message:
-            "Hey Oluwaleye Taiwo, don't forget to complete your pending tasks for today!",
-          type: "reminder",
-          read: false,
-          createdAt: "2024-03-22T12:00:00.000Z",
-        },
-        {
-          id: "1234567892",
-          user_id: "taskly-001",
-          title: "Task Completed 🎉",
-          message:
-            "Great job, Oluwaleye Taiwo! You've completed your task successfully. Keep it up!",
-          type: "success",
-          read: false,
-          createdAt: "2024-03-22T14:30:00.000Z",
-        },
-        {
-          id: "1234567893",
-          user_id: "taskly-001",
-          title: "New Feature Alert 🚀",
-          message:
-            "Hey Oluwaleye Taiwo, check out our new feature that makes task management even easier!",
-          type: "update",
-          read: false,
-          createdAt: "2024-03-22T16:45:00.000Z",
-        },
-        {
-          id: "1234567894",
-          user_id: "taskly-001",
-          title: "Your Weekly Progress Report",
-          message:
-            "Hello Oluwaleye Taiwo, here’s your weekly progress report. Keep pushing forward!",
-          type: "report",
-          read: false,
-          createdAt: "2024-03-22T18:00:00.000Z",
-        },
-        {
-          id: "1234567895",
-          user_id: "taskly-001",
-          title: "Task Overdue ⚠️",
-          message:
-            "Hey Oluwaleye Taiwo, you have overdue tasks that need your attention. Please check your list.",
-          type: "warning",
-          read: false,
-          createdAt: "2024-03-22T20:15:00.000Z",
-        },
-        {
-          id: "1234567896",
-          user_id: "taskly-001",
-          title: "Motivation for the Day 💡",
-          message:
-            "Hey Oluwaleye Taiwo, remember: 'Success is the sum of small efforts repeated day in and day out.' Keep going!",
-          type: "motivation",
-          read: false,
-          createdAt: "2024-03-22T22:30:00.000Z",
-        },
-      ],
       menuPositionBar: "10px",
       scrollTimeout: null,
       lastScrollTop: 0,
     };
+  },
+
+  computed: {
+    notifications() {
+      return this.$store.state.notifications;
+    },
   },
 
   methods: {
@@ -153,6 +97,39 @@ export default {
         this.menuPositionBar = "10px";
       }, 500);
     },
+
+    close() {
+      this.selectedMessage = null;
+    },
+
+    formatDateTime(dateString) {
+      if (!dateString) return "";
+
+      const date = new Date(dateString);
+
+      const options = {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true, // Ensures AM/PM format
+      };
+
+      return date.toLocaleString("en-US", options);
+    },
+
+    async fetchNotifications() {
+      try {
+        await this.$store.dispatch("fetchNotifications");
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    },
+  },
+
+  created() {
+    this.fetchNotifications();
   },
 
   mounted() {
@@ -202,6 +179,18 @@ export default {
   right: 20px;
   color: rgb(151, 4, 4) !important;
   font-size: 2rem;
-  z-index: 101;
+  z-index: 9999; /* Increased z-index */
+  cursor: pointer; /* Ensures it is clickable */
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.card-text.time {
+  font-size: 14px;
+  font-weight: 600;
 }
 </style>

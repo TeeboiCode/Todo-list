@@ -48,6 +48,7 @@
           <div class="time-row">
             <label>Start</label>
             <div class="time-inputs">
+              <!-- start date -->
               <DatePicker
                 v-model="task.startDate"
                 :min-date="new Date()"
@@ -61,6 +62,7 @@
                 </template>
               </DatePicker>
 
+              <!-- start time -->
               <DatePicker
                 v-model="task.startTime"
                 mode="time"
@@ -80,6 +82,7 @@
           <div class="time-row">
             <label>End</label>
             <div class="time-inputs">
+              <!-- end date -->
               <DatePicker
                 v-model="task.endDate"
                 :min-date="task.startDate || new Date()"
@@ -93,6 +96,7 @@
                 </template>
               </DatePicker>
 
+              <!-- end time -->
               <DatePicker
                 v-model="task.endTime"
                 mode="time"

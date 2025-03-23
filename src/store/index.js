@@ -104,10 +104,14 @@ export default createStore({
       state.tasks = tasks;
     },
 
-    update_task_status(state, { taskId, status }) {
-      state.tasks = state.tasks.map((task) =>
-        task.id === taskId ? { ...task, status } : task
+    update_task_status(state, updatedTask) {
+      const taskIndex = state.tasks.findIndex(
+        (task) => task.id === updatedTask.id
       );
+      if (taskIndex !== -1) {
+        // Replace the entire task object with the updated version
+        state.tasks.splice(taskIndex, 1, updatedTask);
+      }
     },
 
     update_user(state, user) {
@@ -244,30 +248,19 @@ export default createStore({
 
     async updateTaskStatus({ commit }, { taskId, status }) {
       try {
-        // console.log("Updating task:", { taskId, status });
+        console.log("Updating task:", { taskId, status });
 
         const response = await axios.patch(`${API_URL}/tasks/${taskId}`, {
-          status,
+          status: status,
         });
 
         if (response.status === 200) {
-          // Update the task in state
-          const updatedTask = response.data;
-          commit("update_task_status", { taskId, status });
-
-          // await Swal.fire({
-          //   icon: "success",
-          //   title: "Task status updated",
-          //   confirmButtonColor: "#09203e",
-          // });
+          console.log("Store: Update successful:", response.data); // Debug log
+          commit("update_task_status", response.data);
+          return response.data;
         }
       } catch (error) {
-        // await Swal.fire({
-        //   icon: "error",
-        //   title: "Failed to update task status",
-        //   text: error.response?.data?.error || "Please try again",
-        //   confirmButtonColor: "#09203e",
-        // });
+        console.error("Update task error:", error.response?.data || error);
         throw error;
       }
     },
@@ -295,9 +288,9 @@ export default createStore({
     async fetchNotifications({ commit }) {
       try {
         const response = await axios.get(`${API_URL}/notifications`);
-        commit('SET_NOTIFICATIONS', response.data);
+        commit("set_notifications", response.data);
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error("Error fetching notifications:", error);
       }
     },
 
