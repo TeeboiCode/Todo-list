@@ -167,10 +167,9 @@ export default {
 
     //submit form
     async submitForm() {
-      this.isLoading = true;
-
       try {
         if (this.validateForm()) {
+          this.isLoading = true;
           // Prepare the user data to send to the API
           const newUser = {
             email: this.formValue.email,

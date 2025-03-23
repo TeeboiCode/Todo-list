@@ -152,16 +152,19 @@ export default {
     },
 
     async handleStatusChange({ id, status }) {
+      // console.log("Updating task status:", { id, status }); // Debug log
       try {
+        console.log("Handling status change:", { id, status }); // Add this debug log
         await this.$store.dispatch("updateTaskStatus", {
           taskId: id,
-          status,
+          status: status,
         });
       } catch (error) {
         console.error("Error updating task:", error);
         Swal.fire({
           icon: "error",
           title: "Failed to update task status",
+          text: error.response?.data?.message || "Please try again",
           confirmButtonColor: "#09203e",
         });
       }
