@@ -9,7 +9,7 @@
       <!-- show AdsProject after 5secs -->
       <div v-else>
         <!-- if the local storage data for user remeber me is true show AppDashboard -->
-        <AppDashboardVue v-if="userRememberMe" />
+        <AppDashboardVue v-if="getUserData" />
 
         <AdsProjectVue v-else />
       </div>
@@ -34,25 +34,16 @@ export default {
       userRememberMe: null,
     };
   },
-  methods: {
-    // get user's data from local storage
+  computed: {
     getUserData() {
-      const userData = JSON.parse(localStorage.getItem("currentUser"));
-      if (userData) {
-        this.userRememberMe = userData.remember_me;
-      } else {
-        return null;
-      }
-
-      // console.log(this.userRememberMe);
+      return this.$store.getters.isAuthenticated;
     },
   },
+
   mounted() {
     setTimeout(() => {
       this.showCoverPage = false;
     }, 5000);
-
-    this.getUserData();
   },
 };
 </script>

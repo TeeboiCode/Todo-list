@@ -37,7 +37,7 @@
                 }}
               </div>
               <p class="card-text des">
-                {{ userTask.description }} : id : {{ userTask.id }}
+                 {{ userTask.description }} <!-- : id : {{ userTask.id }} -->
               </p>
               <p class="card-text des"></p>
 

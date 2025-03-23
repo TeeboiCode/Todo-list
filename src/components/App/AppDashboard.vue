@@ -100,10 +100,10 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
 import MenuBar from "../Menu.vue";
 import Preloader from "../Preloader.vue";
 import CardTaskVue from "../CardTask.vue";
+import Swal from "sweetalert2";
 
 export default {
   name: "AppDashboardVue",
@@ -125,12 +125,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchTasks", "updateTaskStatus"]),
-
     async initializeData() {
       try {
         this.isLoading = true;
-        await this.fetchTasks();
+        await this.$store.dispatch("fetchTasks");
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
@@ -155,22 +153,26 @@ export default {
 
     async handleStatusChange({ id, status }) {
       try {
-        await this.updateTaskStatus({ taskId: id, status });
+        await this.$store.dispatch("updateTaskStatus", {
+          taskId: id,
+          status,
+        });
       } catch (error) {
         console.error("Error updating task:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Failed to update task status',
-          confirmButtonColor: '#09203e'
+          icon: "error",
+          title: "Failed to update task status",
+          confirmButtonColor: "#09203e",
         });
       }
     },
   },
 
   computed: {
-    ...mapState({
-      userDataApi: (state) => state.tasks,
-    }),
+    // Get tasks from Vuex store
+    userDataApi() {
+      return this.$store.state.tasks;
+    },
 
     filteredTasks() {
       return this.filterStatus === "all"
