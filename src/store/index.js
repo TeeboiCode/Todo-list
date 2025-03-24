@@ -65,8 +65,12 @@ export default createStore({
     isAuthenticated: (state) => !!state.token,
     getUser: (state) => state.user,
     getTasks: (state) => state.tasks,
-    getNotification: (state) => state.notifications,
+    getNotifications: (state) => state.notifications,
+    unreadNotificationsCount: (state) => {
+      return state.notifications.filter((n) => !n.read).length;
+    },
   },
+
   mutations: {
     set_auth(state, { token, user, rememberMe }) {
       // Clear previous tokens
@@ -124,7 +128,25 @@ export default createStore({
     },
 
     set_notifications(state, notifications) {
+      console.log(
+        "Before mutation - current notifications:",
+        state.notifications
+      );
       state.notifications = notifications;
+      console.log(
+        "After mutation - updated notifications:",
+        state.notifications
+      );
+    },
+
+    // Add this mutation to update a single notification
+    update_notification(state, updatedNotification) {
+      const index = state.notifications.findIndex(
+        (n) => n.id === updatedNotification.id
+      );
+      if (index !== -1) {
+        state.notifications.splice(index, 1, updatedNotification);
+      }
     },
 
     remove_notification(state, notificationId) {
@@ -138,21 +160,27 @@ export default createStore({
     async register({ commit }, user) {
       try {
         const response = await axios.post(`${API_URL}/register`, user);
+
+        console.log("Registration response:", response.data);
+        
         commit("set_auth", {
           token: response.data.token,
           user: response.data.full_name,
           rememberMe: false, // default to session storage
         });
 
-        let message = "Registration Successful";
-
-        if (response.data.message) {
-          message = response.data || message;
+        // Store the welcome notification if it exists
+        if (response.data.notification) {
+          console.log(
+            "Adding welcome notification to store:",
+            response.data.notification
+          );
+          commit("add_notification", response.data.notification);
         }
 
         await Swal.fire({
           icon: "success",
-          title: message,
+          title: "Registration Successful",
           confirmButtonColor: "#09203e",
         });
 
@@ -184,6 +212,9 @@ export default createStore({
           user: response.data,
           rememberMe: remember_me,
         });
+
+        // After login, fetch notifications
+        await this.dispatch("fetchNotifications");
 
         await Swal.fire({
           icon: "success",
@@ -287,10 +318,47 @@ export default createStore({
 
     async fetchNotifications({ commit }) {
       try {
+        console.log("Starting to fetch notifications..."); // Debug log
+        console.log("Current token:", this.state.token); // Add this to check token
+
         const response = await axios.get(`${API_URL}/notifications`);
+        console.log("API Response:", response.data); // Debug log
+
+        if (!response.data) {
+          console.log("No notifications data in response");
+          return;
+        }
+
         commit("set_notifications", response.data);
+        console.log("Notifications committed to store:", response.data); // Debug log
       } catch (error) {
         console.error("Error fetching notifications:", error);
+        console.error("Error details:", error.response?.data); // Add more error details
+      }
+    },
+
+    async markNotificationAsRead({ commit, state }, notificationId) {
+      try {
+        // Find notification in state
+        const notification = state.notifications.find(
+          (n) => n.id === notificationId
+        );
+        if (!notification) return;
+
+        // Create updated notification with read=true
+        const updatedNotification = { ...notification, read: true };
+
+        // Make API call to update notification status
+        await axios.patch(`${API_URL}/notifications/${notificationId}`, {
+          read: true,
+        });
+
+        // Update in store
+        commit("update_notification", updatedNotification);
+
+        return updatedNotification;
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
       }
     },
 

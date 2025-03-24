@@ -1,10 +1,10 @@
 <template>
   <!-- container -->
   <div>
-    <div v-if="isLoading" class="container">
+    <!-- <div v-if="isLoading" class="container">
       <Preloader :isLoading="isLoading" />
-    </div>
-    <div class="container" v-else>
+    </div> -->
+    <div class="container">
       <div>
         <!-- greeting -->
         <div class="greeting">
@@ -23,7 +23,9 @@
                 class="fa-solid fa-bell"
                 @click="$router.push('/notification')"
               ></i>
-              <span class="badge-icon"> 99+ </span>
+              <span v-if="notificationCount > 0" class="badge-icon">
+                {{ notificationCount > 99 ? "99+" : notificationCount }}
+              </span>
             </span>
             <i class="fa-solid fa-gear" @click="$router.push('/appcard')"></i>
           </div>
@@ -190,11 +192,17 @@ export default {
     userName() {
       return this.$store.getters.getUser?.full_name;
     },
+
+    notificationCount() {
+      return this.$store.getters.unreadNotificationsCount;
+    },
   },
 
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
     this.initializeData();
+    this.$store.dispatch("fetchNotifications");
+    console.log("Current notifications:", this.$store.state.notifications); // Debug log
   },
 
   beforeUnmount() {

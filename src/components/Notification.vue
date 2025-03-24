@@ -1,55 +1,70 @@
 <template>
-  <div class="container">
-    <h3 class="text-center my-3 fw-bold">Notification</h3>
+  <div class="notifications-container">
+    <div class="container" v-if="notifications.length === 0">
+      <div class="no-notifications fw-bold">No notifications yet</div>
+    </div>
 
-    <!-- messages -->
+    <!-- Notification list -->
+    <div class="container" v-else>
+      <h3 class="text-center my-3 fw-bold">Notification</h3>
 
-    <div class="row">
-      <!-- msg 1 -->
-      <div
-        class="col-md-6 col-12 mb-3 mb-sm-0"
-        v-for="notification in notifications"
-        :key="notification.id"
-      >
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ notification.title }}</h5>
-            <p class="card-text des">
-              {{ notification.message }}
-            </p>
-            <div
-              class="d-flex align-items-center justify-content-between card-text time"
-            >
-              <span style="color: #00000066">
-                Date: <span>{{ formatDateTime(notification.createdAt) }}</span>
-              </span>
+      <!-- messages -->
 
-              <button
-                type="button"
-                class="btn btn-link"
-                style="color: #3386ec"
-                @click="viewMessage(notification)"
+      <div class="row">
+        <!-- msg 1 -->
+        <div
+          class="col-md-6 col-12 mb-3 mb-sm-0"
+          v-for="notification in notifications"
+          :key="notification.id"
+          :class="{ unread: !notification.read }"
+        >
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ notification.title }}</h5>
+              <p
+                class="card-text des"
+                v-if="notification.isHtml"
+                v-html="notification.message"
+              ></p>
+              <p class="card-text des" v-else>{{ notification.message }}</p>
+
+              <div
+                class="d-flex align-items-center justify-content-between card-text time"
               >
-                View
-              </button>
+                <span style="color: #00000066">
+                  Date:
+                  <span>{{ formatDateTime(notification.createdAt) }}</span>
+                </span>
+
+                <button
+                  type="button"
+                  class="btn btn-link"
+                  style="color: #3386ec"
+                  @click="viewMessage(notification)"
+                >
+                  View
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- end row -->
+      <!-- end row -->
 
-    <!-- Full Message Modal -->
-    <div id="modal" class="container pt-4" v-if="selectedMessage">
-      <i class="fa-solid fa-circle-xmark close" @click="close"></i>
-      <h3 class="text-center fw-bold my-4">
-        {{ selectedMessage.title }}
-      </h3>
-      <p>
-        {{ selectedMessage.message }}
-      </p>
+      <!-- Full Message Modal -->
+      <div id="modal" class="container pt-4" v-if="selectedMessage">
+        <i class="fa-solid fa-circle-xmark close" @click="close"></i>
+        <h3 class="text-center fw-bold my-4">
+          {{ selectedMessage.title }}
+        </h3>
+        <p
+          class="card-text des"
+          v-if="selectedMessage.isHtml"
+          v-html="selectedMessage.message"
+        ></p>
+        <p class="card-text des" v-else>{{ selectedMessage.message }}</p>
+      </div>
     </div>
-
     <div class="menu-containerBar">
       <MenuVue :menuPosition="menuPositionBar" />
     </div>
@@ -74,13 +89,20 @@ export default {
 
   computed: {
     notifications() {
-      return this.$store.state.notifications;
+      const notifications = this.$store.state.notifications;
+      console.log("Notifications in component:", notifications); // Debug log
+      return notifications || []; // Ensure we always return an array
     },
   },
 
   methods: {
     viewMessage(msg) {
       this.selectedMessage = msg;
+
+      // Mark as read if it's currently unread
+      if (!msg.read) {
+        this.$store.dispatch("markNotificationAsRead", msg.id);
+      }
     },
 
     handleScroll() {
@@ -118,22 +140,15 @@ export default {
 
       return date.toLocaleString("en-US", options);
     },
-
-    async fetchNotifications() {
-      try {
-        await this.$store.dispatch("fetchNotifications");
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    },
-  },
-
-  created() {
-    this.fetchNotifications();
   },
 
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
+    // Add debug logs
+    console.log("NotificationVue mounted");
+    this.$store.dispatch("fetchNotifications").then(() => {
+      console.log("Notifications after fetch:", this.notifications);
+    });
   },
 
   beforeUnmount() {
@@ -146,6 +161,21 @@ export default {
 .card {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 20px;
+}
+
+.unread .card {
+  position: relative;
+}
+
+.unread .card::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
 }
 
 .card-text.des {
@@ -192,5 +222,16 @@ export default {
 .card-text.time {
   font-size: 14px;
   font-weight: 600;
+}
+
+.no-notifications {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.725rem;
+  padding: 24px;
+  color: #666;
 }
 </style>
