@@ -52,17 +52,30 @@
       <!-- end row -->
 
       <!-- Full Message Modal -->
-      <div id="modal" class="container pt-4" v-if="selectedMessage">
-        <i class="fa-solid fa-circle-xmark close" @click="close"></i>
-        <h3 class="text-center fw-bold my-4">
-          {{ selectedMessage.title }}
-        </h3>
-        <p
-          class="card-text des"
-          v-if="selectedMessage.isHtml"
-          v-html="selectedMessage.message"
-        ></p>
-        <p class="card-text des" v-else>{{ selectedMessage.message }}</p>
+      <div class="modal-backdrop" v-if="selectedMessage" @click.self="close">
+        <div id="modal" class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">{{ selectedMessage.title }}</h3>
+            <button class="close-btn" @click="close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          
+          <div class="modal-body">
+            <p
+              class="message-content"
+              v-if="selectedMessage.isHtml"
+              v-html="selectedMessage.message"
+            ></p>
+            <p class="message-content" v-else>{{ selectedMessage.message }}</p>
+          </div>
+          
+          <div class="modal-footer">
+            <span class="notification-date">
+              {{ formatDateTime(selectedMessage.createdAt) }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="menu-containerBar">
@@ -115,9 +128,30 @@ export default {
         currentScroll > this.lastScrollTop ? "-100px" : "10px";
       this.lastScrollTop = currentScroll !== 0 ? 0 : currentScroll;
 
+      this.applyElevationEffect();
+
       this.scrollTimeout = setTimeout(() => {
         this.menuPositionBar = "10px";
       }, 500);
+    },
+
+    applyElevationEffect() {
+      const cards = document.querySelectorAll('.card');
+      const viewportHeight = window.innerHeight;
+      
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const centerPosition = rect.top + rect.height/2;
+        
+        const distanceFromCenter = Math.abs(centerPosition - viewportHeight/2);
+        const maxDistance = viewportHeight/2;
+        
+        if (distanceFromCenter < maxDistance * 0.4) {
+          card.classList.add('elevated');
+        } else {
+          card.classList.remove('elevated');
+        }
+      });
     },
 
     close() {
@@ -148,6 +182,9 @@ export default {
     console.log("NotificationVue mounted");
     this.$store.dispatch("fetchNotifications").then(() => {
       console.log("Notifications after fetch:", this.notifications);
+      this.$nextTick(() => {
+        this.applyElevationEffect();
+      });
     });
   },
 
@@ -161,6 +198,11 @@ export default {
 .card {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 20px;
+  transition: box-shadow 0.3s ease;
+}
+
+.card.elevated {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 8px 16px;
 }
 
 .unread .card {
@@ -192,36 +234,128 @@ export default {
   text-decoration: none;
 }
 
-#modal {
+/* Modal Styles */
+.modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
   background: #fff;
-  z-index: 100;
-  transition: all 0.3s ease-in-out;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fcfcfc;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.close-btn i {
+  font-size: 1.25rem;
+  color: #666;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.message-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+  margin: 0;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.notification-date {
+  font-size: 0.875rem;
+  color: #888;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+
+/* Remove the old modal styles */
+#modal {
+  position: static; /* Override fixed positioning */
+  width: auto;
+  height: auto;
+  transition: none;
+  margin: 20px;
 }
 
 .close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  color: rgb(151, 4, 4) !important;
-  font-size: 2rem;
-  z-index: 9999; /* Increased z-index */
-  cursor: pointer; /* Ensures it is clickable */
-}
-
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.card-text.time {
-  font-size: 14px;
-  font-weight: 600;
+  position: static; /* Remove absolute positioning from old styles */
 }
 
 .no-notifications {

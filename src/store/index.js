@@ -162,7 +162,7 @@ export default createStore({
         const response = await axios.post(`${API_URL}/register`, user);
 
         console.log("Registration response:", response.data);
-        
+
         commit("set_auth", {
           token: response.data.token,
           user: response.data.full_name,
@@ -287,7 +287,13 @@ export default createStore({
 
         if (response.status === 200) {
           console.log("Store: Update successful:", response.data); // Debug log
-          commit("update_task_status", response.data);
+          commit("update_task_status", response.data.task);
+
+          // Add notification to store if one was created
+          if (response.data.notification) {
+            commit("add_notification", response.data.notification);
+          }
+
           return response.data;
         }
       } catch (error) {
