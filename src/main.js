@@ -6,6 +6,7 @@ import store from "./store";
 import BootstrapVue3 from "bootstrap-vue-3";
 import { setupCalendar } from 'v-calendar';
 import 'v-calendar/style.css';
+import VCalendar from 'v-calendar';
 
 // Import Bootstrap and BootstrapVue3 CSS files
 import "bootstrap/dist/css/bootstrap.css";
@@ -17,5 +18,6 @@ app.use(store);
 app.use(router);
 app.use(BootstrapVue3);
 app.use(setupCalendar, {});
+app.use(VCalendar, {});
 
 app.mount("#app");

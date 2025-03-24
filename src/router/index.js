@@ -21,6 +21,7 @@ import SuccessfulPassword from "../components/SuccessfulPassword.vue";
 import Note from "../components/Note.vue";
 import CardTask from "../components/CardTask.vue";
 import ChangePassword from "../components/ChangePassword.vue";
+import Calendar from '@/views/Calendar.vue';
 
 const routes = [
   { path: "/", name: "home", component: HomeView },
@@ -117,6 +118,11 @@ const routes = [
     path: "/successfulPassword",
     name: "successfulPassword",
     component: SuccessfulPassword,
+  },
+  {
+    path: '/calendar',
+    name: 'Calendar',
+    component: Calendar
   },
 ];
 

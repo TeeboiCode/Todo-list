@@ -6,21 +6,21 @@
     }"
   >
     <div class="menu-content-container">
-      <div class="menu-item"  @click="$router.push('/dashboard')">
-        <i class="fa-solid fa-house active"></i>
-        <span class="active">Home</span>
+      <div class="menu-item" @click="$router.push('/dashboard')">
+        <i class="fa-solid fa-house" :class="{ active: isActive('/dashboard') }"></i>
+        <span :class="{ active: isActive('/dashboard') }">Home</span>
       </div>
-      <div class="menu-item">
-        <i class="fa-solid fa-calendar-days"></i>
-        <span>Calendar</span>
+      <div class="menu-item" @click="$router.push('/calendar')">
+        <i class="fa-solid fa-calendar-days" :class="{ active: isActive('/calendar') }"></i>
+        <span :class="{ active: isActive('/calendar') }">Calendar</span>
       </div>
-      <div class="menu-item"  @click="$router.push('/createTask')">
-        <i class="fa-solid fa-circle-plus"></i>
-        <span>Add Task</span>
+      <div class="menu-item" @click="$router.push('/createTask')">
+        <i class="fa-solid fa-circle-plus" :class="{ active: isActive('/createTask') }"></i>
+        <span :class="{ active: isActive('/createTask') }">Add Task</span>
       </div>
-      <div class="menu-item" @click="$router.push('/appProfile')" >
-        <i class="fa-solid fa-user"></i>
-        <span>Profile</span>
+      <div class="menu-item" @click="$router.push('/appProfile')">
+        <i class="fa-solid fa-user" :class="{ active: isActive('/appProfile') }"></i>
+        <span :class="{ active: isActive('/appProfile') }">Profile</span>
       </div>
     </div>
   </div>
@@ -32,6 +32,11 @@ export default {
   props: {
     menuPosition: String,
   },
+  methods: {
+    isActive(route) {
+      return this.$route.path === route;
+    }
+  }
 };
 </script>
 
