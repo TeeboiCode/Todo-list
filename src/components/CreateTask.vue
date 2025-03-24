@@ -49,33 +49,19 @@
             <label>Start</label>
             <div class="time-inputs">
               <!-- start date -->
-              <DatePicker
+              <input
+                type="date"
                 v-model="task.startDate"
-                :min-date="new Date()"
-                :masks="dateMasks"
-                mode="date"
-              >
-                <template v-slot="{ inputEvents }">
-                  <div class="date-button" v-on="inputEvents">
-                    {{ formatDate(task.startDate) || "Select Date" }}
-                  </div>
-                </template>
-              </DatePicker>
+                class="date-button"
+                :min="getTodayDateString()"
+              />
 
               <!-- start time -->
-              <DatePicker
+              <input
+                type="time"
                 v-model="task.startTime"
-                mode="time"
-                :is24hr="true"
-                :masks="timeMasks"
-                :model-config="timeModelConfig"
-              >
-                <template v-slot="{ inputEvents }">
-                  <div class="time-button" v-on="inputEvents">
-                    {{ formatTime(task.startTime) || "Select Time" }}
-                  </div>
-                </template>
-              </DatePicker>
+                class="time-button"
+              />
             </div>
           </div>
 
@@ -83,33 +69,19 @@
             <label>End</label>
             <div class="time-inputs">
               <!-- end date -->
-              <DatePicker
+              <input
+                type="date"
                 v-model="task.endDate"
-                :min-date="task.startDate || new Date()"
-                :masks="dateMasks"
-                mode="date"
-              >
-                <template v-slot="{ inputEvents }">
-                  <div class="date-button" v-on="inputEvents">
-                    {{ formatDate(task.endDate) || "Select Date" }}
-                  </div>
-                </template>
-              </DatePicker>
+                class="date-button"
+                :min="task.startDate"
+              />
 
               <!-- end time -->
-              <DatePicker
+              <input
+                type="time"
                 v-model="task.endTime"
-                mode="time"
-                :is24hr="true"
-                :masks="timeMasks"
-                :model-config="timeModelConfig"
-              >
-                <template v-slot="{ inputEvents }">
-                  <div class="time-button" v-on="inputEvents">
-                    {{ formatTime(task.endTime) || "Select Time" }}
-                  </div>
-                </template>
-              </DatePicker>
+                class="time-button"
+              />
             </div>
           </div>
         </div>
@@ -121,40 +93,38 @@
 </template>
 
 <script>
-import { DatePicker } from "v-calendar";
-import "v-calendar/style.css";
 import Swal from "sweetalert2";
 
 export default {
   name: "CreateTask",
-  components: {
-    DatePicker,
-  },
   data() {
     return {
       task: {
         title: "",
         description: "",
         allDay: false,
-        startDate: new Date(),
-        startTime: new Date(),
-        endDate: new Date(),
-        endTime: new Date(),
-      },
-      dateMasks: {
-        input: "YYYY-MM-DD",
-      },
-      timeMasks: {
-        input: "HH:mm",
-      },
-      timeModelConfig: {
-        type: "date",
-        mask: "HH:mm",
+        startDate: this.getTodayDateString(),
+        startTime: this.getCurrentTimeString(),
+        endDate: this.getTodayDateString(),
+        endTime: this.getCurrentTimeString(60), // 1 hour later by default
       },
       userDataApi: [],
     };
   },
   methods: {
+    getTodayDateString() {
+      const today = new Date();
+      return today.toISOString().split('T')[0]; // YYYY-MM-DD format
+    },
+    
+    getCurrentTimeString(addMinutes = 0) {
+      const now = new Date();
+      if (addMinutes) {
+        now.setMinutes(now.getMinutes() + addMinutes);
+      }
+      return now.toTimeString().slice(0, 5); // HH:MM format
+    },
+    
     validateForm() {
       // Check if title and description are provided
       if (!this.task.title.trim()) {
@@ -173,24 +143,21 @@ export default {
         });
         return false;
       }
+      
+      // Combine date and time for comparison
+      const startDateTime = this.combineDateTime(this.task.startDate, this.task.startTime);
+      const endDateTime = this.combineDateTime(this.task.endDate, this.task.endTime);
+      
       // check if start date is before end date
-      if (this.task.startDate > this.task.endDate) {
+      if (startDateTime > endDateTime) {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "Start date must be before end date.",
+          text: "Start date/time must be before end date/time.",
         });
         return false;
       }
-      // check if start time is before end time
-      if (this.task.startTime > this.task.endTime) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Start time must be before end time.",
-        });
-        return false;
-      }
+      
       return true;
     },
 
@@ -224,34 +191,13 @@ export default {
       this.$router.push("/dashboard");
     },
 
-    formatDate(date) {
-      if (!date) return "";
-      return new Date(date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-    },
-
-    formatTime(time) {
-      if (!time) return "";
-      return new Date(time).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      });
-    },
     combineDateTime(date, time) {
       if (!date) return null;
-
-      const combinedDate = new Date(date);
-      if (time) {
-        const timeDate = new Date(time);
-        combinedDate.setHours(timeDate.getHours());
-        combinedDate.setMinutes(timeDate.getMinutes());
-      }
-
-      return combinedDate;
+      
+      const [year, month, day] = date.split('-').map(Number);
+      const [hours, minutes] = time.split(':').map(Number);
+      
+      return new Date(year, month - 1, day, hours, minutes);
     },
   },
 };
